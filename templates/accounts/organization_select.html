@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar organización</title>
+</head>
+<body>
+
+    <h1>Selecciona una organización</h1>
+
+    {% for membership in memberships %}
+        <div>
+            <h2>{{ membership.organization.name }}</h2>
+            <p>Rol: {{ membership.get_role_display }}</p>
+
+            <a href="{% url 'organization_set' membership.id %}">
+                Entrar
+            </a>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
