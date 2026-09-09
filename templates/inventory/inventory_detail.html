@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inventario</title>
+</head>
+<body>
+
+    <h1>
+        {{ inventory.get_inventory_type_display }}
+    </h1>
+
+    <h2>
+        {{ inventory.property.name }}
+    </h2>
+
+    <p>
+        Propiedad #{{ inventory.property.property_number }}
+    </p>
+
+    <hr>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% for section in sections %}
+
+            <section>
+
+                <h3>
+                    {{ section.name }}
+                </h3>
+
+                <a href="{% url 'inventory_item_create' section.id %}">
+                    + Agregar característica
+                </a>
+
+                {% for item in section.items.all %}
+
+                    <div>
+
+                        <label for="description_{{ item.id }}">
+                            <strong>
+                                {{ item.name }}
+                            </strong>
+                        </label>
+
+                        <br>
+
+                        <textarea
+                            id="description_{{ item.id }}"
+                            name="description_{{ item.id }}"
+                            rows="3"
+                            cols="60"
+                            placeholder="Descripción u observación..."
+                        >{{ item.description }}</textarea>
+                        <br>
+
+                        <a href="{% url 'inventory_item_update' item.id %}">
+                            Editar
+                        </a>
+                        <a href="{% url 'inventory_item_delete' item.id %}">
+                            Eliminar
+                        </a>
+
+                    </div>
+
+                    <br>
+
+                {% endfor %}
+
+            </section>
+
+            <hr>
+
+        {% endfor %}
+
+        <button type="submit">
+            Guardar cambios
+        </button>
+
+    </form>
+
+</body>
+</html>

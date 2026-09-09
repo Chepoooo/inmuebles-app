@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ property.name }}</title>
+</head>
+<body>
+
+    <h1>{{ property.name }}</h1>
+
+    <p>
+        <strong>Dirección:</strong>
+        {{ property.address }}
+    </p>
+
+    <p>
+        <strong>Número de propiedad:</strong>
+        {{ property.property_number }}
+    </p>
+
+    <p>
+        <strong>Inquilino:</strong>
+        {{ property.tenant_name }}
+    </p>
+
+    <a href="{% url 'property_update' property.id %}">
+        Editar
+    </a>
+
+    <a href="{% url 'property_delete' property.id %}">
+        Eliminar
+    </a>
+
+    <a href="{% url 'property_list' %}">
+        Volver a propiedades
+    </a>
+
+    <a href="{% url 'inventory_list' property.id %}">
+    Ver inventarios
+    </a>
+
+</body>
+</html>

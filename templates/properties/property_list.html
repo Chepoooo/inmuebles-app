@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propiedades</title>
+</head>
+<body>
+
+    <h1>Propiedades</h1>
+
+    <a href="{% url 'property_create' %}">
+        Crear propiedad
+    </a>
+
+    <hr>
+
+    {% if properties %}
+        {% for property in properties %}
+            <div>
+                <h2>
+                    <a href="{% url 'property_detail' property.id %}">
+                        {{ property.name }}
+                    </a>
+                </h2>
+
+                <p>
+                    Número: {{ property.property_number }}
+                </p>
+
+                <p>
+                    Inquilino: {{ property.tenant_name }}
+                </p>
+
+                <p>
+                    Dirección: {{ property.address }}
+                </p>
+            </div>
+
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No hay propiedades registradas.</p>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventarios</title>
+</head>
+<body>
+
+    <h1>Inventarios</h1>
+
+    <h2>{{ property.name }}</h2>
+
+    <p>
+        Propiedad #{{ property.property_number }}
+    </p>
+
+    <a href="{% url 'inventory_create' property.id %}">
+        Crear inventario
+    </a>
+
+    <hr>
+
+    {% if inventories %}
+
+        <ul>
+            {% for inventory in inventories %}
+                <li>
+                    <a href="{% url 'inventory_detail' inventory.id %}">
+                        {{ inventory.get_inventory_type_display }}
+                    </a>
+
+                    - {{ inventory.created_at }}
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+
+        <p>
+            Esta propiedad todavía no tiene inventarios.
+        </p>
+
+    {% endif %}
+
+</body>
+</html>
