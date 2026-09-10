@@ -56,3 +56,16 @@ class InventoryItem(models.Model):
 
     def __str__(self):
         return self.name
+    
+class InventoryItemPhoto(models.Model):
+    item = models.ForeignKey(
+        InventoryItem,
+        on_delete=models.CASCADE,
+        related_name="photos",
+    )
+    public_id = models.CharField(max_length=255)
+    secure_url = models.URLField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Photo for {self.item.name}"

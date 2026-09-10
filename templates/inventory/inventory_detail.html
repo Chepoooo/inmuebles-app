@@ -58,12 +58,37 @@
                             placeholder="Descripción u observación..."
                         >{{ item.description }}</textarea>
                         <br>
+                        <div>
+                            <strong>Fotos:</strong>
+
+                            {% for photo in item.photos.all %}
+                                <div>
+                                    <img
+                                        src="{{ photo.secure_url }}"
+                                        alt="Foto de {{ item.name }}"
+                                        width="200"
+                                    >
+
+                                    <br>
+
+                                    <a href="{% url 'inventory_item_photo_delete' photo.id %}">
+                                        Eliminar foto
+                                    </a>
+                                </div>
+                            {% empty %}
+                                <p>No hay fotos.</p>
+                            {% endfor %}
+                            </div>
 
                         <a href="{% url 'inventory_item_update' item.id %}">
                             Editar
                         </a>
                         <a href="{% url 'inventory_item_delete' item.id %}">
                             Eliminar
+                        </a>
+
+                        <a href="{% url 'inventory_item_photo_create' item.id %}">
+                          + Agregar foto
                         </a>
 
                     </div>

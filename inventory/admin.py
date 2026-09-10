@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from .models import Inventory, InventoryItem, InventorySection
+from .models import (
+    Inventory,
+    InventoryItem,
+    InventoryItemPhoto,
+    InventorySection,
+)
 
 
 @admin.register(Inventory)
@@ -37,3 +42,15 @@ class InventoryItemAdmin(admin.ModelAdmin):
     )
     list_filter = ("section",)
     search_fields = ("name",)
+    
+@admin.register(InventoryItemPhoto)
+class InventoryItemPhotoAdmin(admin.ModelAdmin):
+    list_display = (
+        "item",
+        "public_id",
+        "created_at",
+    )
+    search_fields = (
+        "item__name",
+        "public_id",
+    )

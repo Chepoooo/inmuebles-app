@@ -1,11 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+import cloudinary
+import cloudinary.uploader
 
 from accounts.utils import get_current_organization
 from properties.models import Property
 
 from .forms import InventoryForm, InventoryItemForm
-from .models import Inventory, InventoryItem, InventorySection
+from .models import (
+    Inventory,
+    InventoryItem,
+    InventoryItemPhoto,
+    InventorySection,
+)
 
 
 @login_required
@@ -180,7 +187,9 @@ def inventory_detail(request, inventory_id):
         property__organization=organization,
     )
 
-    sections = inventory.sections.prefetch_related("items")
+    sections = inventory.sections.prefetch_related(
+    "items__photos"
+    )
 
     if request.method == "POST":
         for section in sections:
@@ -320,5 +329,83 @@ def inventory_item_delete(request, item_id):
         "inventory/inventory_item_confirm_delete.html",
         {
             "item": item,
+        },
+    )
+    
+@login_required
+def inventory_item_photo_create(request, item_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    item = get_object_or_404(
+        InventoryItem.objects.select_related(
+            "section__inventory__property"
+        ),
+        id=item_id,
+        section__inventory__property__organization=organization,
+    )
+
+    if request.method == "POST":
+        photo = request.FILES.get("photo")
+
+        if photo:
+            result = cloudinary.uploader.upload(
+                photo,
+                folder="inventory",
+            )
+
+            InventoryItemPhoto.objects.create(
+                item=item,
+                public_id=result["public_id"],
+                secure_url=result["secure_url"],
+            )
+
+            return redirect(
+                "inventory_detail",
+                inventory_id=item.section.inventory_id,
+            )
+
+    return render(
+        request,
+        "inventory/inventory_item_photo_form.html",
+        {
+            "item": item,
+        },
+    )
+    
+@login_required
+def inventory_item_photo_delete(request, photo_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    photo = get_object_or_404(
+        InventoryItemPhoto.objects.select_related(
+            "item__section__inventory__property"
+        ),
+        id=photo_id,
+        item__section__inventory__property__organization=organization,
+    )
+
+    inventory_id = photo.item.section.inventory_id
+
+    if request.method == "POST":
+        cloudinary.uploader.destroy(photo.public_id)
+
+        photo.delete()
+
+        return redirect(
+            "inventory_detail",
+            inventory_id=inventory_id,
+        )
+
+    return render(
+        request,
+        "inventory/inventory_item_photo_confirm_delete.html",
+        {
+            "photo": photo,
         },
     )

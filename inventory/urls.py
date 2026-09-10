@@ -34,4 +34,15 @@ urlpatterns = [
     views.inventory_item_delete,
     name="inventory_item_delete",
     ),
+    path(
+    "item/<int:item_id>/photos/add/",
+    views.inventory_item_photo_create,
+    name="inventory_item_photo_create",
+    ),
+    
+    path(
+    "photo/<int:photo_id>/delete/",
+    views.inventory_item_photo_delete,
+    name="inventory_item_photo_delete",  
+    ),
 ]
