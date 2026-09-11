@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ repair.repair_type }}</title>
+</head>
+<body>
+
+    <h1>{{ repair.repair_type }}</h1>
+
+    <p>
+        <strong>Propiedad:</strong>
+        {{ repair.property }}
+    </p>
+
+    <p>
+        <strong>Fecha:</strong>
+        {{ repair.report_date|date:"d/m/Y" }}
+    </p>
+
+    <p>
+        <strong>Trabajador:</strong>
+        {{ repair.assigned_worker|default:"No asignado" }}
+    </p>
+
+    <p>
+        <strong>Cotización:</strong>
+        {{ repair.quote|default:"No registrada" }}
+    </p>
+
+    <p>
+        <strong>Estado:</strong>
+        {{ repair.get_status_display }}
+    </p>
+
+    <p>
+        <strong>Descripción:</strong>
+    </p>
+
+    <p>
+        {{ repair.description|default:"Sin descripción." }}
+    </p>
+
+    <hr>
+
+    <a href="{% url 'repair_update' repair.id %}">
+        Editar
+    </a>
+
+    <br>
+
+    <a href="{% url 'repair_delete' repair.id %}">
+        Eliminar
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'repair_list' %}">
+        Volver a reparaciones
+    </a>
+
+</body>
+</html>

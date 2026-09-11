@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar reparación</title>
+</head>
+<body>
+
+    <h1>Actualizar reparación</h1>
+
+    <p>
+        <strong>Reparación:</strong>
+        {{ repair.repair_type }}
+    </p>
+
+    <p>
+        <strong>Propiedad:</strong>
+        {{ repair.property }}
+    </p>
+
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Guardar cambios
+        </button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'repair_detail' repair.id %}">
+        Cancelar
+    </a>
+
+</body>
+</html>

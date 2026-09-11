@@ -2,7 +2,7 @@
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-
+from accounts.utils import admin_required
 from accounts.utils import get_current_organization
 
 from .forms import PropertyForm
@@ -48,6 +48,7 @@ def property_detail(request, property_id):
 
 
 @login_required
+@admin_required
 def property_create(request):
     organization = get_current_organization(request)
 
@@ -80,6 +81,7 @@ def property_create(request):
 
 
 @login_required
+@admin_required
 def property_update(request, property_id):
     organization = get_current_organization(request)
 
@@ -116,6 +118,7 @@ def property_update(request, property_id):
 
 
 @login_required
+@admin_required
 def property_delete(request, property_id):
     organization = get_current_organization(request)
 

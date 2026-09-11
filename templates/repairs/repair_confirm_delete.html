@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar reparación</title>
+</head>
+<body>
+
+    <h1>Eliminar reparación</h1>
+
+    <p>
+        ¿Estás seguro de que quieres eliminar
+        <strong>{{ repair.repair_type }}</strong>?
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit">
+            Sí, eliminar
+        </button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'repair_detail' repair.id %}">
+        Cancelar
+    </a>
+
+</body>
+</html>

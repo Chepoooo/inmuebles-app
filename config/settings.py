@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'properties',
     'inventory',
+    'repairs',
 ]
 
 MIDDLEWARE = [

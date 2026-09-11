@@ -3,7 +3,11 @@ from django.shortcuts import render
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from .utils import get_current_membership, get_current_organization
+from .utils import (
+    get_current_membership,
+    get_current_organization,
+    admin_required,
+)
 
 from organizations.models import Membership
 
@@ -44,6 +48,7 @@ def organization_set(request, membership_id):
     return redirect("/")
 
 @login_required
+@admin_required
 def organization_context_test(request):
     organization = get_current_organization(request)
     membership = get_current_membership(request)

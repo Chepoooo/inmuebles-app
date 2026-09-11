@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 import cloudinary
 import cloudinary.uploader
+from accounts.utils import admin_required
 
 from accounts.utils import get_current_organization
 from properties.models import Property
@@ -44,6 +45,7 @@ def inventory_list(request, property_id):
 
 
 @login_required
+@admin_required
 def inventory_create(request, property_id):
     organization = get_current_organization(request)
 
@@ -220,6 +222,7 @@ def inventory_detail(request, inventory_id):
     )
     
 @login_required
+@admin_required
 def inventory_item_create(request, section_id):
     organization = get_current_organization(request)
 
@@ -260,6 +263,7 @@ def inventory_item_create(request, section_id):
     )
     
 @login_required
+@admin_required
 def inventory_item_update(request, item_id):
     organization = get_current_organization(request)
 
@@ -301,6 +305,7 @@ def inventory_item_update(request, item_id):
     )
     
 @login_required
+@admin_required
 def inventory_item_delete(request, item_id):
     organization = get_current_organization(request)
 
@@ -334,6 +339,7 @@ def inventory_item_delete(request, item_id):
     )
     
 @login_required
+@admin_required
 def inventory_item_photo_create(request, item_id):
     organization = get_current_organization(request)
 
@@ -377,6 +383,7 @@ def inventory_item_photo_create(request, item_id):
     )
     
 @login_required
+@admin_required
 def inventory_item_photo_delete(request, photo_id):
     organization = get_current_organization(request)
 
@@ -412,6 +419,7 @@ def inventory_item_photo_delete(request, photo_id):
     )
     
 @login_required
+@admin_required
 def inventory_signature_create(request, inventory_id):
     organization = get_current_organization(request)
 
