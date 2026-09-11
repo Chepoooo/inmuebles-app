@@ -12,6 +12,7 @@ from .models import (
     InventoryItem,
     InventoryItemPhoto,
     InventorySection,
+    InventorySignature,
 )
 
 
@@ -407,5 +408,54 @@ def inventory_item_photo_delete(request, photo_id):
         "inventory/inventory_item_photo_confirm_delete.html",
         {
             "photo": photo,
+        },
+    )
+    
+@login_required
+def inventory_signature_create(request, inventory_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    inventory = get_object_or_404(
+        Inventory.objects.select_related("property"),
+        id=inventory_id,
+        property__organization=organization,
+    )
+
+    if hasattr(inventory, "signature"):
+        return redirect(
+            "inventory_detail",
+            inventory_id=inventory.id,
+        )
+
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        signature_data = request.POST.get("signature", "").strip()
+
+        if name and signature_data:
+            result = cloudinary.uploader.upload(
+                signature_data,
+                folder="inventory/signatures",
+            )
+
+            InventorySignature.objects.create(
+                inventory=inventory,
+                name=name,
+                public_id=result["public_id"],
+                secure_url=result["secure_url"],
+            )
+
+            return redirect(
+                "inventory_detail",
+                inventory_id=inventory.id,
+            )
+
+    return render(
+        request,
+        "inventory/inventory_signature_form.html",
+        {
+            "inventory": inventory,
         },
     )

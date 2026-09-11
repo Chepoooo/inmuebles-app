@@ -69,3 +69,17 @@ class InventoryItemPhoto(models.Model):
 
     def __str__(self):
         return f"Photo for {self.item.name}"
+    
+class InventorySignature(models.Model):
+    inventory = models.OneToOneField(
+        Inventory,
+        on_delete=models.CASCADE,
+        related_name="signature",
+    )
+    name = models.CharField(max_length=150)
+    public_id = models.CharField(max_length=255)
+    secure_url = models.URLField(max_length=500)
+    signed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Signature for {self.inventory}"

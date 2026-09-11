@@ -5,6 +5,7 @@ from .models import (
     InventoryItem,
     InventoryItemPhoto,
     InventorySection,
+    InventorySignature,
 )
 
 
@@ -53,4 +54,17 @@ class InventoryItemPhotoAdmin(admin.ModelAdmin):
     search_fields = (
         "item__name",
         "public_id",
+    )
+    
+@admin.register(InventorySignature)
+class InventorySignatureAdmin(admin.ModelAdmin):
+    list_display = (
+        "inventory",
+        "name",
+        "signed_at",
+    )
+    search_fields = (
+        "name",
+        "inventory__property__name",
+        "inventory__property__property_number",
     )

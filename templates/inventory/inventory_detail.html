@@ -103,9 +103,41 @@
 
         {% endfor %}
 
+
+        {% if not inventory.signature %}
+
+            <a href="{% url 'inventory_signature_create' inventory.id %}">
+                Firmar inventario
+            </a>
+
+        {% else %}
+
+            <h2>Firma del cliente</h2>
+
+            <p>
+                Inventario firmado por:
+                <strong>{{ inventory.signature.name }}</strong>
+            </p>
+
+            <p>
+                Fecha:
+                {{ inventory.signature.signed_at|date:"d/m/Y H:i" }}
+            </p>
+
+            <div>
+                <img
+                    src="{{ inventory.signature.secure_url }}"
+                    alt="Firma de {{ inventory.signature.name }}"
+                    width="400"
+                >
+            </div>
+
+        {% endif %}
+
         <button type="submit">
             Guardar cambios
         </button>
+            
 
     </form>
 

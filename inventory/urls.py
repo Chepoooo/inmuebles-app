@@ -45,4 +45,9 @@ urlpatterns = [
     views.inventory_item_photo_delete,
     name="inventory_item_photo_delete",  
     ),
+    path(
+    "<int:inventory_id>/signature/",
+    views.inventory_signature_create,
+    name="inventory_signature_create",
+    ),
 ]
