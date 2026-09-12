@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Propiedades</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}
+    Propiedades
+{% endblock %}
+
+{% block content %}
 
     <h1>Propiedades</h1>
 
@@ -15,33 +14,34 @@
 
     <hr>
 
-    {% if properties %}
-        {% for property in properties %}
-            <div>
-                <h2>
-                    <a href="{% url 'property_detail' property.id %}">
-                        {{ property.name }}
-                    </a>
-                </h2>
+    {% for property in properties %}
+        <div>
+            <h2>
+                <a href="{% url 'property_detail' property.id %}">
+                    {{ property.name }}
+                </a>
+            </h2>
 
-                <p>
-                    Número: {{ property.property_number }}
-                </p>
+            <p>
+                <strong>Dirección:</strong>
+                {{ property.address }}
+            </p>
 
-                <p>
-                    Inquilino: {{ property.tenant_name }}
-                </p>
+            <p>
+                <strong>Inmueble:</strong>
+                {{ property.property_number }}
+            </p>
 
-                <p>
-                    Dirección: {{ property.address }}
-                </p>
-            </div>
+            <p>
+                <strong>Arrendatario:</strong>
+                {{ property.tenant_name }}
+            </p>
+        </div>
 
-            <hr>
-        {% endfor %}
-    {% else %}
+        <hr>
+
+    {% empty %}
         <p>No hay propiedades registradas.</p>
-    {% endif %}
+    {% endfor %}
 
-</body>
-</html>
+{% endblock %}

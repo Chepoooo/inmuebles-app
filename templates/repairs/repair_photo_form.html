@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar foto</title>
+</head>
+<body>
+
+    <h1>Agregar foto</h1>
+
+    <p>
+        <strong>Reparación:</strong>
+        {{ repair.repair_type }}
+    </p>
+
+    <p>
+        <strong>Propiedad:</strong>
+        {{ repair.property }}
+    </p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="photo">Seleccionar foto</label>
+        <br><br>
+
+        <input
+            type="file"
+            id="photo"
+            name="photo"
+            accept="image/*"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Subir foto
+        </button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'repair_detail' repair.id %}">
+        Cancelar
+    </a>
+
+</body>
+</html>

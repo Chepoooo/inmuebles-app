@@ -43,15 +43,68 @@
 
     <hr>
 
-    <a href="{% url 'repair_update' repair.id %}">
-        Editar
-    </a>
+    <h2>Fotos de la reparación</h2>
 
-    <br>
+    {% for photo in repair.photos.all %}
 
-    <a href="{% url 'repair_delete' repair.id %}">
-        Eliminar
-    </a>
+        <div>
+            <img
+                src="{{ photo.secure_url }}"
+                alt="Foto de {{ repair.repair_type }}"
+                width="300"
+            >
+
+            {% if membership.role == "admin" or membership.role == "repair_user" %}
+                <br>
+
+                <form
+                    method="post"
+                    action="{% url 'repair_photo_delete' photo.id %}"
+                >
+                    {% csrf_token %}
+
+                    <button type="submit">
+                        Eliminar foto
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+        <br>
+
+    {% empty %}
+
+        <p>No hay fotos registradas.</p>
+
+    {% endfor %}
+
+    {% if membership.role == "admin" or membership.role == "repair_user" %}
+        <a href="{% url 'repair_photo_create' repair.id %}">
+            Agregar foto
+        </a>
+    {% endif %}
+
+    <hr>
+
+    {% if membership.role == "admin" %}
+
+        <a href="{% url 'repair_update' repair.id %}">
+            Editar reparación
+        </a>
+
+        <br><br>
+
+        <a href="{% url 'repair_delete' repair.id %}">
+            Eliminar reparación
+        </a>
+
+    {% elif membership.role == "repair_user" %}
+
+        <a href="{% url 'repair_user_update' repair.id %}">
+            Actualizar reparación
+        </a>
+
+    {% endif %}
 
     <br><br>
 

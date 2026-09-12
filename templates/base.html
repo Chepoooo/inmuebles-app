@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Inmuebles{% endblock %}</title>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="#">
+                Inmuebles
+            </a>
+
+            <a href="{% url 'property_list' %}">
+                Propiedades
+            </a>
+
+            <a href="{% url 'repair_list' %}">
+                Reparaciones
+            </a>
+
+            {% if user.is_authenticated %}
+                <span>
+                    {{ user.username }}
+                </span>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        Cerrar sesión
+                    </button>
+                </form>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

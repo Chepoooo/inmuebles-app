@@ -1,16 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Reparaciones</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}
+    Reparaciones
+{% endblock %}
+
+{% block content %}
 
     <h1>Reparaciones</h1>
 
-    <a href="{% url 'repair_create' %}">
-        Crear reparación
-    </a>
+    {% if membership.role == "admin" %}
+        <a href="{% url 'repair_create' %}">
+            Crear reparación
+        </a>
+    {% endif %}
 
     <hr>
 
@@ -36,9 +38,9 @@
         </div>
 
         <hr>
+
     {% empty %}
         <p>No hay reparaciones registradas.</p>
     {% endfor %}
 
-</body>
-</html>
+{% endblock %}

@@ -22,4 +22,14 @@ urlpatterns = [
     views.repair_user_update,
     name="repair_user_update",
     ),
+    path(
+    "<int:repair_id>/photos/add/",
+    views.repair_photo_create,
+    name="repair_photo_create",
+    ),
+    path(
+        "photo/<int:photo_id>/delete/",
+        views.repair_photo_delete,
+        name="repair_photo_delete",
+    ),
 ]

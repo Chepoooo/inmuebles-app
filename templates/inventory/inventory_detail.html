@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <title>Inventario</title>
-</head>
-<body>
+{% block title %}
+    Inventario
+{% endblock %}
+
+{% block content %}
 
     <h1>
         {{ inventory.get_inventory_type_display }}
@@ -57,7 +55,9 @@
                             cols="60"
                             placeholder="Descripción u observación..."
                         >{{ item.description }}</textarea>
+
                         <br>
+
                         <div>
                             <strong>Fotos:</strong>
 
@@ -78,17 +78,18 @@
                             {% empty %}
                                 <p>No hay fotos.</p>
                             {% endfor %}
-                            </div>
+                        </div>
 
                         <a href="{% url 'inventory_item_update' item.id %}">
                             Editar
                         </a>
+
                         <a href="{% url 'inventory_item_delete' item.id %}">
                             Eliminar
                         </a>
 
                         <a href="{% url 'inventory_item_photo_create' item.id %}">
-                          + Agregar foto
+                            + Agregar foto
                         </a>
 
                     </div>
@@ -102,7 +103,6 @@
             <hr>
 
         {% endfor %}
-
 
         {% if not inventory.signature %}
 
@@ -137,9 +137,7 @@
         <button type="submit">
             Guardar cambios
         </button>
-            
 
     </form>
 
-</body>
-</html>
+{% endblock %}

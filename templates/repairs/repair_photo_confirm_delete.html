@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar foto</title>
+</head>
+<body>
+
+    <h1>Eliminar foto</h1>
+
+    <img
+        src="{{ photo.secure_url }}"
+        alt="Foto de reparación"
+        width="300"
+    >
+
+    <p>
+        ¿Quieres eliminar esta foto?
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit">
+            Sí, eliminar
+        </button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'repair_detail' photo.repair.id %}">
+        Cancelar
+    </a>
+
+</body>
+</html>
