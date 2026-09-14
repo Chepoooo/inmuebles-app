@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Reparaciones
+    Inventarios
 {% endblock %}
 
 {% block content %}
 
-    <h1>Reparaciones</h1>
+    <h1>Inventarios</h1>
 
     <p>
-        Consulta y busca las reparaciones registradas en la organización.
+        Consulta y busca los inventarios registrados en la organización.
     </p>
 
     <form method="get">
@@ -17,7 +17,7 @@
         <input
             type="text"
             name="search"
-            placeholder="Buscar por propiedad, número o reparación..."
+            placeholder="Buscar por propiedad o número..."
             value="{{ search }}"
         >
 
@@ -26,7 +26,7 @@
         </button>
 
         {% if search %}
-            <a href="{% url 'repair_list' %}">
+            <a href="{% url 'inventory_dashboard' %}">
                 Limpiar búsqueda
             </a>
         {% endif %}
@@ -36,10 +36,10 @@
     <hr>
 
     <p>
-        Reparaciones encontradas: {{ repairs|length }}
+        Inventarios encontrados: {{ inventories|length }}
     </p>
 
-    {% if repairs %}
+    {% if inventories %}
 
         <table border="1" cellpadding="8" cellspacing="0">
 
@@ -47,8 +47,7 @@
                 <tr>
                     <th>Propiedad</th>
                     <th>Número</th>
-                    <th>Reparación</th>
-                    <th>Estado</th>
+                    <th>Tipo</th>
                     <th>Fecha</th>
                     <th>Acción</th>
                 </tr>
@@ -56,33 +55,29 @@
 
             <tbody>
 
-                {% for repair in repairs %}
+                {% for inventory in inventories %}
 
                     <tr>
 
                         <td>
-                            {{ repair.property.name }}
+                            {{ inventory.property.name }}
                         </td>
 
                         <td>
-                            {{ repair.property.property_number }}
+                            {{ inventory.property.property_number }}
                         </td>
 
                         <td>
-                            {{ repair.repair_type }}
+                            {{ inventory.get_inventory_type_display }}
                         </td>
 
                         <td>
-                            {{ repair.get_status_display }}
+                            {{ inventory.created_at|date:"d/m/Y" }}
                         </td>
 
                         <td>
-                            {{ repair.report_date|date:"d/m/Y" }}
-                        </td>
-
-                        <td>
-                            <a href="{% url 'repair_detail' repair.id %}">
-                                Ver reparación
+                            <a href="{% url 'inventory_detail' inventory.id %}">
+                                Ver inventario
                             </a>
                         </td>
 
@@ -99,26 +94,16 @@
         {% if search %}
 
             <p>
-                No se encontraron reparaciones para "{{ search }}".
+                No se encontraron inventarios para "{{ search }}".
             </p>
 
         {% else %}
 
             <p>
-                No hay reparaciones registradas.
+                No hay inventarios registrados.
             </p>
 
         {% endif %}
-
-    {% endif %}
-
-    {% if membership.role == "admin" %}
-
-        <hr>
-
-        <a href="{% url 'repair_create' %}">
-            Crear reparación
-        </a>
 
     {% endif %}
 

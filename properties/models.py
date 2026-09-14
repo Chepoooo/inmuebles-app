@@ -10,6 +10,16 @@ class Property(models.Model):
         on_delete=models.CASCADE,
         related_name="properties",
     )
+    
+    photo_public_id = models.CharField(
+    max_length=255,
+    blank=True,
+    )
+
+    photo_url = models.URLField(
+        max_length=500,
+        blank=True,
+    )
     name = models.CharField(max_length=150)
     address = models.CharField(max_length=255)
     property_number = models.CharField(max_length=100)

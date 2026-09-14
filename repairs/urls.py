@@ -23,6 +23,11 @@ urlpatterns = [
     name="repair_user_update",
     ),
     path(
+    "property/<int:property_id>/",
+    views.property_repair_list,
+    name="property_repair_list",
+    ),
+    path(
     "<int:repair_id>/photos/add/",
     views.repair_photo_create,
     name="repair_photo_create",
@@ -32,4 +37,5 @@ urlpatterns = [
         views.repair_photo_delete,
         name="repair_photo_delete",
     ),
+
 ]

@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% block title %}Inmuebles{% endblock %}</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 
 <body>
 
-    <header>
-        <nav>
-            <a href="#">
-                Inmuebles
-            </a>
+    {% if user.is_authenticated %}
 
-            <a href="{% url 'property_list' %}">
-                Propiedades
-            </a>
+        <header>
+            <nav>
 
-            <a href="{% url 'repair_list' %}">
-                Reparaciones
-            </a>
+                <a href="{% url 'property_list' %}">
+                    Propiedades
+                </a>
 
-            {% if user.is_authenticated %}
+                <a href="{% url 'repair_list' %}">
+                    Reparaciones
+                </a>
+
+                <a href="{% url 'inventory_dashboard' %}">
+                    Inventarios
+                </a>
+
                 <span>
                     {{ user.username }}
                 </span>
@@ -34,9 +39,11 @@
                         Cerrar sesión
                     </button>
                 </form>
-            {% endif %}
-        </nav>
-    </header>
+
+            </nav>
+        </header>
+
+    {% endif %}
 
     <main>
         {% block content %}

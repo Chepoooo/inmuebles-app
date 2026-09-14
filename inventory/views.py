@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 import cloudinary
 import cloudinary.uploader
 from accounts.utils import admin_required
+from django.db.models import Q
 
 from accounts.utils import get_current_organization
 from properties.models import Property
@@ -465,5 +466,32 @@ def inventory_signature_create(request, inventory_id):
         "inventory/inventory_signature_form.html",
         {
             "inventory": inventory,
+        },
+    )
+    
+@login_required
+def inventory_dashboard(request):
+    organization = get_current_organization(request)
+
+    inventories = (
+        Inventory.objects
+        .filter(property__organization=organization)
+        .select_related("property")
+    )
+
+    search = request.GET.get("search", "").strip()
+
+    if search:
+        inventories = inventories.filter(
+            Q(property__name__icontains=search)
+            | Q(property__property_number__icontains=search)
+        )
+
+    return render(
+        request,
+        "inventory/inventory_dashboard.html",
+        {
+            "inventories": inventories,
+            "search": search,
         },
     )

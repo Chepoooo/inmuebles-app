@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ repair.repair_type }}</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}
+    Detalles de reparacion
+{% endblock %}
+
+{% block content %}
 
     <h1>{{ repair.repair_type }}</h1>
 
@@ -112,5 +112,4 @@
         Volver a reparaciones
     </a>
 
-</body>
-</html>
+{% endblock %}

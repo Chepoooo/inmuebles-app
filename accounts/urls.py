@@ -23,9 +23,5 @@ urlpatterns = [
         views.organization_set,
         name="organization_set",
    ),
-    path(
-    "organization-test/",
-    views.organization_context_test,
-    name="organization_context_test",
-),
+   
 ]

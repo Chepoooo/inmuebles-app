@@ -50,4 +50,9 @@ urlpatterns = [
     views.inventory_signature_create,
     name="inventory_signature_create",
     ),
+    path(
+    "",
+    views.inventory_dashboard,
+    name="inventory_dashboard",
+    ),
 ]

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from accounts.utils import admin_required
 from accounts.utils import get_current_organization
-
+import cloudinary.uploader
 from .forms import PropertyForm
 from .models import Property
 
@@ -56,11 +56,23 @@ def property_create(request):
         return redirect("organization_select")
 
     if request.method == "POST":
-        form = PropertyForm(request.POST)
+        form = PropertyForm(request.POST, request.FILES)
 
         if form.is_valid():
             property = form.save(commit=False)
             property.organization = organization
+
+            photo = form.cleaned_data.get("photo")
+
+            if photo:
+                result = cloudinary.uploader.upload(
+                    photo,
+                    folder="properties",
+                )
+
+                property.photo_public_id = result["public_id"]
+                property.photo_url = result["secure_url"]
+
             property.save()
 
             return redirect(
@@ -95,10 +107,31 @@ def property_update(request, property_id):
     )
 
     if request.method == "POST":
-        form = PropertyForm(request.POST, instance=property)
-
+        form = PropertyForm(
+            request.POST,
+            request.FILES,
+            instance=property,
+        )
         if form.is_valid():
-            form.save()
+            property = form.save(commit=False)
+
+            photo = form.cleaned_data.get("photo")
+
+            if photo:
+                if property.photo_public_id:
+                    cloudinary.uploader.destroy(
+                        property.photo_public_id
+                    )
+
+                result = cloudinary.uploader.upload(
+                    photo,
+                    folder="properties",
+                )
+
+                property.photo_public_id = result["public_id"]
+                property.photo_url = result["secure_url"]
+
+            property.save()
 
             return redirect(
                 "property_detail",

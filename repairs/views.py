@@ -10,6 +10,8 @@ from accounts.utils import (
     get_current_organization,
     user_is_repair_user,
 )
+from django.db.models import Q
+from properties.models import Property
 from accounts.utils import admin_required, get_current_organization
 from .forms import RepairForm
 from .models import Repair, RepairPhoto
@@ -19,22 +21,29 @@ from .models import Repair, RepairPhoto
 def repair_list(request):
     organization = get_current_organization(request)
 
-    if not organization:
-        return redirect("organization_select")
-
     repairs = (
         Repair.objects
         .filter(organization=organization)
         .select_related("property")
     )
 
+    search = request.GET.get("search", "").strip()
+
+    if search:
+        repairs = repairs.filter(
+            Q(property__name__icontains=search)
+            | Q(property__property_number__icontains=search)
+            | Q(repair_type__icontains=search)
+        )
+
     return render(
-    request,
-    "repairs/repair_list.html",
-    {
-        "repairs": repairs,
-        "membership": get_current_membership(request),
-    },
+        request,
+        "repairs/repair_list.html",
+        {
+            "repairs": repairs,
+            "search": search,
+            "membership": get_current_membership(request),
+        },
     )
 
 
@@ -299,4 +308,33 @@ def repair_photo_delete(request, photo_id):
         request,
         "repairs/repair_photo_confirm_delete.html",
         {"photo": photo},
+    )
+    
+@login_required
+def property_repair_list(request, property_id):
+    organization = get_current_organization(request)
+
+    property = get_object_or_404(
+        Property,
+        id=property_id,
+        organization=organization,
+    )
+
+    repairs = (
+        Repair.objects
+        .filter(
+            organization=organization,
+            property=property,
+        )
+        .select_related("property")
+    )
+
+    return render(
+        request,
+        "repairs/property_repair_list.html",
+        {
+            "property": property,
+            "repairs": repairs,
+            "membership": get_current_membership(request),
+        },
     )

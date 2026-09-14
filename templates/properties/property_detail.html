@@ -1,44 +1,71 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ property.name }}</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>{{ property.name }}</h1>
+{% block title %}
+{{ property.name }}
+{% endblock %}
 
-    <p>
-        <strong>Dirección:</strong>
-        {{ property.address }}
-    </p>
+{% block content %}
 
-    <p>
-        <strong>Número de propiedad:</strong>
-        {{ property.property_number }}
-    </p>
+<h1>{{ property.name }}</h1>
 
-    <p>
-        <strong>Inquilino:</strong>
-        {{ property.tenant_name }}
-    </p>
+{% if property.photo_url %}
+    <div>
+        <img
+            src="{{ property.photo_url }}"
+            alt="Foto de {{ property.name }}"
+            width="300"
+            style="object-fit: cover; border-radius: 8px;"
+        >
+    </div>
 
-    <a href="{% url 'property_update' property.id %}">
-        Editar
-    </a>
+    <br>
+{% endif %}
 
-    <a href="{% url 'property_delete' property.id %}">
-        Eliminar
-    </a>
+<p>
+    <strong>Dirección:</strong>
+    {{ property.address }}
+</p>
 
-    <a href="{% url 'property_list' %}">
-        Volver a propiedades
-    </a>
+<p>
+    <strong>Número de propiedad:</strong>
+    {{ property.property_number }}
+</p>
 
-    <a href="{% url 'inventory_list' property.id %}">
+<p>
+    <strong>Inquilino:</strong>
+    {{ property.tenant_name }}
+</p>
+
+<p>
+    <strong>Fecha de creación:</strong>
+    {{ property.created_at|date:"d/m/Y" }}
+</p>
+
+<hr>
+
+<a href="{% url 'inventory_list' property.id %}">
     Ver inventarios
-    </a>
+</a>
 
-</body>
-</html>
+<br><br>
+
+<a href="{% url 'property_repair_list' property.id %}">
+    Ver reparaciones
+</a>
+
+<hr>
+
+<a href="{% url 'property_update' property.id %}">
+    Editar
+</a>
+
+<a href="{% url 'property_delete' property.id %}">
+    Eliminar
+</a>
+
+<a href="{% url 'property_list' %}">
+    Volver a propiedades
+</a>
+```
+
+{% endblock %}

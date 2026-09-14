@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Reparaciones - {{ property.name }}
+{% endblock %}
+
+{% block content %}
+
+    <h1>Reparaciones</h1>
+
+    <h2>{{ property.name }}</h2>
+
+    <p>
+        Propiedad #{{ property.property_number }}
+    </p>
+
+    <hr>
+
+    {% if membership.role == "admin" %}
+        <a href="{% url 'repair_create' %}">
+            Crear reparación
+        </a>
+
+        <hr>
+    {% endif %}
+
+    {% for repair in repairs %}
+
+        <div>
+            <h3>
+                <a href="{% url 'repair_detail' repair.id %}">
+                    {{ repair.repair_type }}
+                </a>
+            </h3>
+
+            <p>
+                <strong>Estado:</strong>
+                {{ repair.get_status_display }}
+            </p>
+
+            <p>
+                <strong>Fecha:</strong>
+                {{ repair.report_date|date:"d/m/Y" }}
+            </p>
+
+            <p>
+                <strong>Trabajador:</strong>
+                {{ repair.assigned_worker|default:"No asignado" }}
+            </p>
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>
+            Esta propiedad no tiene reparaciones registradas.
+        </p>
+
+    {% endfor %}
+
+    <a href="{% url 'property_detail' property.id %}">
+        Volver a la propiedad
+    </a>
+
+{% endblock %}
