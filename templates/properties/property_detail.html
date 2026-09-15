@@ -32,14 +32,27 @@
 </p>
 
 <p>
-    <strong>Inquilino:</strong>
+    <strong>Arrendatario:</strong>
     {{ property.tenant_name }}
 </p>
 
 <p>
+    <strong>Numero de Documento:</strong>
+    {{ property.document_number }}
+</p>
+
+<p>
+  <strong>Correo Electronico:</strong>
+   {{ property.tenant_email }}
+<p>
+<p>
+  <strong>Tipo de Inmueble:</strong>
+   {{ property.property_type }}
+<p>
     <strong>Fecha de creación:</strong>
     {{ property.created_at|date:"d/m/Y" }}
 </p>
+
 
 <hr>
 

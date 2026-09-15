@@ -1,25 +1,266 @@
 {% extends "base.html" %}
 
 {% block title %}
-    {{ title }}
+{{ title }}
 {% endblock %}
 
 {% block content %}
 
-    <h1>{{ title }}</h1>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+<h1>{{ title }}</h1>
 
-        {{ form.as_p }}
+<form method="post" enctype="multipart/form-data" novalidate>
 
-        <button type="submit">
-            Guardar
-        </button>
-    </form>
+    {% csrf_token %}
 
-    <a href="{% url 'property_list' %}">
-        Cancelar
-    </a>
+    {% if form.non_field_errors %}
+        {{ form.non_field_errors }}
+    {% endif %}
+
+
+    <!-- Nombre de la propiedad -->
+    <p>
+        {{ form.name.label_tag }}
+        {{ form.name }}
+
+        {% if form.name.errors %}
+            {{ form.name.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Dirección -->
+    <p>
+        <label for="google-address">
+            {{ form.address.label }}
+        </label>
+
+        <div id="google-address-container"></div>
+
+        {{ form.address.as_hidden }}
+
+        {% if form.address.errors %}
+            {{ form.address.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Número de propiedad -->
+    <p>
+        {{ form.property_number.label_tag }}
+        {{ form.property_number }}
+
+        {% if form.property_number.errors %}
+            {{ form.property_number.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Arrendatario -->
+    <p>
+        {{ form.tenant_name.label_tag }}
+        {{ form.tenant_name }}
+
+        {% if form.tenant_name.errors %}
+            {{ form.tenant_name.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Número de documento -->
+    <p>
+        {{ form.document_number.label_tag }}
+        {{ form.document_number }}
+
+        {% if form.document_number.errors %}
+            {{ form.document_number.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Correo electrónico -->
+    <p>
+        {{ form.tenant_email.label_tag }}
+        {{ form.tenant_email }}
+
+        {% if form.tenant_email.errors %}
+            {{ form.tenant_email.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Fecha de creación -->
+    <p>
+        {{ form.created_at.label_tag }}
+        {{ form.created_at }}
+
+        {% if form.created_at.errors %}
+            {{ form.created_at.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Tipo de inmueble -->
+    <p>
+        {{ form.property_type.label_tag }}
+        {{ form.property_type }}
+
+        {% if form.property_type.errors %}
+            {{ form.property_type.errors }}
+        {% endif %}
+    </p>
+
+
+    <!-- Foto -->
+    <p>
+        {{ form.photo.label_tag }}
+        {{ form.photo }}
+
+        {% if form.photo.errors %}
+            {{ form.photo.errors }}
+        {% endif %}
+    </p>
+
+
+    <button type="submit">
+        Guardar
+    </button>
+
+</form>
+
+<br>
+
+<a href="{% url 'property_list' %}">
+    Cancelar
+</a>
+
+
+<script
+    async
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&loading=async&v=weekly">
+</script>
+
+
+<script>
+    async function initAddressAutocomplete() {
+
+        /*
+         * Cargamos específicamente la librería Places.
+         */
+        const { PlaceAutocompleteElement } =
+            await google.maps.importLibrary("places");
+
+
+        /*
+         * Creamos el componente de Google.
+         */
+        const autocomplete =
+            new PlaceAutocompleteElement();
+
+
+        /*
+         * Solo queremos resultados de Colombia.
+         */
+        autocomplete.includedRegionCodes = ["co"];
+
+
+        /*
+         * Texto del campo.
+         */
+        autocomplete.placeholder =
+            "Ingrese la dirección";
+
+
+        /*
+         * Buscamos dónde colocar el componente.
+         */
+        const container =
+            document.getElementById(
+                "google-address-container"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        container.appendChild(autocomplete);
+
+
+        /*
+         * Nuestro campo real de Django.
+         */
+        const addressInput =
+            document.getElementById("id_address");
+
+
+        if (!addressInput) {
+            return;
+        }
+
+
+        /*
+         * Si estamos editando una propiedad
+         * que ya tiene dirección, mostramos
+         * esa dirección en el autocomplete.
+         */
+        if (addressInput.value) {
+            autocomplete.value =
+                addressInput.value;
+        }
+
+
+        /*
+         * Cuando el usuario selecciona
+         * una sugerencia.
+         */
+        autocomplete.addEventListener(
+            "gmp-select",
+            async (event) => {
+
+                const place =
+                    event.placePrediction.toPlace();
+
+
+                await place.fetchFields({
+                    fields: ["formattedAddress"],
+                });
+
+
+                /*
+                 * Guardamos la dirección
+                 * en el campo Django.
+                 */
+                addressInput.value =
+                    place.formattedAddress || "";
+            }
+        );
+
+
+        /*
+         * Si el usuario empieza a escribir
+         * nuevamente, eliminamos el valor
+         * anterior del campo Django.
+         */
+        autocomplete.addEventListener(
+            "input",
+            () => {
+                addressInput.value = "";
+            }
+        );
+    }
+
+
+    /*
+     * Esperamos a que Google Maps esté
+     * completamente disponible.
+     */
+    window.addEventListener(
+        "load",
+        initAddressAutocomplete
+    );
+</script>
+
 
 {% endblock %}

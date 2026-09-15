@@ -16,7 +16,7 @@
             <th>Foto</th>
             <th>Propiedad</th>
             <th>Número</th>
-            <th>Inquilino</th>
+            <th>Arrendatario</th>
             <th>Dirección</th>
             <th>Fecha de creación</th>
         </tr>
@@ -45,14 +45,23 @@
                     </a>
                 </td>
 
-                <td>{{ property.property_number }}</td>
+                <td>
+                    {{ property.property_number }}
+                </td>
 
-                <td>{{ property.tenant_name }}</td>
+                <td>
+                    {{ property.tenant_name }}
+                </td>
 
-                <td>{{ property.address }}</td>
+                <td>
+                    {{ property.address }}
+                </td>
 
-                <td>{{ property.created_at|date:"d/m/Y" }}</td>
+                <td>
+                    {{ property.created_at|date:"d/m/Y" }}
+                </td>
             </tr>
+
         {% empty %}
             <tr>
                 <td colspan="6">
@@ -62,5 +71,30 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% if page_obj.paginator.num_pages > 1 %}
+
+    <div>
+
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">
+                Anterior
+            </a>
+        {% endif %}
+
+        <span>
+            Página {{ page_obj.number }}
+            de {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">
+                Siguiente
+            </a>
+        {% endif %}
+
+    </div>
+
+{% endif %}
 
 {% endblock %}
