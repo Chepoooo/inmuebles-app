@@ -1,14 +1,28 @@
 from django.contrib.auth.decorators import login_required
+
 from django.shortcuts import get_object_or_404, redirect, render
+
 import cloudinary
+
 import cloudinary.uploader
-from accounts.utils import admin_required
+
 from django.db.models import Q
 
-from accounts.utils import get_current_organization
+from accounts.utils import (
+    admin_required,
+    get_current_membership,
+    get_current_organization,
+)
+
 from properties.models import Property
 
+from .defaults import (
+    INVENTORY_ITEM_EXTRA_FIELDS,
+    INVENTORY_ITEM_TYPE_OPTIONS,
+)
+
 from .forms import InventoryForm, InventoryItemForm
+
 from .models import (
     Inventory,
     InventoryItem,
@@ -153,10 +167,20 @@ def inventory_create(request, property_id):
                 )
 
                 for item_order, item_name in enumerate(items):
+
+                    type_options = INVENTORY_ITEM_TYPE_OPTIONS.get(
+                        item_name,
+                        [],
+                    )
+
+        
+
                     InventoryItem.objects.create(
                         section=section,
                         name=item_name,
                         order=item_order,
+                        type_options=type_options,
+                        extra_data={},
                     )
 
             return redirect(
@@ -185,6 +209,8 @@ def inventory_detail(request, inventory_id):
     if not organization:
         return redirect("organization_select")
 
+    membership = get_current_membership(request)
+
     inventory = get_object_or_404(
         Inventory.objects.select_related("property"),
         id=inventory_id,
@@ -192,26 +218,80 @@ def inventory_detail(request, inventory_id):
     )
 
     sections = inventory.sections.prefetch_related(
-    "items__photos"
+        "items__photos"
     )
 
     if request.method == "POST":
+
+        has_errors = False
+
         for section in sections:
+
             for item in section.items.all():
+
+                status = request.POST.get(
+                    f"status_{item.id}",
+                    "",
+                ).strip()
+
+                item_type = request.POST.get(
+                    f"item_type_{item.id}",
+                    "",
+                ).strip()
+
                 description = request.POST.get(
                     f"description_{item.id}",
                     "",
+                ).strip()
+
+                if not status:
+                    has_errors = True
+                    continue
+
+                extra_fields = INVENTORY_ITEM_EXTRA_FIELDS.get(
+                    item.name,
+                    {},
                 )
 
+                extra_data = {}
+
+                for field_name in extra_fields:
+
+                    value = request.POST.get(
+                        f"extra_{field_name}_{item.id}",
+                        "",
+                    ).strip()
+
+                    extra_data[field_name] = value
+
+                item.status = status
+                item.item_type = item_type
                 item.description = description
+                item.extra_data = extra_data
+
                 item.save(
-                    update_fields=["description"]
+                    update_fields=[
+                        "status",
+                        "item_type",
+                        "description",
+                        "extra_data",
+                    ]
                 )
 
-        return redirect(
-            "inventory_detail",
-            inventory_id=inventory.id,
-        )
+        if not has_errors:
+            return redirect(
+                "inventory_detail",
+                inventory_id=inventory.id,
+            )
+
+    for section in sections:
+
+        for item in section.items.all():
+
+            item.extra_fields = INVENTORY_ITEM_EXTRA_FIELDS.get(
+                item.name,
+                {},
+            )
 
     return render(
         request,
@@ -219,6 +299,8 @@ def inventory_detail(request, inventory_id):
         {
             "inventory": inventory,
             "sections": sections,
+            "status_choices": InventoryItem.STATUS_CHOICES,
+            "membership": membership,
         },
     )
     

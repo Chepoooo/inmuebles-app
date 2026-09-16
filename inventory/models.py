@@ -42,17 +42,64 @@ class InventorySection(models.Model):
 
 
 class InventoryItem(models.Model):
+
+    STATUS_CHOICES = [
+        ("good", "Buen estado"),
+        ("regular", "Regular"),
+        ("bad", "Mal estado"),
+    ]
+
     section = models.ForeignKey(
         InventorySection,
         on_delete=models.CASCADE,
         related_name="items",
     )
-    name = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
-    order = models.PositiveIntegerField(default=0)
+
+    name = models.CharField(
+        max_length=150,
+        verbose_name="Nombre",
+    )
+
+    item_type = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Tipo o material",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name="Estado",
+    )
+
+    type_options = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Opciones de tipo o material",
+    )
+
+    extra_data = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name="Datos adicionales",
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name="Descripción",
+    )
+
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Orden",
+    )
 
     class Meta:
         ordering = ["order", "id"]
+        verbose_name = "Característica de inventario"
+        verbose_name_plural = "Características de inventario"
 
     def __str__(self):
         return self.name
