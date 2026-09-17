@@ -2,53 +2,110 @@
 {% load inventory_extras %}
 
 {% block title %}
-    Inventario
+Inventario
 {% endblock %}
 
 {% block content %}
 
-    <h1>
-        {{ inventory.get_inventory_type_display }}
-    </h1>
 
-    <h2>
-        {{ inventory.property.name }}
-    </h2>
+<h1>
+    {{ inventory.get_inventory_type_display }}
+</h1>
 
-    <p>
-        Propiedad #{{ inventory.property.property_number }}
-    </p>
+<h2>
+    {{ inventory.property.name }}
+</h2>
 
-    <hr>
+<p>
+    Propiedad #{{ inventory.property.property_number }}
+</p>
 
-    <form method="post">
+<hr>
+{% if membership.role == "admin" %}
 
-        {% csrf_token %}
+    <a href="{% url 'inventory_section_create' inventory.id %}">
+        + Agregar sección
+    </a>
 
-        {% for section in sections %}
+    <br><br>
 
-            <section>
+{% endif %}
+<form method="post">
 
-                <h3>
-                    {{ section.name }}
-                </h3>
+    {% csrf_token %}
 
-                {% if membership.role == "admin" %}
+    {% for section in sections %}
 
-                    <a href="{% url 'inventory_item_create' section.id %}">
-                        + Agregar característica
+        <section>
+
+            <h3>
+                {{ section.name }}
+            </h3>
+            {% if membership.role == "admin" %}
+
+                {% if section.name == "Alcoba auxiliar" or section.name|slice:":17" == "Alcoba auxiliar " %}
+
+                    <a href="{% url 'inventory_add_auxiliary_bedroom' inventory.id %}">
+                        + Agregar alcoba auxiliar
                     </a>
+
+                    <br><br>
+
+                {% elif section.name == "Baño auxiliar" or section.name|slice:":15" == "Baño auxiliar " %}
+
+                    <a href="{% url 'inventory_add_auxiliary_bathroom' inventory.id %}">
+                        + Agregar baño auxiliar
+                    </a>
+
+                    <br><br>
 
                 {% endif %}
 
-                {% for item in section.items.all %}
+            {% endif %}
+
+            {% if membership.role == "admin" %}
+
+                <a href="{% url 'inventory_item_create' section.id %}">
+                    + Agregar característica
+                </a>
+
+            {% endif %}
+
+            {% for item in section.items.all %}
+
+                {% if item.is_description %}
+
+                    <div>
+
+                        <h4>
+                            Descripción adicional
+                        </h4>
+
+                        <label for="description_{{ item.id }}">
+                            Descripción:
+                        </label>
+
+                        <br>
+
+                        <textarea
+                            id="description_{{ item.id }}"
+                            name="description_{{ item.id }}"
+                            rows="4"
+                            cols="60"
+                            placeholder="Escriba una descripción u observación..."
+                        >{{ item.description }}</textarea>
+
+                    </div>
+
+                    <br>
+
+                {% else %}
 
                     <div>
 
                         <h4>
                             {{ item.name }}
                         </h4>
-
 
                         {% if item.type_options %}
 
@@ -82,7 +139,7 @@
 
                             <br><br>
 
-                        {% elif item.name != "Descripción adicional" %}
+                        {% else %}
 
                             <label for="item_type_{{ item.id }}">
                                 Tipo / material:
@@ -99,7 +156,6 @@
                             <br><br>
 
                         {% endif %}
-
 
                         <label for="status_{{ item.id }}">
                             Estado:
@@ -131,7 +187,6 @@
                         </select>
 
                         <br><br>
-
 
                         {% for field_name, field_config in item.extra_fields.items %}
 
@@ -190,7 +245,6 @@
 
                         {% endfor %}
 
-
                         <label for="description_{{ item.id }}">
                             Descripción:
                         </label>
@@ -206,7 +260,6 @@
                         >{{ item.description }}</textarea>
 
                         <br><br>
-
 
                         <div>
 
@@ -246,7 +299,6 @@
 
                         </div>
 
-
                         {% if membership.role == "admin" %}
 
                             <br>
@@ -269,62 +321,63 @@
 
                     <br>
 
-                {% endfor %}
+                {% endif %}
 
-            </section>
+            {% endfor %}
 
-            <hr>
+        </section>
 
-        {% endfor %}
+        <hr>
 
+    {% endfor %}
 
-        {% if membership.role == "admin" %}
+    {% if membership.role == "admin" %}
 
-            {% if not inventory.signature %}
+        {% if not inventory.signature %}
 
-                <a href="{% url 'inventory_signature_create' inventory.id %}">
-                    Firmar inventario
-                </a>
+            <a href="{% url 'inventory_signature_create' inventory.id %}">
+                Firmar inventario
+            </a>
 
-            {% else %}
+        {% else %}
 
-                <h2>
-                    Firma del cliente
-                </h2>
+            <h2>
+                Firma del cliente
+            </h2>
 
-                <p>
-                    Inventario firmado por:
-                    <strong>
-                        {{ inventory.signature.name }}
-                    </strong>
-                </p>
+            <p>
+                Inventario firmado por:
+                <strong>
+                    {{ inventory.signature.name }}
+                </strong>
+            </p>
 
-                <p>
-                    Fecha:
-                    {{ inventory.signature.signed_at|date:"d/m/Y H:i" }}
-                </p>
+            <p>
+                Fecha:
+                {{ inventory.signature.signed_at|date:"d/m/Y H:i" }}
+            </p>
 
-                <div>
+            <div>
 
-                    <img
-                        src="{{ inventory.signature.secure_url }}"
-                        alt="Firma de {{ inventory.signature.name }}"
-                        width="400"
-                    >
+                <img
+                    src="{{ inventory.signature.secure_url }}"
+                    alt="Firma de {{ inventory.signature.name }}"
+                    width="400"
+                >
 
-                </div>
-
-            {% endif %}
+            </div>
 
         {% endif %}
 
+    {% endif %}
 
-        <br><br>
+    <br><br>
 
-        <button type="submit">
-            Guardar cambios
-        </button>
+    <button type="submit">
+        Guardar cambios
+    </button>
 
-    </form>
+</form>
+
 
 {% endblock %}

@@ -90,6 +90,10 @@ class InventoryItem(models.Model):
         blank=True,
         verbose_name="Descripción",
     )
+    is_description = models.BooleanField(
+        default=False,
+        verbose_name="Es descripción adicional",
+    )
 
     order = models.PositiveIntegerField(
         default=0,

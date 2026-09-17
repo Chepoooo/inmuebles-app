@@ -55,4 +55,20 @@ urlpatterns = [
     views.inventory_dashboard,
     name="inventory_dashboard",
     ),
+    path(
+    "inventory/<int:inventory_id>/section/create/",
+    views.inventory_section_create,
+    name="inventory_section_create",
+    ),
+    path(
+    "inventory/<int:inventory_id>/add-auxiliary-bedroom/",
+    views.inventory_add_auxiliary_bedroom,
+    name="inventory_add_auxiliary_bedroom",
+    ),
+
+    path(
+        "inventory/<int:inventory_id>/add-auxiliary-bathroom/",
+        views.inventory_add_auxiliary_bathroom,
+        name="inventory_add_auxiliary_bathroom",
+    ),
 ]
