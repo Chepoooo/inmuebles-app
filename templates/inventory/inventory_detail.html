@@ -33,6 +33,42 @@ Inventario
 <form method="post">
 
     {% csrf_token %}
+    {% if membership.role == "admin" %}
+
+        <div>
+
+            <label for="bulk_status">
+                Estado para todas las características:
+            </label>
+
+            <select id="bulk_status">
+
+                <option value="">
+                    Seleccione un estado
+                </option>
+
+                {% for value, label in status_choices %}
+
+                    <option value="{{ value }}">
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button
+                type="button"
+                id="apply_bulk_status"
+            >
+                Aplicar a todas
+            </button>
+
+        </div>
+
+        <br>
+
+    {% endif %}
 
     {% for section in sections %}
 
@@ -41,6 +77,16 @@ Inventario
             <h3>
                 {{ section.name }}
             </h3>
+
+            {% if membership.role == "admin" %}
+
+                <a href="{% url 'inventory_section_delete' section.id %}">
+                    Eliminar sección
+                </a>
+
+                <br><br>
+
+            {% endif %}
             {% if membership.role == "admin" %}
 
                 {% if section.name == "Alcoba auxiliar" or section.name|slice:":17" == "Alcoba auxiliar " %}
@@ -379,5 +425,41 @@ Inventario
 
 </form>
 
+    </form>
+
+    <script>
+
+        const bulkStatus = document.getElementById("bulk_status");
+        const applyBulkStatus = document.getElementById("apply_bulk_status");
+
+        if (bulkStatus && applyBulkStatus) {
+
+            applyBulkStatus.addEventListener("click", function () {
+
+                const selectedStatus = bulkStatus.value;
+
+                if (!selectedStatus) {
+                    alert("Seleccione un estado primero.");
+                    return;
+                }
+
+                const statusFields = document.querySelectorAll(
+                    'select[name^="status_"]'
+                );
+
+                statusFields.forEach(function (field) {
+                    field.value = selectedStatus;
+                });
+
+            });
+
+        }
+
+    </script>
 
 {% endblock %}
+
+
+
+
+

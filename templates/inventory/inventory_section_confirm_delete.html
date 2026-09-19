@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Eliminar sección
+{% endblock %}
+
+{% block content %}
+
+    <h1>
+        Eliminar sección
+    </h1>
+
+    <h2>
+        {{ section.name }}
+    </h2>
+
+    <p>
+        ¿Está seguro de que desea eliminar esta sección?
+    </p>
+
+    <p>
+        También se eliminarán todas las características
+        y fotos asociadas a esta sección.
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Sí, eliminar sección
+        </button>
+
+        <a href="{% url 'inventory_detail' inventory.id %}">
+            Cancelar
+        </a>
+
+    </form>
+
+{% endblock %}

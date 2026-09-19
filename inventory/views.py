@@ -748,6 +748,9 @@ def inventory_add_auxiliary_bedroom(request, inventory_id):
 @login_required
 @admin_required
 def inventory_add_auxiliary_bathroom(request, inventory_id):
+
+
+
     organization = get_current_organization(request)
 
     if not organization:
@@ -831,4 +834,39 @@ def inventory_add_auxiliary_bathroom(request, inventory_id):
     return redirect(
         "inventory_detail",
         inventory_id=inventory.id,
+    )
+    
+@login_required
+@admin_required
+def inventory_section_delete(request, section_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    section = get_object_or_404(
+        InventorySection.objects.select_related(
+            "inventory__property"
+        ),
+        id=section_id,
+        inventory__property__organization=organization,
+    )
+
+    inventory_id = section.inventory.id
+
+    if request.method == "POST":
+        section.delete()
+
+        return redirect(
+            "inventory_detail",
+            inventory_id=inventory_id,
+        )
+
+    return render(
+        request,
+        "inventory/inventory_section_confirm_delete.html",
+        {
+            "section": section,
+            "inventory": section.inventory,
+        },
     )

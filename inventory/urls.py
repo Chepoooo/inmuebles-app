@@ -71,4 +71,9 @@ urlpatterns = [
         views.inventory_add_auxiliary_bathroom,
         name="inventory_add_auxiliary_bathroom",
     ),
+    path(
+    "inventory/section/<int:section_id>/delete/",
+    views.inventory_section_delete,
+    name="inventory_section_delete",
+    ), 
 ]
