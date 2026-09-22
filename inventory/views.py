@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from inventory.utils import save_inventory_from_post
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.core.paginator import Paginator
 import cloudinary
 
 import cloudinary.uploader
@@ -517,11 +517,18 @@ def inventory_dashboard(request):
             | Q(signature__name__icontains=search)
         )
 
+    paginator = Paginator(inventories, 20)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
         "inventory/inventory_dashboard.html",
         {
-            "inventories": inventories,
+            "inventories": page_obj,
+            "page_obj": page_obj,
             "search": search,
             "membership": get_current_membership(request),
         },

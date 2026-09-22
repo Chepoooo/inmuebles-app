@@ -33,12 +33,17 @@
                     {{ user.username }}
                 </span>
 
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">
-                        Cerrar sesión
-                    </button>
-                </form>
+                    <form
+                        method="post"
+                        action="{% url 'logout' %}"
+                        onsubmit="return confirm('¿Estás seguro de que deseas cerrar sesión?');"
+                    >
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Cerrar sesión
+                        </button>
+                    </form>
 
             </nav>
         </header>

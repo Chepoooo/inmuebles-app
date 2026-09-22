@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -37,7 +36,7 @@
     <hr>
 
     <p>
-        Reparaciones encontradas: {{ repairs|length }}
+        Reparaciones encontradas: {{ page_obj.paginator.count }}
     </p>
 
     {% if repairs %}
@@ -130,6 +129,41 @@
 
         </table>
 
+        <br>
+
+        {% if page_obj.has_other_pages %}
+
+            <div>
+
+                {% if page_obj.has_previous %}
+
+                    <a
+                        href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+                    >
+                        Anterior
+                    </a>
+
+                {% endif %}
+
+                <span>
+                    Página {{ page_obj.number }}
+                    de {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+
+                    <a
+                        href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+                    >
+                        Siguiente
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
     {% else %}
 
         {% if search %}
@@ -159,4 +193,3 @@
     {% endif %}
 
 {% endblock %}
-

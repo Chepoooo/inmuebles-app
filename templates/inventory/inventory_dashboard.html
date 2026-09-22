@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -37,7 +36,7 @@
     <hr>
 
     <p>
-        Inventarios encontrados: {{ inventories|length }}
+        Inventarios encontrados: {{ page_obj.paginator.count }}
     </p>
 
     {% if inventories %}
@@ -142,5 +141,33 @@
 
     {% endif %}
 
-{% endblock %}
+    {% if page_obj.has_other_pages %}
 
+        <div>
+
+            {% if page_obj.has_previous %}
+
+                <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
+                    Anterior
+                </a>
+
+            {% endif %}
+
+            <span>
+                Página {{ page_obj.number }}
+                de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+
+                <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
+                    Siguiente
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+{% endblock %}

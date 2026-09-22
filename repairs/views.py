@@ -41,13 +41,23 @@ def repair_list(request):
             Q(property__name__icontains=search)
             | Q(property__property_number__icontains=search)
             | Q(repair_type__icontains=search)
+            | Q(assigned_worker__icontains=search)
         )
+
+    from django.core.paginator import Paginator
+
+    paginator = Paginator(repairs, 20)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
 
     return render(
         request,
         "repairs/repair_list.html",
         {
-            "repairs": repairs,
+            "repairs": page_obj,
+            "page_obj": page_obj,
             "search": search,
             "membership": get_current_membership(request),
         },
