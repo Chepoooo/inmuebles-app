@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Eliminar inventario
+{% endblock %}
+
+{% block content %}
+
+    <h1>Eliminar inventario</h1>
+
+    <p>
+        ¿Estás seguro de que deseas eliminar este inventario?
+    </p>
+
+    <p>
+        <strong>Propiedad:</strong>
+        {{ inventory.property.name }}
+    </p>
+
+    <p>
+        <strong>Número:</strong>
+        {{ inventory.property.property_number }}
+    </p>
+
+    <p>
+        <strong>Tipo:</strong>
+        {{ inventory.get_inventory_type_display }}
+    </p>
+
+    {% if inventory.signature %}
+
+        <p>
+            <strong>Firmado por:</strong>
+            {{ inventory.signature.name }}
+        </p>
+
+    {% else %}
+
+        <p>
+            <strong>Firmado por:</strong>
+            Sin firma
+        </p>
+
+    {% endif %}
+
+    <p>
+        <strong>Advertencia:</strong>
+        Esta acción eliminará el inventario y toda la información
+        asociada a él.
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Sí, eliminar inventario
+        </button>
+
+        <a href="{% url 'inventory_dashboard' %}">
+            Cancelar
+        </a>
+
+    </form>
+
+{% endblock %}

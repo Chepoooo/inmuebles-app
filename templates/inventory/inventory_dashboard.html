@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -17,7 +18,7 @@
         <input
             type="text"
             name="search"
-            placeholder="Buscar por propiedad o número..."
+            placeholder="Buscar por propiedad, número o firmante..."
             value="{{ search }}"
         >
 
@@ -44,13 +45,23 @@
         <table border="1" cellpadding="8" cellspacing="0">
 
             <thead>
+
                 <tr>
+
                     <th>Propiedad</th>
+
                     <th>Número</th>
+
                     <th>Tipo</th>
+
                     <th>Fecha</th>
+
+                    <th>Firmado por</th>
+
                     <th>Acción</th>
+
                 </tr>
+
             </thead>
 
             <tbody>
@@ -76,9 +87,33 @@
                         </td>
 
                         <td>
+
+                            {% if inventory.signature %}
+
+                                {{ inventory.signature.name }}
+
+                            {% else %}
+
+                                Sin firma
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
                             <a href="{% url 'inventory_detail' inventory.id %}">
                                 Ver inventario
                             </a>
+
+                            {% if membership.role == "admin" %}
+
+                                <a href="{% url 'inventory_delete' inventory.id %}">
+                                    Eliminar
+                                </a>
+
+                            {% endif %}
+
                         </td>
 
                     </tr>
@@ -108,3 +143,4 @@
     {% endif %}
 
 {% endblock %}
+

@@ -76,4 +76,9 @@ urlpatterns = [
     views.inventory_section_delete,
     name="inventory_section_delete",
     ), 
+    path(
+    "inventory/<int:inventory_id>/delete/",
+    views.inventory_delete,
+    name="inventory_delete",
+    ),
 ]

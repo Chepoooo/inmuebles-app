@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -44,14 +45,25 @@
         <table border="1" cellpadding="8" cellspacing="0">
 
             <thead>
+
                 <tr>
+
                     <th>Propiedad</th>
+
                     <th>Número</th>
+
                     <th>Reparación</th>
+
+                    <th>Trabajador asignado</th>
+
                     <th>Estado</th>
+
                     <th>Fecha</th>
+
                     <th>Acción</th>
+
                 </tr>
+
             </thead>
 
             <tbody>
@@ -73,6 +85,20 @@
                         </td>
 
                         <td>
+
+                            {% if repair.assigned_worker %}
+
+                                {{ repair.assigned_worker }}
+
+                            {% else %}
+
+                                Sin asignar
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
                             {{ repair.get_status_display }}
                         </td>
 
@@ -81,9 +107,19 @@
                         </td>
 
                         <td>
+
                             <a href="{% url 'repair_detail' repair.id %}">
                                 Ver reparación
                             </a>
+
+                            {% if membership.role == "admin" %}
+
+                                <a href="{% url 'repair_delete' repair.id %}">
+                                    Eliminar
+                                </a>
+
+                            {% endif %}
+
                         </td>
 
                     </tr>
@@ -123,3 +159,4 @@
     {% endif %}
 
 {% endblock %}
+

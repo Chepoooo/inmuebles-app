@@ -37,5 +37,11 @@ urlpatterns = [
         views.repair_photo_delete,
         name="repair_photo_delete",
     ),
+    
+    path(
+    "create-from-inventory/<int:item_id>/",
+    views.repair_create_from_inventory,
+    name="repair_create_from_inventory",
+    ), 
 
 ]

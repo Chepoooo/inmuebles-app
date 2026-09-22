@@ -1,31 +1,77 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Eliminar reparación</title>
-</head>
-<body>
+```html
+{% extends "base.html" %}
+
+{% block title %}
+    Eliminar reparación
+{% endblock %}
+
+{% block content %}
 
     <h1>Eliminar reparación</h1>
 
     <p>
-        ¿Estás seguro de que quieres eliminar
-        <strong>{{ repair.repair_type }}</strong>?
+        ¿Estás seguro de que deseas eliminar esta reparación?
+    </p>
+
+    <p>
+        <strong>Propiedad:</strong>
+        {{ repair.property.name }}
+    </p>
+
+    <p>
+        <strong>Número:</strong>
+        {{ repair.property.property_number }}
+    </p>
+
+    <p>
+        <strong>Reparación:</strong>
+        {{ repair.repair_type }}
+    </p>
+
+    <p>
+        <strong>Trabajador asignado:</strong>
+
+        {% if repair.assigned_worker %}
+
+            {{ repair.assigned_worker }}
+
+        {% else %}
+
+            Sin asignar
+
+        {% endif %}
+
+    </p>
+
+    <p>
+        <strong>Estado:</strong>
+        {{ repair.get_status_display }}
+    </p>
+
+    <p>
+        <strong>Fecha:</strong>
+        {{ repair.report_date|date:"d/m/Y" }}
+    </p>
+
+    <p>
+        <strong>Advertencia:</strong>
+        Esta acción eliminará la reparación y toda la información
+        asociada a ella.
     </p>
 
     <form method="post">
+
         {% csrf_token %}
 
         <button type="submit">
-            Sí, eliminar
+            Sí, eliminar reparación
         </button>
+
+        <a href="{% url 'repair_list' %}">
+            Cancelar
+        </a>
+
     </form>
 
-    <br>
-
-    <a href="{% url 'repair_detail' repair.id %}">
-        Cancelar
-    </a>
-
-</body>
-</html>
+{% endblock %}
+```

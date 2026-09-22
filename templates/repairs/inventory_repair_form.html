@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+
+    <h1>
+        {{ title }}
+    </h1>
+
+    <div>
+
+        <h3>
+            Información del inventario
+        </h3>
+
+        <p>
+            <strong>Propiedad:</strong>
+            {{ property.name }}
+        </p>
+
+        <p>
+            <strong>Inmueble:</strong>
+            {{ property.property_number }}
+        </p>
+
+        <p>
+            <strong>Sección:</strong>
+            {{ section.name }}
+        </p>
+
+        <p>
+            <strong>Característica:</strong>
+            {{ item.name }}
+        </p>
+
+        <p>
+            <strong>Tipo / material:</strong>
+            {{ item.item_type|default:"No registrado" }}
+        </p>
+
+        <p>
+            <strong>Estado de la característica:</strong>
+            {{ item.get_status_display|default:"No registrado" }}
+        </p>
+
+        {% if item.extra_data %}
+
+            <h4>
+                Información adicional
+            </h4>
+
+            {% for key, value in item.extra_data.items %}
+
+                {% if value %}
+
+                    <p>
+                        <strong>{{ key }}:</strong>
+                        {{ value }}
+                    </p>
+
+                {% endif %}
+
+            {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+    <hr>
+
+    <h3>
+        Información de la reparación
+    </h3>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Crear reparación
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'inventory_detail' inventory.id %}">
+        Cancelar
+    </a>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-
+from inventory.utils import save_inventory_from_post
 from django.shortcuts import get_object_or_404, redirect, render
 
 import cloudinary
@@ -167,101 +167,12 @@ def inventory_detail(request, inventory_id):
 
     if request.method == "POST":
 
-        has_errors = False
+        inventory_saved = save_inventory_from_post(
+            request,
+            inventory,
+        )
 
-        for section in sections:
-
-            for item in section.items.all():
-
-                # Descripción adicional
-                # No necesita estado, tipo ni material.
-                if item.is_description:
-
-                    item.description = request.POST.get(
-                        f"description_{item.id}",
-                        "",
-                    ).strip()
-
-                    item.save(
-                        update_fields=[
-                            "description",
-                        ]
-                    )
-
-                    continue
-
-                status = request.POST.get(
-                    f"status_{item.id}",
-                    "",
-                ).strip()
-
-                item_type = request.POST.get(
-                    f"item_type_{item.id}",
-                    "",
-                ).strip()
-
-                description = request.POST.get(
-                    f"description_{item.id}",
-                    "",
-                ).strip()
-
-                if not status:
-                    has_errors = True
-                    continue
-
-                # Las secciones dinámicas utilizan la definición
-                # de su sección original
-                base_section_name = section.name
-
-                if section.name.startswith("Alcoba auxiliar "):
-                    base_section_name = "Alcoba auxiliar"
-
-                elif section.name.startswith("Baño auxiliar "):
-                    base_section_name = "Baño auxiliar"
-
-                extra_fields = {}
-
-                for section_name, definitions in INVENTORY_SECTION_DEFINITIONS.items():
-
-                    if base_section_name == section_name:
-
-                        for definition in definitions:
-
-                            if definition["name"] == item.name:
-
-                                extra_fields = definition.get(
-                                    "extra_fields",
-                                    {},
-                                )
-
-                                break
-
-                extra_data = {}
-
-                for field_name in extra_fields:
-
-                    value = request.POST.get(
-                        f"extra_{field_name}_{item.id}",
-                        "",
-                    ).strip()
-
-                    extra_data[field_name] = value
-
-                item.status = status
-                item.item_type = item_type
-                item.description = description
-                item.extra_data = extra_data
-
-                item.save(
-                    update_fields=[
-                        "status",
-                        "item_type",
-                        "description",
-                        "extra_data",
-                    ]
-                )
-
-        if not has_errors:
+        if inventory_saved:
             return redirect(
                 "inventory_detail",
                 inventory_id=inventory.id,
@@ -585,10 +496,16 @@ def inventory_signature_create(request, inventory_id):
 def inventory_dashboard(request):
     organization = get_current_organization(request)
 
+    if not organization:
+        return redirect("organization_select")
+
     inventories = (
         Inventory.objects
         .filter(property__organization=organization)
-        .select_related("property")
+        .select_related(
+            "property",
+            "signature",
+        )
     )
 
     search = request.GET.get("search", "").strip()
@@ -597,6 +514,7 @@ def inventory_dashboard(request):
         inventories = inventories.filter(
             Q(property__name__icontains=search)
             | Q(property__property_number__icontains=search)
+            | Q(signature__name__icontains=search)
         )
 
     return render(
@@ -605,6 +523,7 @@ def inventory_dashboard(request):
         {
             "inventories": inventories,
             "search": search,
+            "membership": get_current_membership(request),
         },
     )
     
@@ -868,5 +787,34 @@ def inventory_section_delete(request, section_id):
         {
             "section": section,
             "inventory": section.inventory,
+        },
+    )
+    
+@login_required
+@admin_required
+def inventory_delete(request, inventory_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    inventory = get_object_or_404(
+        Inventory,
+        id=inventory_id,
+        property__organization=organization,
+    )
+
+    if request.method == "POST":
+        inventory.delete()
+
+        return redirect(
+            "inventory_dashboard"
+        )
+
+    return render(
+        request,
+        "inventory/inventory_confirm_delete.html",
+        {
+            "inventory": inventory,
         },
     )

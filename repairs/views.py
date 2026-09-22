@@ -1,7 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseForbidden
-from .forms import RepairForm, RepairUserForm
+from .forms import (
+    RepairForm,
+    RepairUserForm,
+    InventoryRepairForm,
+)
+from inventory.utils import save_inventory_from_post
+from inventory.defaults import INVENTORY_SECTION_DEFINITIONS
 import cloudinary
 import cloudinary.uploader
 from accounts.utils import (
@@ -10,6 +16,7 @@ from accounts.utils import (
     get_current_organization,
     user_is_repair_user,
 )
+from inventory.models import InventoryItem
 from django.db.models import Q
 from properties.models import Property
 from accounts.utils import admin_required, get_current_organization
@@ -102,6 +109,81 @@ def repair_create(request):
         {
             "form": form,
             "title": "Crear reparación",
+        },
+    )
+    
+@login_required
+@admin_required
+def repair_create_from_inventory(request, item_id):
+
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    item = get_object_or_404(
+        InventoryItem.objects.select_related(
+            "section__inventory__property"
+        ),
+        id=item_id,
+        section__inventory__property__organization=organization,
+    )
+
+    inventory = item.section.inventory
+    property = inventory.property
+
+    if request.method == "POST":
+
+        # Este POST viene directamente desde el inventario
+        # si contiene los campos de la característica.
+        inventory_data_was_sent = (
+            f"status_{item.id}" in request.POST
+        )
+
+        if inventory_data_was_sent:
+
+            # Guardar todos los cambios actuales
+            # del inventario antes de continuar.
+            save_inventory_from_post(
+                request,
+                inventory,
+            )
+
+            # Recargar el item con los datos recién guardados.
+            item.refresh_from_db()
+
+        form = InventoryRepairForm(request.POST)
+
+        if form.is_valid():
+
+            repair = form.save(commit=False)
+
+            repair.organization = organization
+            repair.property = property
+            repair.inventory_item = item
+            repair.repair_type = item.name
+
+            repair.save()
+
+            return redirect(
+                "inventory_detail",
+                inventory_id=inventory.id,
+            )
+
+    else:
+
+        form = InventoryRepairForm()
+
+    return render(
+        request,
+        "repairs/inventory_repair_form.html",
+        {
+            "form": form,
+            "item": item,
+            "section": item.section,
+            "inventory": inventory,
+            "property": property,
+            "title": "Reportar reparación",
         },
     )
 
@@ -336,5 +418,34 @@ def property_repair_list(request, property_id):
             "property": property,
             "repairs": repairs,
             "membership": get_current_membership(request),
+        },
+    )
+    
+@login_required
+@admin_required
+def repair_delete(request, repair_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    repair = get_object_or_404(
+        Repair,
+        id=repair_id,
+        organization=organization,
+    )
+
+    if request.method == "POST":
+        repair.delete()
+
+        return redirect(
+            "repair_list"
+        )
+
+    return render(
+        request,
+        "repairs/repair_confirm_delete.html",
+        {
+            "repair": repair,
         },
     )
