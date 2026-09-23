@@ -1,47 +1,187 @@
+
+/* ================================
+   VARIABLES DE DISEÑO
+   ================================ */
+
+:root {
+    --color-primary: #1f3a5c;
+    --color-secondary: #2f5d8c;
+    --color-light: #f2f2f2;
+    --color-dark: #4a4a4a;
+    --color-white: #ffffff;
+    --color-accent: #c73a32;
+
+    --border-color: #d9d9d9;
+    --border-radius: 8px;
+
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+
+/* ================================
+   RESET BÁSICO
+   ================================ */
+
 * {
     box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f5f6f8;
-    color: #222;
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    line-height: 1.5;
 }
 
-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
-    padding: 16px 30px;
+
+/* ================================
+   HEADER
+   ================================ */
+
+.site-header {
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 30px;
 }
 
-nav {
+
+/* ================================
+   NAVEGACIÓN PRINCIPAL
+   ================================ */
+
+.main-nav {
+    min-height: 70px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-nav a {
-    color: #222;
+
+/* ================================
+   MARCA
+   ================================ */
+
+.nav-brand a {
+    color: var(--color-primary);
     text-decoration: none;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
 }
 
-nav a:hover {
-    text-decoration: underline;
+
+/* ================================
+   LINKS PRINCIPALES
+   ================================ */
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
 }
 
-nav span {
+.nav-links a {
+    position: relative;
+    padding: 24px 0;
+    color: var(--color-dark);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--color-primary);
+}
+
+
+/* Línea debajo del link al pasar el mouse */
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 17px;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width 0.2s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+
+/* ================================
+   USUARIO
+   ================================ */
+
+.nav-user {
     margin-left: auto;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 18px;
 }
+
+.nav-username {
+    color: var(--color-dark);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* ================================
+   BOTÓN CERRAR SESIÓN
+   ================================ */
+
+.logout-button {
+    width: auto;
+    padding: 8px 14px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    font-size: 13px;
+}
+
+.logout-button:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+
+/* ================================
+   CONTENIDO PRINCIPAL
+   ================================ */
 
 main {
+    width: 100%;
     max-width: 1100px;
     margin: 30px auto;
     padding: 0 20px;
 }
 
+
+/* ================================
+   TÍTULOS
+   ================================ */
+
+h1,
+h2,
+h3 {
+    color: var(--color-primary);
+}
+
 h1 {
+    margin-top: 0;
     margin-bottom: 10px;
 }
 
@@ -49,51 +189,236 @@ h2 {
     margin-top: 25px;
 }
 
-a {
-    color: #2563eb;
+h3 {
+    margin-top: 20px;
 }
 
+
+/* ================================
+   LINKS
+   ================================ */
+
+a {
+    color: var(--color-primary);
+}
+
+a:hover {
+    color: var(--color-secondary);
+}
+
+
+/* ================================
+   BOTONES
+   ================================ */
+
 button {
-    padding: 8px 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #ffffff;
+    padding: 9px 16px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.1s ease;
 }
 
 button:hover {
-    background-color: #f0f0f0;
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
 }
 
-input,
-select,
-textarea {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+button:active {
+    transform: translateY(1px);
 }
+
+
+/* ================================
+   FORMULARIOS
+   ================================ */
 
 form {
     margin-bottom: 20px;
 }
 
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+    color: var(--color-dark);
+    font-family: inherit;
+    font-size: 14px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 2px rgba(47, 93, 140, 0.12);
+}
+
+
+/* ================================
+   TABLAS
+   ================================ */
+
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #ffffff;
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-soft);
 }
 
 th,
 td {
     padding: 12px;
-    border: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-color);
     text-align: left;
 }
 
 th {
-    background-color: #f0f1f3;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 600;
 }
 
 tr:hover {
-    background-color: #fafafa;
+    background-color: #f8f8f8;
 }
+
+
+/* ================================
+   RESPONSIVE — TABLET
+   ================================ */
+
+@media (max-width: 768px) {
+
+    .site-header {
+        padding: 0 20px;
+    }
+
+    .main-nav {
+        min-height: auto;
+        padding: 14px 0;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .nav-brand {
+        width: 100%;
+    }
+
+    .nav-links {
+        width: 100%;
+        gap: 18px;
+        overflow-x: auto;
+    }
+
+    .nav-links a {
+        padding: 8px 0;
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    .nav-links a::after {
+        bottom: 2px;
+    }
+
+    .nav-user {
+        width: 100%;
+        margin-left: 0;
+        justify-content: space-between;
+    }
+
+    .logout-button {
+        width: auto;
+    }
+
+    main {
+        margin: 24px auto;
+        padding: 0 16px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+
+/* ================================
+   RESPONSIVE — MÓVIL
+   ================================ */
+
+@media (max-width: 480px) {
+
+    .site-header {
+        padding: 0 16px;
+    }
+
+    .main-nav {
+        padding: 12px 0;
+    }
+
+    .nav-brand a {
+        font-size: 20px;
+    }
+
+    .nav-links {
+        gap: 14px;
+    }
+
+    .nav-links a {
+        font-size: 13px;
+    }
+
+    .nav-user {
+        gap: 12px;
+    }
+
+    .nav-username {
+        font-size: 13px;
+    }
+
+    main {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    h2 {
+        font-size: 21px;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .logout-button {
+        width: auto;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+

@@ -426,8 +426,8 @@ Inventario
 
             <button
                 type="submit"
-                formaction="{% url 'inventory_signature_create' inventory.id %}"
-                formmethod="post"
+                name="action"
+                value="sign"
                 formnovalidate
             >
                 Firmar inventario

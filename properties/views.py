@@ -2,7 +2,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.db.models import Q
 from accounts.utils import admin_required
 from accounts.utils import get_current_organization
 import cloudinary.uploader
@@ -23,6 +23,16 @@ def property_list(request):
         organization=organization
     )
 
+    search = request.GET.get("search", "").strip()
+
+    if search:
+        properties = properties.filter(
+            Q(name__icontains=search)
+            | Q(property_number__icontains=search)
+            | Q(tenant_name__icontains=search)
+            | Q(address__icontains=search)
+        )
+
     paginator = Paginator(properties, 15)
 
     page_number = request.GET.get("page")
@@ -34,9 +44,9 @@ def property_list(request):
         {
             "properties": page_obj,
             "page_obj": page_obj,
+            "search": search,
         },
     )
-
 
 @login_required
 def property_detail(request, property_id):

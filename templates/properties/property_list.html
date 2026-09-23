@@ -1,96 +1,349 @@
+```html
 {% extends "base.html" %}
 
 {% block title %}Propiedades{% endblock %}
 
 {% block content %}
 
-<h1>Propiedades</h1>
+<div class="page-header">
 
-<a href="{% url 'property_create' %}">Crear propiedad</a>
+    <div>
+        <h1>Propiedades</h1>
 
-<br><br>
+        <p class="page-description">
+            Administra y consulta las propiedades de tu organización.
+        </p>
+    </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Foto</th>
-            <th>Propiedad</th>
-            <th>Número</th>
-            <th>Arrendatario</th>
-            <th>Dirección</th>
-            <th>Fecha de creación</th>
-        </tr>
-    </thead>
+    <a
+        href="{% url 'property_create' %}"
+        class="button-primary"
+    >
+        Crear propiedad
+    </a>
 
-    <tbody>
-        {% for property in properties %}
+</div>
+
+
+<div class="search-box">
+
+    <form method="get" class="property-search-form">
+
+        <div class="search-input-wrapper">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Buscar por propiedad, número, arrendatario o dirección..."
+                value="{{ search }}"
+            >
+
+        </div>
+
+        <button type="submit" class="button-primary">
+            Buscar
+        </button>
+
+        {% if search %}
+
+            <a
+                href="{% url 'property_list' %}"
+                class="button-secondary"
+            >
+                Limpiar
+            </a>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<div class="results-header">
+
+    <span>
+        {% if properties %}
+            Propiedades encontradas
+        {% else %}
+            Resultados
+        {% endif %}
+    </span>
+
+</div>
+
+
+<!-- ================================
+     TABLA — ESCRITORIO
+     ================================ -->
+
+<div class="properties-table-wrapper">
+
+    <table class="properties-table">
+
+        <thead>
             <tr>
-                <td>
-                    {% if property.photo_url %}
-                        <img
-                            src="{{ property.photo_url }}"
-                            alt="Foto de {{ property.name }}"
-                            width="80"
-                            height="60"
-                            style="object-fit: cover; border-radius: 5px;"
+                <th>Foto</th>
+                <th>Propiedad</th>
+                <th>Número</th>
+                <th>Arrendatario</th>
+                <th>Dirección</th>
+                <th>Fecha de creación</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for property in properties %}
+
+                <tr>
+
+                    <td>
+
+                        {% if property.photo_url %}
+
+                            <img
+                                src="{{ property.photo_url }}"
+                                alt="Foto de {{ property.name }}"
+                                class="property-table-image"
+                            >
+
+                        {% else %}
+
+                            <div class="property-image-placeholder">
+                                Sin foto
+                            </div>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <a
+                            href="{% url 'property_detail' property.id %}"
+                            class="property-name"
                         >
-                    {% else %}
+                            {{ property.name }}
+                        </a>
+
+                    </td>
+
+
+                    <td>
+                        {{ property.property_number }}
+                    </td>
+
+
+                    <td>
+                        {{ property.tenant_name|default:"Sin arrendatario" }}
+                    </td>
+
+
+                    <td>
+                        {{ property.address }}
+                    </td>
+
+
+                    <td>
+                        {{ property.created_at|date:"d/m/Y" }}
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+
+                    <td colspan="6">
+
+                        <div class="empty-state">
+
+                            <h3>No hay propiedades registradas</h3>
+
+                            <p>
+                                {% if search %}
+                                    No encontramos propiedades que coincidan con tu búsqueda.
+                                {% else %}
+                                    Todavía no has registrado ninguna propiedad.
+                                {% endif %}
+                            </p>
+
+                            {% if search %}
+
+                                <a
+                                    href="{% url 'property_list' %}"
+                                    class="button-secondary"
+                                >
+                                    Ver todas las propiedades
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'property_create' %}"
+                                    class="button-primary"
+                                >
+                                    Crear primera propiedad
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- ================================
+     TARJETAS — MÓVIL
+     ================================ -->
+
+<div class="properties-mobile-list">
+
+    {% for property in properties %}
+
+        <article class="property-card">
+
+            <div class="property-card-image">
+
+                {% if property.photo_url %}
+
+                    <img
+                        src="{{ property.photo_url }}"
+                        alt="Foto de {{ property.name }}"
+                    >
+
+                {% else %}
+
+                    <div class="property-card-placeholder">
                         Sin foto
-                    {% endif %}
-                </td>
+                    </div>
 
-                <td>
-                    <a href="{% url 'property_detail' property.id %}">
-                        {{ property.name }}
-                    </a>
-                </td>
+                {% endif %}
 
-                <td>
-                    {{ property.property_number }}
-                </td>
+            </div>
 
-                <td>
-                    {{ property.tenant_name }}
-                </td>
 
-                <td>
-                    {{ property.address }}
-                </td>
+            <div class="property-card-content">
 
-                <td>
-                    {{ property.created_at|date:"d/m/Y" }}
-                </td>
-            </tr>
+                <h2>
+                    {{ property.name }}
+                </h2>
 
-        {% empty %}
-            <tr>
-                <td colspan="6">
-                    No hay propiedades registradas.
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                <p class="property-number">
+                    Propiedad #{{ property.property_number }}
+                </p>
+
+
+                <div class="property-card-info">
+
+                    <div>
+                        <span>Arrendatario</span>
+
+                        <strong>
+                            {{ property.tenant_name|default:"Sin arrendatario" }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Dirección</span>
+
+                        <strong>
+                            {{ property.address }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Fecha de creación</span>
+
+                        <strong>
+                            {{ property.created_at|date:"d/m/Y" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'property_detail' property.id %}"
+                    class="property-card-link"
+                >
+                    Ver propiedad
+                </a>
+
+            </div>
+
+        </article>
+
+    {% empty %}
+
+        <div class="empty-state mobile-empty-state">
+
+            <h3>No hay propiedades registradas</h3>
+
+            <p>
+                {% if search %}
+                    No encontramos propiedades que coincidan con tu búsqueda.
+                {% else %}
+                    Todavía no has registrado ninguna propiedad.
+                {% endif %}
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- ================================
+     PAGINACIÓN
+     ================================ -->
 
 {% if page_obj.paginator.num_pages > 1 %}
 
-    <div>
+    <div class="pagination">
 
         {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}">
+
+            <a
+                href="?search={{ search }}&page={{ page_obj.previous_page_number }}"
+                class="pagination-button"
+            >
                 Anterior
             </a>
+
         {% endif %}
 
-        <span>
+
+        <span class="pagination-info">
             Página {{ page_obj.number }}
             de {{ page_obj.paginator.num_pages }}
         </span>
 
+
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">
+
+            <a
+                href="?search={{ search }}&page={{ page_obj.next_page_number }}"
+                class="pagination-button"
+            >
                 Siguiente
             </a>
+
         {% endif %}
 
     </div>
@@ -98,3 +351,4 @@
 {% endif %}
 
 {% endblock %}
+```

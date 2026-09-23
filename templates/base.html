@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,24 +15,37 @@
 
     {% if user.is_authenticated %}
 
-        <header>
-            <nav>
+        <header class="site-header">
 
-                <a href="{% url 'property_list' %}">
-                    Propiedades
-                </a>
+            <nav class="main-nav">
 
-                <a href="{% url 'repair_list' %}">
-                    Reparaciones
-                </a>
+                <div class="nav-brand">
+                    <a href="{% url 'property_list' %}">
+                        Inmuebles
+                    </a>
+                </div>
 
-                <a href="{% url 'inventory_dashboard' %}">
-                    Inventarios
-                </a>
+                <div class="nav-links">
 
-                <span>
-                    {{ user.username }}
-                </span>
+                    <a href="{% url 'property_list' %}">
+                        Propiedades
+                    </a>
+
+                    <a href="{% url 'repair_list' %}">
+                        Reparaciones
+                    </a>
+
+                    <a href="{% url 'inventory_dashboard' %}">
+                        Inventarios
+                    </a>
+
+                </div>
+
+                <div class="nav-user">
+
+                    <span class="nav-username">
+                        {{ user.username }}
+                    </span>
 
                     <form
                         method="post"
@@ -40,12 +54,15 @@
                     >
                         {% csrf_token %}
 
-                        <button type="submit">
+                        <button type="submit" class="logout-button">
                             Cerrar sesión
                         </button>
                     </form>
 
+                </div>
+
             </nav>
+
         </header>
 
     {% endif %}
@@ -57,3 +74,4 @@
 
 </body>
 </html>
+

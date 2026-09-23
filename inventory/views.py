@@ -167,16 +167,21 @@ def inventory_detail(request, inventory_id):
 
     if request.method == "POST":
 
-        inventory_saved = save_inventory_from_post(
+        save_inventory_from_post(
             request,
             inventory,
         )
 
-        if inventory_saved:
+        if request.POST.get("action") == "sign":
             return redirect(
-                "inventory_detail",
+                "inventory_signature_create",
                 inventory_id=inventory.id,
             )
+
+        return redirect(
+            "inventory_detail",
+            inventory_id=inventory.id,
+        )
 
     # Preparar los campos adicionales para mostrar
     # correctamente en el template.
