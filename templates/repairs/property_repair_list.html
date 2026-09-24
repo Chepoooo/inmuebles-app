@@ -1,4 +1,10 @@
+
 {% extends "base.html" %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/repairs.css' %}">
+{% endblock %}
 
 {% block title %}
     Reparaciones - {{ property.name }}
@@ -6,61 +12,116 @@
 
 {% block content %}
 
-    <h1>Reparaciones</h1>
+<div class="property-repair-list">
 
-    <h2>{{ property.name }}</h2>
-
-    <p>
-        Propiedad #{{ property.property_number }}
-    </p>
-
-    <hr>
-
-    {% if membership.role == "admin" %}
-        <a href="{% url 'repair_create' %}">
-            Crear reparación
-        </a>
-
-        <hr>
-    {% endif %}
-
-    {% for repair in repairs %}
+    <div class="property-repair-header">
 
         <div>
-            <h3>
-                <a href="{% url 'repair_detail' repair.id %}">
-                    {{ repair.repair_type }}
-                </a>
-            </h3>
+            <a
+                href="{% url 'property_detail' property.id %}"
+                class="repair-back-link"
+            >
+                ← Volver a la propiedad
+            </a>
 
-            <p>
-                <strong>Estado:</strong>
-                {{ repair.get_status_display }}
-            </p>
+            <h1>Reparaciones</h1>
 
-            <p>
-                <strong>Fecha:</strong>
-                {{ repair.report_date|date:"d/m/Y" }}
-            </p>
-
-            <p>
-                <strong>Trabajador:</strong>
-                {{ repair.assigned_worker|default:"No asignado" }}
+            <p class="property-repair-subtitle">
+                {{ property.name }}
+                · Propiedad #{{ property.property_number }}
             </p>
         </div>
 
-        <hr>
+        {% if membership.role == "admin" %}
+            <a
+                href="{% url 'repair_create' %}"
+                class="button-primary"
+            >
+                Crear reparación
+            </a>
+        {% endif %}
 
-    {% empty %}
+    </div>
 
-        <p>
-            Esta propiedad no tiene reparaciones registradas.
-        </p>
 
-    {% endfor %}
+    <div class="results-header">
+        <h2>Reparaciones registradas</h2>
+        <span>{{ repairs|length }} reparación{{ repairs|length|pluralize:"es,es" }}</span>
+    </div>
 
-    <a href="{% url 'property_detail' property.id %}">
-        Volver a la propiedad
-    </a>
+
+    <div class="property-repair-table-wrapper">
+
+        <table class="property-repair-table">
+
+            <thead>
+                <tr>
+                    <th>Reparación</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Trabajador</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for repair in repairs %}
+
+                    <tr>
+
+                        <td>
+                            <a
+                                href="{% url 'repair_detail' repair.id %}"
+                                class="property-repair-name"
+                            >
+                                {{ repair.repair_type }}
+                            </a>
+                        </td>
+
+                        <td>
+                            <span class="repair-status repair-status-{{ repair.status }}">
+                                {{ repair.get_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ repair.report_date|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ repair.assigned_worker|default:"No asignado" }}
+                        </td>
+
+                        <td class="property-repair-actions">
+                            <a
+                                href="{% url 'repair_detail' repair.id %}"
+                            >
+                                Ver detalle
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="5">
+                            <div class="property-repair-empty">
+                                Esta propiedad no tiene reparaciones registradas.
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 {% endblock %}
+

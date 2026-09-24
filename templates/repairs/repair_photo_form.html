@@ -1,11 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Agregar foto</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load repair_extras %}
 
+{% block title %}
+    <title>Agregar foto</title>
+{% endblock %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/repairs.css' %}">
+{% endblock %}
+{% block content %}
     <h1>Agregar foto</h1>
 
     <p>
@@ -45,5 +49,4 @@
         Cancelar
     </a>
 
-</body>
-</html>
+{% endblock %}  

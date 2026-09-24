@@ -1,195 +1,427 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Reparaciones
+Reparaciones
 {% endblock %}
 
 {% block content %}
 
+<div class="page-header">
+
+
+<div>
     <h1>Reparaciones</h1>
 
-    <p>
+    <p class="page-description">
         Consulta y busca las reparaciones registradas en la organización.
     </p>
+</div>
 
-    <form method="get">
+{% if membership.role == "admin" %}
+
+    <a
+        href="{% url 'repair_create' %}"
+        class="button-primary"
+    >
+        Crear reparación
+    </a>
+
+{% endif %}
+
+
+</div>
+
+<!-- ================================
+     BUSCADOR
+     ================================ -->
+
+<div class="search-box">
+
+
+<form method="get" class="repair-search-form">
+
+    <div class="search-input-wrapper">
 
         <input
             type="text"
             name="search"
-            placeholder="Buscar por propiedad, número o reparación..."
+            placeholder="Buscar por propiedad, número, reparación o trabajador..."
             value="{{ search }}"
         >
 
-        <button type="submit">
-            Buscar
-        </button>
-
-        {% if search %}
-            <a href="{% url 'repair_list' %}">
-                Limpiar búsqueda
-            </a>
-        {% endif %}
-
-    </form>
-
-    <hr>
-
-    <p>
-        Reparaciones encontradas: {{ page_obj.paginator.count }}
-    </p>
-
-    {% if repairs %}
-
-        <table border="1" cellpadding="8" cellspacing="0">
-
-            <thead>
-
-                <tr>
-
-                    <th>Propiedad</th>
-
-                    <th>Número</th>
-
-                    <th>Reparación</th>
-
-                    <th>Trabajador asignado</th>
-
-                    <th>Estado</th>
-
-                    <th>Fecha</th>
-
-                    <th>Acción</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for repair in repairs %}
-
-                    <tr>
-
-                        <td>
-                            {{ repair.property.name }}
-                        </td>
-
-                        <td>
-                            {{ repair.property.property_number }}
-                        </td>
-
-                        <td>
-                            {{ repair.repair_type }}
-                        </td>
-
-                        <td>
-
-                            {% if repair.assigned_worker %}
-
-                                {{ repair.assigned_worker }}
-
-                            {% else %}
-
-                                Sin asignar
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-                            {{ repair.get_status_display }}
-                        </td>
-
-                        <td>
-                            {{ repair.report_date|date:"d/m/Y" }}
-                        </td>
-
-                        <td>
-
-                            <a href="{% url 'repair_detail' repair.id %}">
-                                Ver reparación
-                            </a>
-
-                            {% if membership.role == "admin" %}
-
-                                <a href="{% url 'repair_delete' repair.id %}">
-                                    Eliminar
-                                </a>
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-        <br>
-
-        {% if page_obj.has_other_pages %}
-
-            <div>
-
-                {% if page_obj.has_previous %}
-
-                    <a
-                        href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
-                    >
-                        Anterior
-                    </a>
-
-                {% endif %}
-
-                <span>
-                    Página {{ page_obj.number }}
-                    de {{ page_obj.paginator.num_pages }}
-                </span>
-
-                {% if page_obj.has_next %}
-
-                    <a
-                        href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
-                    >
-                        Siguiente
-                    </a>
-
-                {% endif %}
-
-            </div>
-
-        {% endif %}
-
-    {% else %}
-
-        {% if search %}
-
-            <p>
-                No se encontraron reparaciones para "{{ search }}".
-            </p>
-
-        {% else %}
-
-            <p>
-                No hay reparaciones registradas.
-            </p>
-
-        {% endif %}
-
-    {% endif %}
-
-    {% if membership.role == "admin" %}
-
-        <hr>
-
-        <a href="{% url 'repair_create' %}">
-            Crear reparación
+    </div>
+
+    <button type="submit" class="button-primary">
+        Buscar
+    </button>
+
+    {% if search %}
+
+        <a
+            href="{% url 'repair_list' %}"
+            class="button-secondary"
+        >
+            Limpiar
         </a>
 
     {% endif %}
+
+</form>
+
+
+</div>
+
+<!-- ================================
+     RESULTADOS
+     ================================ -->
+
+<div class="results-header">
+
+
+Reparaciones encontradas: {{ page_obj.paginator.count }}
+
+
+</div>
+
+<!-- ================================
+     TABLA — ESCRITORIO
+     ================================ -->
+
+<div class="repairs-table-wrapper">
+
+
+<table class="repairs-table">
+
+    <thead>
+
+        <tr>
+
+            <th>Propiedad</th>
+
+            <th>Número</th>
+
+            <th>Reparación</th>
+
+            <th>Trabajador asignado</th>
+
+            <th>Estado</th>
+
+            <th>Fecha</th>
+
+            <th>Acciones</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for repair in repairs %}
+
+            <tr>
+
+                <td>
+                    <span class="repair-property-name">
+                        {{ repair.property.name }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ repair.property.property_number }}
+                </td>
+
+                <td>
+                    {{ repair.repair_type }}
+                </td>
+
+                <td>
+
+                    {% if repair.assigned_worker %}
+
+                        {{ repair.assigned_worker }}
+
+                    {% else %}
+
+                        <span class="repair-unassigned">
+                            Sin asignar
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <span class="repair-status">
+                        {{ repair.get_status_display }}
+                    </span>
+
+                </td>
+
+                <td>
+                    {{ repair.report_date|date:"d/m/Y" }}
+                </td>
+
+                <td>
+
+                    <div class="repair-actions">
+
+                        <a
+                            href="{% url 'repair_detail' repair.id %}"
+                            class="repair-action-link"
+                        >
+                            Ver reparación
+                        </a>
+
+                        {% if membership.role == "admin" %}
+
+                            <a
+                                href="{% url 'repair_delete' repair.id %}"
+                                class="repair-action-delete"
+                            >
+                                Eliminar
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+
+                <td colspan="7">
+
+                    <div class="empty-state">
+
+                        <h3>No hay reparaciones registradas</h3>
+
+                        <p>
+
+                            {% if search %}
+
+                                No encontramos reparaciones que coincidan con tu búsqueda.
+
+                            {% else %}
+
+                                Todavía no has registrado ninguna reparación.
+
+                            {% endif %}
+
+                        </p>
+
+                        {% if search %}
+
+                            <a
+                                href="{% url 'repair_list' %}"
+                                class="button-secondary"
+                            >
+                                Ver todas las reparaciones
+                            </a>
+
+                        {% elif membership.role == "admin" %}
+
+                            <a
+                                href="{% url 'repair_create' %}"
+                                class="button-primary"
+                            >
+                                Crear primera reparación
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+```
+
+</div>
+
+<!-- ================================
+     TARJETAS — MÓVIL
+     ================================ -->
+
+<div class="repairs-mobile-list">
+
+
+{% for repair in repairs %}
+
+    <article class="repair-card">
+
+        <div class="repair-card-header">
+
+            <div>
+
+                <h2>
+                    {{ repair.property.name }}
+                </h2>
+
+                <span class="repair-card-number">
+                    Propiedad #{{ repair.property.property_number }}
+                </span>
+
+            </div>
+
+            <span class="repair-status">
+                {{ repair.get_status_display }}
+            </span>
+
+        </div>
+
+
+        <div class="repair-card-info">
+
+            <div>
+
+                <span>Reparación</span>
+
+                <strong>
+                    {{ repair.repair_type }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>Trabajador asignado</span>
+
+                <strong>
+
+                    {% if repair.assigned_worker %}
+
+                        {{ repair.assigned_worker }}
+
+                    {% else %}
+
+                        Sin asignar
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>Fecha de reporte</span>
+
+                <strong>
+                    {{ repair.report_date|date:"d/m/Y" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="repair-card-actions">
+
+            <a
+                href="{% url 'repair_detail' repair.id %}"
+                class="button-primary"
+            >
+                Ver reparación
+            </a>
+
+            {% if membership.role == "admin" %}
+
+                <a
+                    href="{% url 'repair_delete' repair.id %}"
+                    class="button-secondary repair-delete-button"
+                >
+                    Eliminar
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </article>
+
+{% empty %}
+
+    <div class="empty-state mobile-empty-state">
+
+        <h3>No hay reparaciones registradas</h3>
+
+        <p>
+
+            {% if search %}
+
+                No encontramos reparaciones que coincidan con tu búsqueda.
+
+            {% else %}
+
+                Todavía no has registrado ninguna reparación.
+
+            {% endif %}
+
+        </p>
+
+    </div>
+
+{% endfor %}
+
+
+</div>
+
+<!-- ================================
+     PAGINACIÓN
+     ================================ -->
+
+{% if page_obj.has_other_pages %}
+
+
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+
+        <a
+            href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+            class="pagination-button"
+        >
+            Anterior
+        </a>
+
+    {% endif %}
+
+
+    <span class="pagination-info">
+
+        Página {{ page_obj.number }}
+        de {{ page_obj.paginator.num_pages }}
+
+    </span>
+
+
+    {% if page_obj.has_next %}
+
+        <a
+            href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+            class="pagination-button"
+        >
+            Siguiente
+        </a>
+
+    {% endif %}
+
+</div>
+
+
+{% endif %}
 
 {% endblock %}

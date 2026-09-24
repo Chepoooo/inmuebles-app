@@ -1,189 +1,273 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
 
-    <title>Firmar inventario</title>
+{% extends "base.html" %}
 
-    <style>
-        #signature-pad {
-            border: 1px solid #000;
-            width: 100%;
-            max-width: 600px;
-            height: 250px;
-            touch-action: none;
-        }
-    </style>
-</head>
-<body>
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% endblock %}
 
-    <h1>Firmar inventario</h1>
+{% block title %}
+    Firmar inventario
+{% endblock %}
 
-    <p>
-        Propiedad:
-        {{ inventory.property.name }}
-    </p>
+{% block content %}
 
-    <p>
-        Número:
-        {{ inventory.property.property_number }}
-    </p>
+<div class="inventory-signature-page">
 
-    <hr>
+    <!-- ENCABEZADO -->
 
-    <h2>Declaración</h2>
+    <div class="inventory-signature-header">
 
-    <p>
-        Declaro que he revisado el presente inventario y estoy
-        de acuerdo con el estado de la propiedad y los elementos
-        registrados en él.
-    </p>
+        <a
+            href="{% url 'inventory_detail' inventory.id %}"
+            class="inventory-back-link"
+        >
+            ← Volver al inventario
+        </a>
 
-    <form method="post" id="signature-form">
+        <h1>Firmar inventario</h1>
 
-        {% csrf_token %}
+        <p>
+            Revisa la información del inventario antes de registrar tu firma.
+        </p>
 
-        <div>
-            <label for="name">
-                Nombre del cliente
-            </label>
+    </div>
 
-            <br>
+
+    <!-- INFORMACIÓN DE LA PROPIEDAD -->
+
+    <section class="inventory-signature-card">
+
+        <div class="inventory-signature-section-header">
+
+            <h2>Información de la propiedad</h2>
+
+        </div>
+
+        <div class="inventory-signature-property-info">
+
+            <div>
+                <span>Propiedad</span>
+                <strong>
+                    {{ inventory.property.name }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Número de propiedad</span>
+                <strong>
+                    {{ inventory.property.property_number }}
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DECLARACIÓN -->
+
+    <section class="inventory-signature-card">
+
+        <div class="inventory-signature-section-header">
+
+            <h2>Declaración</h2>
+
+        </div>
+
+        <div class="inventory-signature-declaration">
+
+            <p>
+                Declaro que he revisado el presente inventario y estoy
+                de acuerdo con el estado de la propiedad y los elementos
+                registrados en él.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- FORMULARIO -->
+
+    <section class="inventory-signature-card">
+
+        <form
+            method="post"
+            id="signature-form"
+            class="inventory-signature-form"
+        >
+
+            {% csrf_token %}
+
+            <!-- NOMBRE -->
+
+            <div class="inventory-signature-field">
+
+                <label for="name">
+                    Nombre del cliente
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    maxlength="150"
+                    required
+                    placeholder="Ingrese su nombre completo"
+                >
+
+            </div>
+
+
+            <!-- FIRMA -->
+
+            <div class="inventory-signature-field">
+
+                <div class="inventory-signature-label">
+
+                    <label for="signature-pad">
+                        Firma
+                    </label>
+
+                    <span>
+                        Dibuje su firma dentro del recuadro
+                    </span>
+
+                </div>
+
+                <div class="inventory-signature-pad-wrapper">
+
+                    <canvas
+                        id="signature-pad"
+                    ></canvas>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="clear-signature"
+                    class="button-secondary inventory-clear-signature"
+                >
+                    Limpiar firma
+                </button>
+
+            </div>
+
 
             <input
-                type="text"
-                id="name"
-                name="name"
-                maxlength="150"
-                required
+                type="hidden"
+                name="signature"
+                id="signature-data"
             >
-        </div>
 
-        <br>
 
-        <div>
-            <label>
-                Firma
-            </label>
+            <!-- ACCIONES -->
 
-            <br>
+            <div class="inventory-signature-actions">
 
-            <canvas id="signature-pad"></canvas>
-        </div>
+                <a
+                    href="{% url 'inventory_detail' inventory.id %}"
+                    class="button-secondary"
+                >
+                    Cancelar
+                </a>
 
-        <br>
+                <button
+                    type="submit"
+                    class="button-primary"
+                >
+                    Firmar inventario
+                </button>
 
-        <button
-            type="button"
-            id="clear-signature"
-        >
-            Limpiar firma
-        </button>
+            </div>
 
-        <input
-            type="hidden"
-            name="signature"
-            id="signature-data"
-        >
+        </form>
 
-        <br><br>
+    </section>
 
-        <button type="submit">
-            Firmar inventario
-        </button>
+</div>
 
-    </form>
 
-    <br>
+<script>
+    const canvas = document.getElementById("signature-pad");
+    const context = canvas.getContext("2d");
+    const form = document.getElementById("signature-form");
+    const signatureData = document.getElementById("signature-data");
+    const clearButton = document.getElementById("clear-signature");
 
-    <a href="{% url 'inventory_detail' inventory.id %}">
-        Cancelar
-    </a>
+    let drawing = false;
 
-    <script>
-        const canvas = document.getElementById("signature-pad");
-        const context = canvas.getContext("2d");
-        const form = document.getElementById("signature-form");
-        const signatureData = document.getElementById("signature-data");
-        const clearButton = document.getElementById("clear-signature");
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
 
-        let drawing = false;
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
 
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        context.scale(ratio, ratio);
 
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
+        context.lineWidth = 2;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+    }
 
-            context.scale(ratio, ratio);
+    function getPosition(event) {
+        const rect = canvas.getBoundingClientRect();
 
-            context.lineWidth = 2;
-            context.lineCap = "round";
-            context.lineJoin = "round";
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
+        };
+    }
+
+    canvas.addEventListener("pointerdown", (event) => {
+        drawing = true;
+
+        const position = getPosition(event);
+
+        context.beginPath();
+        context.moveTo(position.x, position.y);
+
+        canvas.setPointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+        if (!drawing) {
+            return;
         }
 
-        function getPosition(event) {
-            const rect = canvas.getBoundingClientRect();
+        const position = getPosition(event);
 
-            return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top,
-            };
-        }
+        context.lineTo(position.x, position.y);
+        context.stroke();
+    });
 
-        canvas.addEventListener("pointerdown", (event) => {
-            drawing = true;
+    canvas.addEventListener("pointerup", () => {
+        drawing = false;
+    });
 
-            const position = getPosition(event);
+    canvas.addEventListener("pointercancel", () => {
+        drawing = false;
+    });
 
-            context.beginPath();
-            context.moveTo(position.x, position.y);
+    clearButton.addEventListener("click", () => {
+        context.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+    });
 
-            canvas.setPointerCapture(event.pointerId);
-        });
+    form.addEventListener("submit", (event) => {
+        const imageData = canvas.toDataURL("image/png");
 
-        canvas.addEventListener("pointermove", (event) => {
-            if (!drawing) {
-                return;
-            }
+        signatureData.value = imageData;
+    });
 
-            const position = getPosition(event);
+    window.addEventListener("resize", resizeCanvas);
 
-            context.lineTo(position.x, position.y);
-            context.stroke();
-        });
+    resizeCanvas();
+</script>
 
-        canvas.addEventListener("pointerup", () => {
-            drawing = false;
-        });
-
-        canvas.addEventListener("pointercancel", () => {
-            drawing = false;
-        });
-
-        clearButton.addEventListener("click", () => {
-            context.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-        });
-
-        form.addEventListener("submit", (event) => {
-            const imageData = canvas.toDataURL("image/png");
-
-            signatureData.value = imageData;
-        });
-
-        window.addEventListener("resize", resizeCanvas);
-
-        resizeCanvas();
-    </script>
-
-</body>
-</html>
+{% endblock %}

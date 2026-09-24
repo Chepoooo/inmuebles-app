@@ -1,155 +1,276 @@
 {% extends "base.html" %}
 {% load repair_extras %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/repairs.css' %}">
+{% endblock %}
+
 {% block title %}
-Detalles de reparacion
+    Detalles de reparación
 {% endblock %}
 
 {% block content %}
 
+<div class="repair-detail">
 
-<h1>{{ repair.repair_type }}</h1>
+    <!-- ENCABEZADO -->
 
-<p>
-    <strong>Propiedad:</strong>
-    {{ repair.property }}
-</p>
+    <div class="repair-detail-header">
 
-{% if repair.inventory_item %}
-
-    <hr>
-
-    <h2>Origen del inventario</h2>
-
-    <p>
-        <strong>Sección:</strong>
-        {{ repair.inventory_item.section.name }}
-    </p>
-
-    <p>
-        <strong>Característica:</strong>
-        {{ repair.inventory_item.name }}
-    </p>
-
-    <a
-    href="{% url 'inventory_detail' repair.inventory_item.section.inventory.id %}#inventory-item-{{ repair.inventory_item.id }}"
->
-    Volver a la característica en el inventario
-    </a>
-
-{% endif %}
-<p>
-    <strong>Fecha:</strong>
-    {{ repair.report_date|date:"d/m/Y" }}
-</p>
-
-<p>
-    <strong>Trabajador:</strong>
-    {{ repair.assigned_worker|default:"No asignado" }}
-</p>
-
-<p>
-    <strong>Cotización:</strong>
-
-    {% if repair.quote %}
-        {{ repair.quote|cop }}
-    {% else %}
-        Sin cotización
-    {% endif %}
-</p>
-
-<p>
-    <strong>Estado:</strong>
-    {{ repair.get_status_display }}
-</p>
-
-<p>
-    <strong>Descripción:</strong>
-</p>
-
-<p>
-    {{ repair.description|default:"Sin descripción." }}
-</p>
-
-<hr>
-
-<h2>Fotos de la reparación</h2>
-
-{% for photo in repair.photos.all %}
-
-    <div>
-
-        <img
-            src="{{ photo.secure_url }}"
-            alt="Foto de {{ repair.repair_type }}"
-            width="300"
-        >
-
-        {% if membership.role == "admin" or membership.role == "repair_user" %}
-
-            <br>
-
-            <form
-                method="post"
-                action="{% url 'repair_photo_delete' photo.id %}"
+        <div>
+            <a
+                href="{% url 'repair_list' %}"
+                class="repair-back-link"
             >
-                {% csrf_token %}
+                ← Volver a reparaciones
+            </a>
 
-                <button type="submit">
-                    Eliminar foto
-                </button>
+            <h1>{{ repair.repair_type }}</h1>
 
-            </form>
-
-        {% endif %}
+            <p class="repair-detail-subtitle">
+                Detalles de la reparación
+            </p>
+        </div>
 
     </div>
 
-    <br>
 
-{% empty %}
+    <!-- INFORMACIÓN PRINCIPAL -->
 
-    <p>
-        No hay fotos registradas.
-    </p>
+    <section class="repair-detail-card">
 
-{% endfor %}
+        <div class="repair-detail-info">
 
-{% if membership.role == "admin" or membership.role == "repair_user" %}
+            <div class="repair-info-item">
+                <span>Propiedad</span>
+                <strong>{{ repair.property }}</strong>
+            </div>
 
-    <a href="{% url 'repair_photo_create' repair.id %}">
-        Agregar foto
-    </a>
+            <div class="repair-info-item">
+                <span>Fecha de reporte</span>
+                <strong>
+                    {{ repair.report_date|date:"d/m/Y" }}
+                </strong>
+            </div>
 
-{% endif %}
+            <div class="repair-info-item">
+                <span>Trabajador</span>
+                <strong>
+                    {{ repair.assigned_worker|default:"No asignado" }}
+                </strong>
+            </div>
 
-<hr>
+            <div class="repair-info-item">
+                <span>Cotización</span>
+                <strong>
+                    {% if repair.quote %}
+                        {{ repair.quote|cop }}
+                    {% else %}
+                        Sin cotización
+                    {% endif %}
+                </strong>
+            </div>
 
-{% if membership.role == "admin" %}
+            <div class="repair-info-item">
+                <span>Estado</span>
 
-    <a href="{% url 'repair_update' repair.id %}">
-        Editar reparación
-    </a>
+                <strong>
+                    <span class="repair-status repair-status-{{ repair.status }}">
+                        {{ repair.get_status_display }}
+                    </span>
+                </strong>
+            </div>
 
-    <br><br>
+        </div>
 
-    <a href="{% url 'repair_delete' repair.id %}">
-        Eliminar reparación
-    </a>
+    </section>
 
-{% elif membership.role == "repair_user" %}
 
-    <a href="{% url 'repair_user_update' repair.id %}">
-        Actualizar reparación
-    </a>
+    <!-- ORIGEN DEL INVENTARIO -->
 
-{% endif %}
+    {% if repair.inventory_item %}
 
-<br><br>
+        <section class="repair-detail-section">
 
-<a href="{% url 'repair_list' %}">
-    Volver a reparaciones
-</a>
-```
+            <div class="repair-section-header">
+                <h2>Origen del inventario</h2>
+                <p>
+                    Esta reparación fue registrada a partir de una característica
+                    del inventario.
+                </p>
+            </div>
+
+            <div class="repair-inventory-card">
+
+                <div class="repair-info-item">
+                    <span>Sección</span>
+                    <strong>
+                        {{ repair.inventory_item.section.name }}
+                    </strong>
+                </div>
+
+                <div class="repair-info-item">
+                    <span>Característica</span>
+                    <strong>
+                        {{ repair.inventory_item.name }}
+                    </strong>
+                </div>
+
+                <div class="repair-inventory-link">
+                    <a
+                        href="{% url 'inventory_detail' repair.inventory_item.section.inventory.id %}#inventory-item-{{ repair.inventory_item.id }}"
+                        class="button-secondary"
+                    >
+                        Ver en el inventario
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+
+    <!-- DESCRIPCIÓN -->
+
+    <section class="repair-detail-section">
+
+        <div class="repair-section-header">
+            <h2>Descripción</h2>
+        </div>
+
+        <div class="repair-description-card">
+
+            {% if repair.description %}
+                <p>{{ repair.description }}</p>
+            {% else %}
+                <p class="repair-empty-text">
+                    Sin descripción.
+                </p>
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- FOTOS -->
+
+    <section class="repair-detail-section">
+
+        <div class="repair-section-header">
+
+            <div>
+                <h2>Fotos de la reparación</h2>
+                <p>
+                    Fotografías asociadas a esta reparación.
+                </p>
+            </div>
+
+            {% if membership.role == "admin" or membership.role == "repair_user" %}
+
+                <a
+                    href="{% url 'repair_photo_create' repair.id %}"
+                    class="button-primary"
+                >
+                    Agregar foto
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="repair-photo-grid">
+
+            {% for photo in repair.photos.all %}
+
+                <div class="repair-photo-card">
+
+                    <div class="repair-photo-image">
+
+                        <img
+                            src="{{ photo.secure_url }}"
+                            alt="Foto de {{ repair.repair_type }}"
+                        >
+
+                    </div>
+
+                    {% if membership.role == "admin" or membership.role == "repair_user" %}
+
+                        <div class="repair-photo-actions">
+
+                            <form
+                                method="post"
+                                action="{% url 'repair_photo_delete' photo.id %}"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="button-danger"
+                                >
+                                    Eliminar foto
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% empty %}
+
+                <div class="repair-empty-state">
+                    <p>
+                        No hay fotos registradas.
+                    </p>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- ACCIONES -->
+
+    <section class="repair-detail-actions">
+
+        {% if membership.role == "admin" %}
+
+            <a
+                href="{% url 'repair_update' repair.id %}"
+                class="button-primary"
+            >
+                Editar reparación
+            </a>
+
+            <a
+                href="{% url 'repair_delete' repair.id %}"
+                class="button-danger"
+            >
+                Eliminar reparación
+            </a>
+
+        {% elif membership.role == "repair_user" %}
+
+            <a
+                href="{% url 'repair_user_update' repair.id %}"
+                class="button-primary"
+            >
+                Actualizar reparación
+            </a>
+
+        {% endif %}
+
+    </section>
+
+</div>
 
 {% endblock %}

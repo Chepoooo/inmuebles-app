@@ -1,145 +1,321 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/properties.css' %}">
+{% endblock %}
+
 {% block title %}
 {{ title }}
 {% endblock %}
 
 {% block content %}
 
-
-<h1>{{ title }}</h1>
-
-<form method="post" enctype="multipart/form-data" novalidate>
-
-    {% csrf_token %}
-
-    {% if form.non_field_errors %}
-        {{ form.non_field_errors }}
-    {% endif %}
+<div class="property-form-page">
 
 
-    <!-- Nombre de la propiedad -->
-    <p>
-        {{ form.name.label_tag }}
-        {{ form.name }}
+<!-- ================================
+     ENCABEZADO
+     ================================ -->
 
-        {% if form.name.errors %}
-            {{ form.name.errors }}
+<div class="property-form-header">
+
+    <div>
+
+        <a
+            href="{% url 'property_list' %}"
+            class="property-back-link"
+        >
+            ← Volver a propiedades
+        </a>
+
+        <h1>
+            {{ title }}
+        </h1>
+
+        <p class="property-form-description">
+            Completa la información de la propiedad para registrarla.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ================================
+     FORMULARIO
+     ================================ -->
+
+<div class="property-form-card">
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        novalidate
+        class="property-form"
+    >
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="property-form-errors">
+                {{ form.non_field_errors }}
+            </div>
+
         {% endif %}
-    </p>
 
 
-    <!-- Dirección -->
-    <p>
-        <label for="google-address">
-            {{ form.address.label }}
-        </label>
+        <!-- ================================
+             INFORMACIÓN DE LA PROPIEDAD
+             ================================ -->
 
-        <div id="google-address-container"></div>
+        <div class="property-form-section">
 
-        {{ form.address.as_hidden }}
+            <div class="property-form-section-header">
 
-        {% if form.address.errors %}
-            {{ form.address.errors }}
-        {% endif %}
-    </p>
+                <h2>
+                    Información de la propiedad
+                </h2>
 
+                <p>
+                    Ingresa los datos principales del inmueble.
+                </p>
 
-    <!-- Número de propiedad -->
-    <p>
-        {{ form.property_number.label_tag }}
-        {{ form.property_number }}
-
-        {% if form.property_number.errors %}
-            {{ form.property_number.errors }}
-        {% endif %}
-    </p>
+            </div>
 
 
-    <!-- Arrendatario -->
-    <p>
-        {{ form.tenant_name.label_tag }}
-        {{ form.tenant_name }}
+            <div class="property-form-grid">
 
-        {% if form.tenant_name.errors %}
-            {{ form.tenant_name.errors }}
-        {% endif %}
-    </p>
+                <!-- Nombre -->
 
+                <div class="property-form-field">
 
-    <!-- Número de documento -->
-    <p>
-        {{ form.document_number.label_tag }}
-        {{ form.document_number }}
+                    {{ form.name.label_tag }}
 
-        {% if form.document_number.errors %}
-            {{ form.document_number.errors }}
-        {% endif %}
-    </p>
+                    {{ form.name }}
+
+                    {% if form.name.errors %}
+                        {{ form.name.errors }}
+                    {% endif %}
+
+                </div>
 
 
-    <!-- Correo electrónico -->
-    <p>
-        {{ form.tenant_email.label_tag }}
-        {{ form.tenant_email }}
+                <!-- Número de propiedad -->
 
-        {% if form.tenant_email.errors %}
-            {{ form.tenant_email.errors }}
-        {% endif %}
-    </p>
+                <div class="property-form-field">
 
+                    {{ form.property_number.label_tag }}
 
-    <!-- Fecha de creación -->
-    <p>
-        {{ form.created_at.label_tag }}
-        {{ form.created_at }}
+                    {{ form.property_number }}
 
-        {% if form.created_at.errors %}
-            {{ form.created_at.errors }}
-        {% endif %}
-    </p>
+                    {% if form.property_number.errors %}
+                        {{ form.property_number.errors }}
+                    {% endif %}
+
+                </div>
 
 
-    <!-- Tipo de inmueble -->
-    <p>
-        {{ form.property_type.label_tag }}
-        {{ form.property_type }}
+                <!-- Dirección -->
 
-        {% if form.property_type.errors %}
-            {{ form.property_type.errors }}
-        {% endif %}
-    </p>
+                <div class="property-form-field property-form-field-full">
+
+                    <label for="google-address">
+                        {{ form.address.label }}
+                    </label>
+
+                    <div
+                        id="google-address-container"
+                        class="google-address-container"
+                    ></div>
+
+                    {{ form.address.as_hidden }}
+
+                    {% if form.address.errors %}
+                        {{ form.address.errors }}
+                    {% endif %}
+
+                </div>
 
 
-    <!-- Foto -->
-    <p>
-        {{ form.photo.label_tag }}
-        {{ form.photo }}
+                <!-- Tipo de inmueble -->
 
-        {% if form.photo.errors %}
-            {{ form.photo.errors }}
-        {% endif %}
-    </p>
+                <div class="property-form-field">
+
+                    {{ form.property_type.label_tag }}
+
+                    {{ form.property_type }}
+
+                    {% if form.property_type.errors %}
+                        {{ form.property_type.errors }}
+                    {% endif %}
+
+                </div>
 
 
-    <button type="submit">
-        Guardar
-    </button>
+                <!-- Fecha de creación -->
 
-</form>
+                <div class="property-form-field">
 
-<br>
+                    {{ form.created_at.label_tag }}
 
-<a href="{% url 'property_list' %}">
-    Cancelar
-</a>
+                    {{ form.created_at }}
 
+                    {% if form.created_at.errors %}
+                        {{ form.created_at.errors }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================
+             INFORMACIÓN DEL ARRENDATARIO
+             ================================ -->
+
+        <div class="property-form-section">
+
+            <div class="property-form-section-header">
+
+                <h2>
+                    Información del arrendatario
+                </h2>
+
+                <p>
+                    Datos de contacto de la persona asociada a la propiedad.
+                </p>
+
+            </div>
+
+
+            <div class="property-form-grid">
+
+                <!-- Arrendatario -->
+
+                <div class="property-form-field">
+
+                    {{ form.tenant_name.label_tag }}
+
+                    {{ form.tenant_name }}
+
+                    {% if form.tenant_name.errors %}
+                        {{ form.tenant_name.errors }}
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Documento -->
+
+                <div class="property-form-field">
+
+                    {{ form.document_number.label_tag }}
+
+                    {{ form.document_number }}
+
+                    {% if form.document_number.errors %}
+                        {{ form.document_number.errors }}
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Correo -->
+
+                <div class="property-form-field property-form-field-full">
+
+                    {{ form.tenant_email.label_tag }}
+
+                    {{ form.tenant_email }}
+
+                    {% if form.tenant_email.errors %}
+                        {{ form.tenant_email.errors }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================
+             FOTO
+             ================================ -->
+
+        <div class="property-form-section">
+
+            <div class="property-form-section-header">
+
+                <h2>
+                    Foto de la propiedad
+                </h2>
+
+                <p>
+                    Puedes agregar una fotografía para identificar fácilmente el inmueble.
+                </p>
+
+            </div>
+
+
+            <div class="property-form-field">
+
+                {{ form.photo.label_tag }}
+
+                {{ form.photo }}
+
+                {% if form.photo.errors %}
+                    {{ form.photo.errors }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================
+             ACCIONES
+             ================================ -->
+
+        <div class="property-form-actions">
+
+            <a
+                href="{% url 'property_list' %}"
+                class="button-secondary"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="button-primary"
+            >
+                Guardar propiedad
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+</div>
+
+<!-- ================================
+     GOOGLE MAPS
+     ================================ -->
 
 <script
     async
     src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&loading=async&v=weekly">
 </script>
-
 
 <script>
     async function initAddressAutocomplete() {
@@ -261,6 +437,5 @@
         initAddressAutocomplete
     );
 </script>
-
 
 {% endblock %}

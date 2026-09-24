@@ -1,84 +1,244 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/properties.css' %}">
+{% endblock %}
+
 {% block title %}
 {{ property.name }}
 {% endblock %}
 
 {% block content %}
 
-<h1>{{ property.name }}</h1>
+<div class="property-detail">
 
-{% if property.photo_url %}
+
+<!-- ================================
+     ENCABEZADO
+     ================================ -->
+
+<div class="property-detail-header">
+
     <div>
-        <img
-            src="{{ property.photo_url }}"
-            alt="Foto de {{ property.name }}"
-            width="300"
-            style="object-fit: cover; border-radius: 8px;"
+
+        <a
+            href="{% url 'property_list' %}"
+            class="property-back-link"
         >
+            ← Volver a propiedades
+        </a>
+
+        <h1>
+            {{ property.name }}
+        </h1>
+
+        <p class="property-detail-subtitle">
+            Información de la propiedad
+        </p>
+
     </div>
 
-    <br>
-{% endif %}
-
-<p>
-    <strong>Dirección:</strong>
-    {{ property.address }}
-</p>
-
-<p>
-    <strong>Número de propiedad:</strong>
-    {{ property.property_number }}
-</p>
-
-<p>
-    <strong>Arrendatario:</strong>
-    {{ property.tenant_name }}
-</p>
-
-<p>
-    <strong>Numero de Documento:</strong>
-    {{ property.document_number }}
-</p>
-
-<p>
-  <strong>Correo Electronico:</strong>
-   {{ property.tenant_email }}
-<p>
-<p>
-  <strong>Tipo de Inmueble:</strong>
-   {{ property.property_type }}
-<p>
-    <strong>Fecha de creación:</strong>
-    {{ property.created_at|date:"d/m/Y" }}
-</p>
+</div>
 
 
-<hr>
+<!-- ================================
+     INFORMACIÓN PRINCIPAL
+     ================================ -->
 
-<a href="{% url 'inventory_list' property.id %}">
-    Ver inventarios
-</a>
+<section class="property-detail-card">
 
-<br><br>
+    {% if property.photo_url %}
 
-<a href="{% url 'property_repair_list' property.id %}">
-    Ver reparaciones
-</a>
+        <div class="property-detail-photo">
 
-<hr>
+            <img
+                src="{{ property.photo_url }}"
+                alt="Foto de {{ property.name }}"
+            >
 
-<a href="{% url 'property_update' property.id %}">
-    Editar
-</a>
+        </div>
 
-<a href="{% url 'property_delete' property.id %}">
-    Eliminar
-</a>
+    {% endif %}
 
-<a href="{% url 'property_list' %}">
-    Volver a propiedades
-</a>
-```
+
+    <div class="property-detail-info">
+
+        <div class="property-info-item">
+
+            <span>
+                Dirección
+            </span>
+
+            <strong>
+                {{ property.address }}
+            </strong>
+
+        </div>
+
+
+        <div class="property-info-item">
+
+            <span>
+                Número de propiedad
+            </span>
+
+            <strong>
+                {{ property.property_number }}
+            </strong>
+
+        </div>
+
+
+        <div class="property-info-item">
+
+            <span>
+                Arrendatario
+            </span>
+
+            <strong>
+                {{ property.tenant_name|default:"Sin arrendatario" }}
+            </strong>
+
+        </div>
+
+
+        <div class="property-info-item">
+
+            <span>
+                Número de documento
+            </span>
+
+            <strong>
+                {{ property.document_number|default:"No registrado" }}
+            </strong>
+
+        </div>
+
+
+        <div class="property-info-item">
+
+            <span>
+                Correo electrónico
+            </span>
+
+            <strong>
+                {{ property.tenant_email|default:"No registrado" }}
+            </strong>
+
+        </div>
+
+
+        <div class="property-info-item">
+
+            <span>
+                Tipo de inmueble
+            </span>
+
+            <strong>
+                {{ property.property_type }}
+            </strong>
+
+        </div>
+
+
+        <div class="property-info-item">
+
+            <span>
+                Fecha de creación
+            </span>
+
+            <strong>
+                {{ property.created_at|date:"d/m/Y" }}
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================
+     ACCESOS
+     ================================ -->
+
+<section class="property-related-section">
+
+    <div class="property-related-card">
+
+        <div>
+
+            <h2>
+                Inventarios
+            </h2>
+
+            <p>
+                Consulta los inventarios registrados para esta propiedad.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'inventory_list' property.id %}"
+            class="button-primary"
+        >
+            Ver inventarios
+        </a>
+
+    </div>
+
+
+    <div class="property-related-card">
+
+        <div>
+
+            <h2>
+                Reparaciones
+            </h2>
+
+            <p>
+                Consulta las reparaciones registradas para esta propiedad.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'property_repair_list' property.id %}"
+            class="button-primary"
+        >
+            Ver reparaciones
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ================================
+     ACCIONES
+     ================================ -->
+
+<div class="property-detail-actions">
+
+    <a
+        href="{% url 'property_update' property.id %}"
+        class="button-primary"
+    >
+        Editar propiedad
+    </a>
+
+    <a
+        href="{% url 'property_delete' property.id %}"
+        class="button-danger"
+    >
+        Eliminar propiedad
+    </a>
+
+</div>
+
+
+</div>
 
 {% endblock %}

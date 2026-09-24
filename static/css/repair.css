@@ -1,0 +1,454 @@
+/* ================================
+   REPAIR DETAIL
+   ================================ */
+
+.repair-detail {
+    width: 100%;
+}
+
+/* ================================
+   ENCABEZADO
+   ================================ */
+
+.repair-detail-header {
+    margin-bottom: 28px;
+}
+
+.repair-detail-header h1 {
+    margin: 12px 0 4px;
+}
+
+.repair-detail-subtitle {
+    margin: 0;
+    color: var(--color-dark);
+    font-size: 14px;
+}
+
+.repair-back-link {
+    color: var(--color-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.repair-back-link:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+
+/* ================================
+   INFORMACIÓN PRINCIPAL
+   ================================ */
+
+.repair-detail-card {
+    padding: 24px;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.repair-detail-info {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.repair-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.repair-info-item span:first-child {
+    color: var(--color-dark);
+    font-size: 12px;
+}
+
+.repair-info-item strong {
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+
+/* ================================
+   ESTADO
+   ================================ */
+
+.repair-info-item .repair-status {
+    display: inline-flex;
+    width: fit-content;
+}
+
+
+/* ================================
+   SECCIONES
+   ================================ */
+
+.repair-detail-section {
+    margin-top: 24px;
+}
+
+.repair-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 14px;
+}
+
+.repair-section-header h2 {
+    margin: 0 0 4px;
+    font-size: 19px;
+}
+
+.repair-section-header p {
+    margin: 0;
+    color: var(--color-dark);
+    font-size: 13px;
+}
+
+
+/* ================================
+   ORIGEN DEL INVENTARIO
+   ================================ */
+
+.repair-inventory-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 20px;
+    padding: 22px;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.repair-inventory-link {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+}
+
+
+/* ================================
+   DESCRIPCIÓN
+   ================================ */
+
+.repair-description-card {
+    padding: 22px;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.repair-description-card p {
+    margin: 0;
+    color: var(--color-dark);
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+.repair-empty-text {
+    color: #777 !important;
+}
+
+
+/* ================================
+   FOTOS
+   ================================ */
+
+.repair-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.repair-photo-card {
+    overflow: hidden;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.repair-photo-image {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background-color: var(--color-light);
+}
+
+.repair-photo-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.repair-photo-actions {
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.repair-photo-actions form {
+    margin: 0;
+}
+
+.repair-photo-actions .button-danger {
+    width: 100%;
+}
+
+
+/* ================================
+   ESTADO VACÍO
+   ================================ */
+
+.repair-empty-state {
+    grid-column: 1 / -1;
+    padding: 30px 20px;
+    text-align: center;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.repair-empty-state p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* ================================
+   ACCIONES
+   ================================ */
+
+.repair-detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.repair-detail-actions .button-primary,
+.repair-detail-actions .button-danger {
+    width: auto;
+}
+
+
+/* ================================
+   TABLET
+   ================================ */
+
+@media (max-width: 900px) {
+
+    .repair-detail-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .repair-photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ================================
+   MÓVIL
+   ================================ */
+
+@media (max-width: 600px) {
+
+    .repair-detail-header {
+        margin-bottom: 20px;
+    }
+
+    .repair-detail-card {
+        padding: 18px;
+    }
+
+    .repair-detail-info {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .repair-section-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .repair-section-header .button-primary {
+        width: 100%;
+    }
+
+    .repair-inventory-card {
+        grid-template-columns: 1fr;
+        padding: 18px;
+        gap: 17px;
+    }
+
+    .repair-inventory-link {
+        grid-column: auto;
+    }
+
+    .repair-inventory-link .button-secondary {
+        width: 100%;
+    }
+
+    .repair-description-card {
+        padding: 18px;
+    }
+
+    .repair-photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .repair-photo-image {
+        height: 240px;
+    }
+
+    .repair-detail-actions {
+        flex-direction: column;
+    }
+
+    .repair-detail-actions .button-primary,
+    .repair-detail-actions .button-danger {
+        width: 100%;
+    }
+
+}
+
+/* ================================
+   PROPERTY REPAIR LIST
+   ================================ */
+
+.property-repair-list {
+    width: 100%;
+}
+
+
+/* ================================
+   ENCABEZADO
+   ================================ */
+
+.property-repair-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.property-repair-header h1 {
+    margin: 12px 0 4px;
+}
+
+.property-repair-subtitle {
+    margin: 0;
+    color: var(--color-dark);
+    font-size: 14px;
+}
+
+
+/* ================================
+   TABLA
+   ================================ */
+
+.property-repair-table-wrapper {
+    overflow-x: auto;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.property-repair-table {
+    margin: 0;
+    box-shadow: none;
+}
+
+.property-repair-table th {
+    white-space: nowrap;
+}
+
+.property-repair-table td {
+    vertical-align: middle;
+}
+
+.property-repair-name {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.property-repair-name:hover {
+    color: var(--color-secondary);
+    text-decoration: underline;
+}
+
+
+/* ================================
+   ACCIONES
+   ================================ */
+
+.property-repair-actions {
+    white-space: nowrap;
+}
+
+.property-repair-actions a {
+    color: var(--color-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.property-repair-actions a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+
+/* ================================
+   ESTADO VACÍO
+   ================================ */
+
+.property-repair-empty {
+    padding: 24px;
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 768px) {
+
+    .property-repair-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .property-repair-header .button-primary {
+        width: 100%;
+    }
+
+    .property-repair-table-wrapper {
+        border-radius: var(--border-radius);
+    }
+
+    .property-repair-table {
+        min-width: 700px;
+    }
+
+}

@@ -1,18 +1,35 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Inventarios
+Inventarios
 {% endblock %}
 
 {% block content %}
 
+<div class="page-header">
+
+
+<div>
     <h1>Inventarios</h1>
 
-    <p>
+    <p class="page-description">
         Consulta y busca los inventarios registrados en la organización.
     </p>
+</div>
 
-    <form method="get">
+
+</div>
+
+<!-- ================================
+     BUSCADOR
+     ================================ -->
+
+<div class="search-box">
+
+
+<form method="get" class="inventory-search-form">
+
+    <div class="search-input-wrapper">
 
         <input
             type="text"
@@ -21,153 +38,368 @@
             value="{{ search }}"
         >
 
-        <button type="submit">
-            Buscar
-        </button>
+    </div>
 
-        {% if search %}
-            <a href="{% url 'inventory_dashboard' %}">
-                Limpiar búsqueda
-            </a>
-        {% endif %}
+    <button type="submit" class="button-primary">
+        Buscar
+    </button>
 
-    </form>
+    {% if search %}
 
-    <hr>
-
-    <p>
-        Inventarios encontrados: {{ page_obj.paginator.count }}
-    </p>
-
-    {% if inventories %}
-
-        <table border="1" cellpadding="8" cellspacing="0">
-
-            <thead>
-
-                <tr>
-
-                    <th>Propiedad</th>
-
-                    <th>Número</th>
-
-                    <th>Tipo</th>
-
-                    <th>Fecha</th>
-
-                    <th>Firmado por</th>
-
-                    <th>Acción</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for inventory in inventories %}
-
-                    <tr>
-
-                        <td>
-                            {{ inventory.property.name }}
-                        </td>
-
-                        <td>
-                            {{ inventory.property.property_number }}
-                        </td>
-
-                        <td>
-                            {{ inventory.get_inventory_type_display }}
-                        </td>
-
-                        <td>
-                            {{ inventory.created_at|date:"d/m/Y" }}
-                        </td>
-
-                        <td>
-
-                            {% if inventory.signature %}
-
-                                {{ inventory.signature.name }}
-
-                            {% else %}
-
-                                Sin firma
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-
-                            <a href="{% url 'inventory_detail' inventory.id %}">
-                                Ver inventario
-                            </a>
-
-                            {% if membership.role == "admin" %}
-
-                                <a href="{% url 'inventory_delete' inventory.id %}">
-                                    Eliminar
-                                </a>
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    {% else %}
-
-        {% if search %}
-
-            <p>
-                No se encontraron inventarios para "{{ search }}".
-            </p>
-
-        {% else %}
-
-            <p>
-                No hay inventarios registrados.
-            </p>
-
-        {% endif %}
+        <a
+            href="{% url 'inventory_dashboard' %}"
+            class="button-secondary"
+        >
+            Limpiar
+        </a>
 
     {% endif %}
 
-    {% if page_obj.has_other_pages %}
+</form>
 
-        <div>
 
-            {% if page_obj.has_previous %}
+</div>
 
-                <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
-                    Anterior
-                </a>
+<!-- ================================
+     RESULTADOS
+     ================================ -->
 
-            {% endif %}
+<div class="results-header">
 
-            <span>
-                Página {{ page_obj.number }}
-                de {{ page_obj.paginator.num_pages }}
+
+Inventarios encontrados: {{ page_obj.paginator.count }}
+
+
+</div>
+
+<!-- ================================
+     TABLA — ESCRITORIO
+     ================================ -->
+
+<div class="inventories-table-wrapper">
+
+
+<table class="inventories-table">
+
+    <thead>
+
+        <tr>
+
+            <th>Propiedad</th>
+
+            <th>Número</th>
+
+            <th>Tipo</th>
+
+            <th>Fecha</th>
+
+            <th>Firmado por</th>
+
+            <th>Acciones</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for inventory in inventories %}
+
+            <tr>
+
+                <td>
+
+                    <span class="inventory-property-name">
+                        {{ inventory.property.name }}
+                    </span>
+
+                </td>
+
+                <td>
+                    {{ inventory.property.property_number }}
+                </td>
+
+                <td>
+
+                    <span class="inventory-type">
+                        {{ inventory.get_inventory_type_display }}
+                    </span>
+
+                </td>
+
+                <td>
+                    {{ inventory.created_at|date:"d/m/Y" }}
+                </td>
+
+                <td>
+
+                    {% if inventory.signature %}
+
+                        {{ inventory.signature.name }}
+
+                    {% else %}
+
+                        <span class="inventory-no-signature">
+                            Sin firma
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <div class="inventory-actions">
+
+                        <a
+                            href="{% url 'inventory_detail' inventory.id %}"
+                            class="inventory-action-link"
+                        >
+                            Ver inventario
+                        </a>
+
+                        {% if membership.role == "admin" %}
+
+                            <a
+                                href="{% url 'inventory_delete' inventory.id %}"
+                                class="inventory-action-delete"
+                            >
+                                Eliminar
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="empty-state">
+
+                        <h3>No hay inventarios registrados</h3>
+
+                        <p>
+
+                            {% if search %}
+
+                                No encontramos inventarios que coincidan con tu búsqueda.
+
+                            {% else %}
+
+                                Todavía no has registrado ningún inventario.
+
+                            {% endif %}
+
+                        </p>
+
+                        {% if search %}
+
+                            <a
+                                href="{% url 'inventory_dashboard' %}"
+                                class="button-secondary"
+                            >
+                                Ver todos los inventarios
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+</div>
+
+<!-- ================================
+     TARJETAS — MÓVIL
+     ================================ -->
+
+<div class="inventories-mobile-list">
+
+
+{% for inventory in inventories %}
+
+    <article class="inventory-card">
+
+        <div class="inventory-card-header">
+
+            <div>
+
+                <h2>
+                    {{ inventory.property.name }}
+                </h2>
+
+                <span class="inventory-card-number">
+                    Propiedad #{{ inventory.property.property_number }}
+                </span>
+
+            </div>
+
+            <span class="inventory-type">
+                {{ inventory.get_inventory_type_display }}
             </span>
 
-            {% if page_obj.has_next %}
+        </div>
 
-                <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
-                    Siguiente
+
+        <div class="inventory-card-info">
+
+            <div>
+
+                <span>Tipo de inventario</span>
+
+                <strong>
+                    {{ inventory.get_inventory_type_display }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>Fecha</span>
+
+                <strong>
+                    {{ inventory.created_at|date:"d/m/Y" }}
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>Firmado por</span>
+
+                <strong>
+
+                    {% if inventory.signature %}
+
+                        {{ inventory.signature.name }}
+
+                    {% else %}
+
+                        <span class="inventory-no-signature">
+                            Sin firma
+                        </span>
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="inventory-card-actions">
+
+            <a
+                href="{% url 'inventory_detail' inventory.id %}"
+                class="button-primary"
+            >
+                Ver inventario
+            </a>
+
+            {% if membership.role == "admin" %}
+
+                <a
+                    href="{% url 'inventory_delete' inventory.id %}"
+                    class="button-secondary inventory-delete-button"
+                >
+                    Eliminar
                 </a>
 
             {% endif %}
 
         </div>
 
+    </article>
+
+{% empty %}
+
+    <div class="empty-state mobile-empty-state">
+
+        <h3>No hay inventarios registrados</h3>
+
+        <p>
+
+            {% if search %}
+
+                No encontramos inventarios que coincidan con tu búsqueda.
+
+            {% else %}
+
+                Todavía no has registrado ningún inventario.
+
+            {% endif %}
+
+        </p>
+
+    </div>
+
+{% endfor %}
+
+
+</div>
+
+<!-- ================================
+     PAGINACIÓN
+     ================================ -->
+
+{% if page_obj.has_other_pages %}
+
+
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+
+        <a
+            href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+            class="pagination-button"
+        >
+            Anterior
+        </a>
+
     {% endif %}
+
+
+    <span class="pagination-info">
+
+        Página {{ page_obj.number }}
+        de {{ page_obj.paginator.num_pages }}
+
+    </span>
+
+
+    {% if page_obj.has_next %}
+
+        <a
+            href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+            class="pagination-button"
+        >
+            Siguiente
+        </a>
+
+    {% endif %}
+
+</div>
+
+
+{% endif %}
 
 {% endblock %}
