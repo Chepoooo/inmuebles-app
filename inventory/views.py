@@ -349,15 +349,32 @@ def inventory_item_delete(request, item_id):
         section__inventory__property__organization=organization,
     )
 
-    inventory_id = item.section.inventory_id
+    inventory = item.section.inventory
+    inventory_id = inventory.id
 
     if request.method == "POST":
-        item.delete()
 
-        return redirect(
-            "inventory_detail",
-            inventory_id=inventory_id,
-        )
+        # Primer paso: guardar el inventario antes de mostrar
+        # la confirmación de eliminación.
+        if request.POST.get("prepare_delete") == "1":
+            save_inventory_from_post(request, inventory)
+
+            return render(
+                request,
+                "inventory/inventory_item_confirm_delete.html",
+                {
+                    "item": item,
+                },
+            )
+
+        # Segundo paso: eliminar solo cuando se confirma.
+        if request.POST.get("confirm_delete") == "1":
+            item.delete()
+
+            return redirect(
+                "inventory_detail",
+                inventory_id=inventory_id,
+            )
 
     return render(
         request,
@@ -383,7 +400,26 @@ def inventory_item_photo_create(request, item_id):
         section__inventory__property__organization=organization,
     )
 
+    inventory = item.section.inventory
+
     if request.method == "POST":
+
+        # Guardar primero los cambios del inventario.
+        if request.POST.get("prepare_photo") == "1":
+            save_inventory_from_post(
+                request,
+                inventory,
+            )
+
+            return render(
+                request,
+                "inventory/inventory_item_photo_form.html",
+                {
+                    "item": item,
+                },
+            )
+
+        # Subir la foto después de que el usuario la seleccione.
         photo = request.FILES.get("photo")
 
         if photo:
@@ -400,7 +436,7 @@ def inventory_item_photo_create(request, item_id):
 
             return redirect(
                 "inventory_detail",
-                inventory_id=item.section.inventory_id,
+                inventory_id=inventory.id,
             )
 
     return render(
@@ -427,17 +463,35 @@ def inventory_item_photo_delete(request, photo_id):
         item__section__inventory__property__organization=organization,
     )
 
-    inventory_id = photo.item.section.inventory_id
+    inventory = photo.item.section.inventory
+    inventory_id = inventory.id
 
     if request.method == "POST":
-        cloudinary.uploader.destroy(photo.public_id)
 
-        photo.delete()
+        # Guardar primero los cambios del inventario.
+        if request.POST.get("prepare_delete_photo") == "1":
+            save_inventory_from_post(
+                request,
+                inventory,
+            )
 
-        return redirect(
-            "inventory_detail",
-            inventory_id=inventory_id,
-        )
+            return render(
+                request,
+                "inventory/inventory_item_photo_confirm_delete.html",
+                {
+                    "photo": photo,
+                },
+            )
+
+        # Eliminar la foto únicamente tras confirmar.
+        if request.POST.get("confirm_delete_photo") == "1":
+            cloudinary.uploader.destroy(photo.public_id)
+            photo.delete()
+
+            return redirect(
+                "inventory_detail",
+                inventory_id=inventory_id,
+            )
 
     return render(
         request,
@@ -783,22 +837,40 @@ def inventory_section_delete(request, section_id):
         inventory__property__organization=organization,
     )
 
-    inventory_id = section.inventory.id
+    inventory = section.inventory
+    inventory_id = inventory.id
 
     if request.method == "POST":
-        section.delete()
 
-        return redirect(
-            "inventory_detail",
-            inventory_id=inventory_id,
-        )
+        # Primer paso: guardar el inventario antes de mostrar
+        # la confirmación de eliminación.
+        if request.POST.get("prepare_delete") == "1":
+            save_inventory_from_post(request, inventory)
+
+            return render(
+                request,
+                "inventory/inventory_section_confirm_delete.html",
+                {
+                    "section": section,
+                    "inventory": inventory,
+                },
+            )
+
+        # Segundo paso: eliminar solo cuando se confirma.
+        if request.POST.get("confirm_delete") == "1":
+            section.delete()
+
+            return redirect(
+                "inventory_detail",
+                inventory_id=inventory_id,
+            )
 
     return render(
         request,
         "inventory/inventory_section_confirm_delete.html",
         {
             "section": section,
-            "inventory": section.inventory,
+            "inventory": inventory,
         },
     )
     

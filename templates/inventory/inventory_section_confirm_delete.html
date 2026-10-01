@@ -24,8 +24,9 @@
     </p>
 
     <form method="post">
-
         {% csrf_token %}
+
+        <input type="hidden" name="confirm_delete" value="1">
 
         <button type="submit">
             Sí, eliminar sección
@@ -34,7 +35,6 @@
         <a href="{% url 'inventory_detail' inventory.id %}">
             Cancelar
         </a>
-
     </form>
 
 {% endblock %}

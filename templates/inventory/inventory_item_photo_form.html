@@ -1,41 +1,67 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+{% load static %}
 
-    <title>Agregar foto</title>
-</head>
-<body>
+{% block title %}Agregar foto{% endblock %}
 
-    <h1>Agregar foto</h1>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% endblock %}
 
-    <h2>{{ item.name }}</h2>
+{% block content %}
+<div class="inventory-photo-page">
 
-    <form method="post" enctype="multipart/form-data">
+    <div class="inventory-photo-card">
+        <div class="inventory-photo-header">
+            <a
+                href="{% url 'inventory_detail' item.section.inventory.id %}"
+                class="inventory-photo-back"
+            >
+                ← Volver al inventario
+            </a>
 
-        {% csrf_token %}
+            <h1>Agregar foto</h1>
+            <p class="inventory-photo-subtitle">
+                Característica: <strong>{{ item.name }}</strong>
+            </p>
+        </div>
 
-        <input
-            type="file"
-            name="photo"
-            accept="image/*"
-            required
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="inventory-photo-form"
         >
+            {% csrf_token %}
 
-        <br><br>
+            <div class="inventory-photo-field">
+                <label for="photo">Seleccionar imagen</label>
 
-        <button type="submit">
-            Subir foto
-        </button>
+                <input
+                    type="file"
+                    id="photo"
+                    name="photo"
+                    accept="image/*"
+                    required
+                >
 
-    </form>
+                <small>
+                    Selecciona una imagen para adjuntarla a esta característica.
+                </small>
+            </div>
 
-    <br>
+            <div class="inventory-photo-actions">
+                <button type="submit" class="inventory-photo-button">
+                    Subir foto
+                </button>
 
-    <a href="{% url 'inventory_detail' item.section.inventory.id %}">
-        Cancelar
-    </a>
+                <a
+                    href="{% url 'inventory_detail' item.section.inventory.id %}"
+                    class="inventory-photo-cancel"
+                >
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
 
-</body>
-</html>
+</div>
+{% endblock %}

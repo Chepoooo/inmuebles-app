@@ -1,42 +1,62 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+{% load static %}
 
-    <title>Eliminar foto</title>
-</head>
-<body>
+{% block title %}Eliminar foto{% endblock %}
 
-    <h1>Eliminar foto</h1>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% endblock %}
 
-    <p>
-        ¿Estás seguro de que quieres eliminar esta foto?
-    </p>
+{% block content %}
+<div class="inventory-photo-page">
 
-    <img
-        src="{{ photo.secure_url }}"
-        alt="Foto de {{ photo.item.name }}"
-        width="300"
-    >
+    <div class="inventory-photo-card inventory-photo-delete-card">
+        <div class="inventory-photo-header">
+            <a
+                href="{% url 'inventory_detail' photo.item.section.inventory.id %}"
+                class="inventory-photo-back"
+            >
+                ← Volver al inventario
+            </a>
 
-    <br><br>
+            <h1>Eliminar foto</h1>
+            <p class="inventory-photo-subtitle">
+                ¿Estás seguro de que quieres eliminar esta foto?
+            </p>
+        </div>
 
-    <form method="post">
+        <div class="inventory-photo-preview">
+            <img
+                src="{{ photo.secure_url }}"
+                alt="Foto de {{ photo.item.name }}"
+            >
 
-        {% csrf_token %}
+            <p>
+                Característica: <strong>{{ photo.item.name }}</strong>
+            </p>
+        </div>
 
-        <button type="submit">
-            Sí, eliminar
-        </button>
+        <form method="post" class="inventory-photo-form">
+            {% csrf_token %}
+            <input type="hidden" name="confirm_delete_photo" value="1">
 
-    </form>
+            <div class="inventory-photo-actions">
+                <button
+                    type="submit"
+                    class="inventory-photo-button inventory-photo-button-danger"
+                >
+                    Sí, eliminar foto
+                </button>
 
-    <br>
+                <a
+                    href="{% url 'inventory_detail' photo.item.section.inventory.id %}"
+                    class="inventory-photo-cancel"
+                >
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
 
-    <a href="{% url 'inventory_detail' photo.item.section.inventory.id %}">
-        Cancelar
-    </a>
-
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    Eliminar característica
+{% endblock %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% block content %}
+
+    <h1>Eliminar característica</h1>
+
+    <p>
+        ¿Estás seguro de que deseas eliminar esta característica?
+    </p>
+
+    <p>
+        <strong>Característica:</strong>
+        {{ item.name }}
+    </p>
+
+    {% if item.description %}
+
+        <p>
+            <strong>Descripción:</strong>
+            {{ item.description }}
+        </p>
+
+    {% endif %}
+
+    <p>
+        <strong>Sección:</strong>
+        {{ item.section.name }}
+    </p>
+
+    <p>
+        <strong>Inventario:</strong>
+        {{ item.section.inventory.get_inventory_type_display }}
+    </p>
+
+    <p>
+        <strong>Propiedad:</strong>
+        {{ item.section.inventory.property.name }}
+    </p>
+
+    <p>
+        <strong>Advertencia:</strong>
+        Esta acción eliminará la característica y toda la información
+        asociada a ella.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input type="hidden" name="confirm_delete" value="1">
+
+        <button type="submit">
+            Sí, eliminar característica
+        </button>
+
+        <a href="{% url 'inventory_detail' item.section.inventory.id %}">
+            Cancelar
+        </a>
+    </form>
+
+{% endblock %}
+
