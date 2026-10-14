@@ -134,3 +134,28 @@ class InventorySignature(models.Model):
 
     def __str__(self):
         return f"Signature for {self.inventory}"
+    
+class InventorySignaturePhoto(models.Model):
+    signature = models.ForeignKey(
+        InventorySignature,
+        on_delete=models.CASCADE,
+        related_name="photos",
+    )
+
+    public_id = models.CharField(
+        max_length=255,
+    )
+
+    secure_url = models.URLField(
+        max_length=500,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ["created_at", "id"]
+
+    def __str__(self):
+        return f"Evidence for {self.signature}"

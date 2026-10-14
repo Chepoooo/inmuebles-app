@@ -1,0 +1,232 @@
+/* ========================================
+   ORGANIZACIÓN
+======================================== */
+
+.organization-page {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 30px 20px 50px;
+    box-sizing: border-box;
+}
+
+.organization-header {
+    margin-bottom: 24px;
+}
+
+.organization-header h1 {
+    margin: 0 0 8px;
+    color: #1f3a5c;
+    font-size: 30px;
+}
+
+.organization-description {
+    margin: 0;
+    color: #4a4a4a;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.organization-card {
+    background: #FFFFFF;
+    border: 1px solid #e1e5e9;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 4px 18px rgba(31, 58, 92, 0.08);
+    box-sizing: border-box;
+}
+
+.organization-form {
+    width: 100%;
+}
+
+.organization-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 25px;
+}
+
+.organization-field label {
+    color: #1f3a5c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.organization-field input[type="text"],
+.organization-field input[type="file"] {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+}
+
+.organization-field input[type="text"] {
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid #d3d9df;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #4a4a4a;
+}
+
+.organization-field input[type="text"]:focus {
+    outline: none;
+    border-color: #2f5d8c;
+    box-shadow: 0 0 0 3px rgba(47, 93, 140, 0.12);
+}
+
+.organization-field input[type="file"] {
+    min-height: 46px;
+    padding: 10px;
+    border: 1px solid #d3d9df;
+    border-radius: 8px;
+    background: #f2f2f2;
+    color: #4a4a4a;
+}
+
+.organization-field small {
+    color: #6a6a6a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.organization-current-logo {
+    margin: 4px 0 8px;
+}
+
+.organization-current-logo p {
+    margin: 0 0 10px;
+    color: #1f3a5c;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.organization-current-logo img {
+    display: block;
+    width: auto;
+    max-width: 280px;
+    max-height: 160px;
+    padding: 12px;
+    border: 1px solid #e1e5e9;
+    border-radius: 10px;
+    background: #FFFFFF;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+.organization-info-box {
+    margin: 10px 0 25px;
+    padding: 15px 17px;
+    border-left: 4px solid #2f5d8c;
+    border-radius: 6px;
+    background: #f2f2f2;
+    color: #4a4a4a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.organization-info-box strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #1f3a5c;
+}
+
+.organization-info-box p {
+    margin: 0;
+}
+
+.organization-actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.organization-error {
+    color: #c73a32;
+    font-size: 13px;
+}
+
+.organization-read-only-value {
+    min-height: 46px;
+    padding: 12px 13px;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    background: #f2f2f2;
+    color: #4a4a4a;
+    box-sizing: border-box;
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 768px) {
+
+    .organization-page {
+        padding: 24px 16px 40px;
+    }
+
+    .organization-card {
+        padding: 24px 20px;
+    }
+
+    .organization-header h1 {
+        font-size: 27px;
+    }
+
+}
+
+
+/* ========================================
+   CELULARES
+======================================== */
+
+@media (max-width: 600px) {
+
+    .organization-page {
+        padding: 18px 12px 32px;
+    }
+
+    .organization-card {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .organization-header {
+        margin-bottom: 18px;
+    }
+
+    .organization-header h1 {
+        font-size: 24px;
+    }
+
+    .organization-description {
+        font-size: 14px;
+    }
+
+    .organization-field {
+        margin-bottom: 21px;
+    }
+
+    .organization-field input[type="text"],
+    .organization-field input[type="file"] {
+        min-height: 48px;
+    }
+
+    .organization-current-logo img {
+        width: 100%;
+        max-width: 100%;
+        max-height: 180px;
+    }
+
+    .organization-actions {
+        width: 100%;
+    }
+
+    .organization-actions .button-primary {
+        width: 100%;
+        min-height: 48px;
+    }
+
+}

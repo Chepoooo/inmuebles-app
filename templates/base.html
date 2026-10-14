@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}Inmuebles{% endblock %}</title>
+    <title>{% block title %}Habita{% endblock %}</title>
 
     {% load static %}
 
@@ -19,13 +19,14 @@
         <nav class="main-nav">
 
             <div class="nav-brand">
-                <a href="{% url 'property_list' %}">House Hold</a>
+                <a href="{% url 'property_list' %}">Habita</a>
             </div>
 
             <div class="nav-links">
                 <a href="{% url 'property_list' %}">Propiedades</a>
                 <a href="{% url 'repair_list' %}">Reparaciones</a>
                 <a href="{% url 'inventory_dashboard' %}">Inventarios</a>
+                <a href="{% url 'organization_settings' %}">Organización</a>
             </div>
 
             <div class="nav-user">

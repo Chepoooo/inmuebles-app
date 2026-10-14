@@ -672,6 +672,51 @@ Inventario
 
                         </div>
 
+                        <!-- FOTOS DE EVIDENCIA -->
+
+                        <div class="inventory-signature-evidence">
+
+                            <div class="inventory-signature-evidence-header">
+
+                                <h3>
+                                    Fotos de evidencia
+                                </h3>
+
+                                <span>
+                                    Hasta 5 fotos
+                                </span>
+
+                            </div>
+
+                            <div class="inventory-signature-evidence-grid">
+
+                                {% for photo in inventory.signature.photos.all %}
+
+                                    <div class="inventory-signature-evidence-photo">
+
+                                        <img
+                                            src="{{ photo.secure_url }}"
+                                            alt="Evidencia {{ forloop.counter }}"
+                                        >
+
+                                        <span>
+                                            Prueba {{ forloop.counter }}
+                                        </span>
+
+                                    </div>
+
+                                {% empty %}
+
+                                    <p class="inventory-empty-text">
+                                        No se han agregado fotos de evidencia.
+                                    </p>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                 {% endif %}
@@ -679,6 +724,8 @@ Inventario
             </section>
 
         {% endif %}
+
+
 
 
         <!-- GUARDAR -->

@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Organización
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/organizations.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="organization-page">
+
+    <div class="organization-header">
+
+        <div>
+            <h1>Organización</h1>
+
+            <p class="organization-description">
+                Configura la información que identificará
+                a tu organización en los documentos PDF
+                de los inventarios.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="organization-card">
+
+        {% if membership.role == "admin" %}
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="organization-form"
+            >
+
+                {% csrf_token %}
+
+                <!-- Nombre -->
+
+                <div class="organization-field">
+
+                    <label for="{{ form.name.id_for_label }}">
+                        {{ form.name.label }}
+                    </label>
+
+                    {{ form.name }}
+
+                    <small>
+                        Este nombre aparecerá como
+                        encabezado en los PDF.
+                    </small>
+
+                    {% if form.name.errors %}
+
+                        <div class="organization-error">
+                            {{ form.name.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Logo -->
+
+                <div class="organization-field">
+
+                    <label for="{{ form.logo.id_for_label }}">
+                        Logo de la organización
+                    </label>
+
+                    {% if organization.logo_secure_url %}
+
+                        <div class="organization-current-logo">
+
+                            <p>
+                                Logo actual
+                            </p>
+
+                            <img
+                                src="{{ organization.logo_secure_url }}"
+                                alt="Logo de {{ organization.name }}"
+                            >
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {{ form.logo }}
+
+                    <small>
+                        Sube el logo que deseas utilizar
+                        en los documentos PDF.
+                    </small>
+
+                    {% if form.logo.errors %}
+
+                        <div class="organization-error">
+                            {{ form.logo.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Información -->
+
+                <div class="organization-info-box">
+
+                    <strong>
+                        Personalización de documentos
+                    </strong>
+
+                    <p>
+                        El nombre y logo configurados aquí
+                        se utilizarán automáticamente en
+                        los PDF de los inventarios de esta
+                        organización.
+                    </p>
+
+                </div>
+
+
+                <!-- Acciones -->
+
+                <div class="organization-actions">
+
+                    <button
+                        type="submit"
+                        class="button-primary"
+                    >
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </form>
+
+        {% else %}
+
+            <div class="organization-read-only">
+
+                <div class="organization-field">
+
+                    <label>
+                        Nombre de la organización
+                    </label>
+
+                    <div class="organization-read-only-value">
+                        {{ organization.name }}
+                    </div>
+
+                </div>
+
+
+                {% if organization.logo_secure_url %}
+
+                    <div class="organization-current-logo">
+
+                        <p>
+                            Logo de la organización
+                        </p>
+
+                        <img
+                            src="{{ organization.logo_secure_url }}"
+                            alt="Logo de {{ organization.name }}"
+                        >
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="organization-info-box">
+
+                    Solo el administrador de la organización
+                    puede modificar estos datos.
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -6,12 +6,26 @@ from django.db import models
 
 
 class Organization(models.Model):
-    name = models.CharField(max_length=150)
-    created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(
+        max_length=150,
+    )
+
+    logo_public_id = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    logo_secure_url = models.URLField(
+        max_length=500,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
 
     def __str__(self):
         return self.name
-
 
 class Membership(models.Model):
     class Role(models.TextChoices):

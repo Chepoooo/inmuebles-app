@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from inventory.utils import save_inventory_from_post
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
+from django.http import FileResponse
+from django.utils.text import slugify
 import cloudinary
 
 import cloudinary.uploader
@@ -30,7 +32,10 @@ from .models import (
     InventoryItemPhoto,
     InventorySection,
     InventorySignature,
+    InventorySignaturePhoto,
 )
+
+from .pdf import build_inventory_pdf
 
 
 @login_required
@@ -156,7 +161,12 @@ def inventory_detail(request, inventory_id):
     membership = get_current_membership(request)
 
     inventory = get_object_or_404(
-        Inventory.objects.select_related("property"),
+        Inventory.objects.select_related(
+            "property",
+            "signature",
+        ).prefetch_related(
+            "signature__photos",
+        ),
         id=inventory_id,
         property__organization=organization,
     )
@@ -522,21 +532,79 @@ def inventory_signature_create(request, inventory_id):
         )
 
     if request.method == "POST":
-        name = request.POST.get("name", "").strip()
-        signature_data = request.POST.get("signature", "").strip()
+
+        name = request.POST.get(
+            "name",
+            "",
+        ).strip()
+
+        signature_data = request.POST.get(
+            "signature",
+            "",
+        ).strip()
+
+        photos = request.FILES.getlist(
+            "photos"
+        )
+
+        # ----------------------------------------------------
+        # Validar cantidad de fotos
+        # ----------------------------------------------------
+
+        if len(photos) > 5:
+
+            return render(
+                request,
+                "inventory/inventory_signature_form.html",
+                {
+                    "inventory": inventory,
+                    "photo_error": (
+                        "Puedes subir un máximo "
+                        "de 5 fotos como evidencia."
+                    ),
+                },
+            )
+
+        # ----------------------------------------------------
+        # Crear firma
+        # ----------------------------------------------------
 
         if name and signature_data:
+
             result = cloudinary.uploader.upload(
                 signature_data,
                 folder="inventory/signatures",
             )
 
-            InventorySignature.objects.create(
+            signature = InventorySignature.objects.create(
                 inventory=inventory,
                 name=name,
                 public_id=result["public_id"],
                 secure_url=result["secure_url"],
             )
+
+            # ------------------------------------------------
+            # Subir evidencias
+            # ------------------------------------------------
+
+            for photo in photos:
+
+                photo_result = (
+                    cloudinary.uploader.upload(
+                        photo,
+                        folder="inventory/signatures/evidence",
+                    )
+                )
+
+                InventorySignaturePhoto.objects.create(
+                    signature=signature,
+                    public_id=photo_result[
+                        "public_id"
+                    ],
+                    secure_url=photo_result[
+                        "secure_url"
+                    ],
+                )
 
             return redirect(
                 "inventory_detail",
@@ -592,6 +660,57 @@ def inventory_dashboard(request):
             "membership": get_current_membership(request),
         },
     )
+    
+    
+@login_required
+def inventory_pdf(request, inventory_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    inventory = get_object_or_404(
+        Inventory.objects.select_related(
+            "property__organization",
+            "signature",
+        ).prefetch_related(
+            "sections__items__photos",
+            "signature__photos",
+        ),
+        id=inventory_id,
+        property__organization=organization,
+    )
+
+    pdf_buffer = build_inventory_pdf(
+        inventory,
+        INVENTORY_SECTION_DEFINITIONS,
+    )
+
+    property_name = slugify(
+        inventory.property.name
+    )
+
+    if not property_name:
+        property_name = (
+            f"inventory-{inventory.id}"
+        )
+
+    filename = (
+        f"inventario-"
+        f"{property_name}-"
+        f"{inventory.inventory_type}.pdf"
+    )
+
+    return FileResponse(
+        pdf_buffer,
+        as_attachment=True,
+        filename=filename,
+        content_type="application/pdf",
+    )
+    
+    
+    
+    
     
 @login_required
 @admin_required

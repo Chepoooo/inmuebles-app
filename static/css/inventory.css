@@ -1246,3 +1246,200 @@
         font-size: 12px;
     }
 }
+
+/* ==========================================
+   FOTOS DE EVIDENCIA DE LA FIRMA
+========================================== */
+
+.inventory-signature-photo-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px;
+    border: 1px solid #d3d9df;
+    border-radius: 8px;
+    background: #f2f2f2;
+    color: #4a4a4a;
+    font: inherit;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.inventory-signature-photo-input:focus {
+    outline: none;
+    border-color: #2f5d8c;
+    box-shadow: 0 0 0 3px rgba(47, 93, 140, 0.12);
+}
+
+.inventory-signature-photo-help {
+    display: block;
+    margin-top: 8px;
+    color: #6a6a6a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.inventory-signature-photo-count {
+    margin-top: 8px;
+    color: #1f3a5c;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.inventory-signature-error {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border-left: 4px solid #c73a32;
+    border-radius: 6px;
+    background: #fdf0ef;
+    color: #c73a32;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.inventory-signature-field .inventory-signature-error {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+
+/* ==========================================
+   CELULARES
+========================================== */
+
+@media (max-width: 600px) {
+
+    .inventory-signature-photo-input {
+        min-height: 50px;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .inventory-signature-photo-help {
+        font-size: 12px;
+    }
+
+    .inventory-signature-photo-count {
+        font-size: 13px;
+    }
+
+}
+
+
+
+
+/* =========================================
+   FOTOS DE EVIDENCIA - RESPONSIVE
+   ========================================= */
+
+.inventory-signature-evidence {
+    width: 100%;
+    margin-top: 24px;
+    box-sizing: border-box;
+}
+
+.inventory-signature-evidence-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.inventory-signature-evidence-header h3 {
+    margin: 0;
+}
+
+.inventory-signature-evidence-header span {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--color-dark);
+}
+
+.inventory-signature-evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.inventory-signature-evidence-photo {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+}
+
+.inventory-signature-evidence-photo img {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.inventory-signature-evidence-photo span {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--color-dark);
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .inventory-signature-evidence-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .inventory-signature-evidence-photo img {
+        height: 150px;
+    }
+
+}
+
+
+/* =========================================
+   TELEFONO
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    .inventory-signature-evidence {
+        margin-top: 20px;
+    }
+
+    .inventory-signature-evidence-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .inventory-signature-evidence-header h3 {
+        font-size: 18px;
+    }
+
+    .inventory-signature-evidence-header span {
+        font-size: 11px;
+    }
+
+    .inventory-signature-evidence-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .inventory-signature-evidence-photo img {
+        width: 100%;
+        height: 125px;
+        object-fit: cover;
+    }
+
+    .inventory-signature-evidence-photo span {
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+}

@@ -7,6 +7,25 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from organizations.models import Membership
 
+def home(request):
+    # Si no ha iniciado sesión, enviar al login.
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # Revisar si ya tiene una organización seleccionada
+    # y si todavía tiene acceso a ella.
+    organization_id = request.session.get("organization_id")
+
+    if organization_id and Membership.objects.filter(
+        user=request.user,
+        organization_id=organization_id,
+    ).exists():
+        return redirect("property_list")
+
+    # Sin organización seleccionada, dejar que la vista
+    # existente gestione uno, varios o ningún membership.
+    return redirect("organization_select")
+
 
 @login_required
 def organization_select(request):

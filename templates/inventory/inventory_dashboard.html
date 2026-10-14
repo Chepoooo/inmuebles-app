@@ -157,6 +157,12 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
                         >
                             Ver inventario
                         </a>
+                        <a
+                            href="{% url 'inventory_pdf' inventory.id %}"
+                            class="inventory-action-link"
+                        >
+                            Imprimir
+                        </a>
 
                         {% if membership.role == "admin" %}
 
@@ -313,6 +319,12 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
                 class="button-primary"
             >
                 Ver inventario
+            </a>
+            <a
+                href="{% url 'inventory_pdf' inventory.id %}"
+                class="inventory-action-link"
+            >
+                Imprimir
             </a>
 
             {% if membership.role == "admin" %}

@@ -20,6 +20,11 @@ urlpatterns = [
         name="inventory_detail",
     ),
     path(
+    "<int:inventory_id>/pdf/",
+    views.inventory_pdf,
+    name="inventory_pdf",
+    ),
+    path(
         "section/<int:section_id>/add-item/",
         views.inventory_item_create,
         name="inventory_item_create",
@@ -81,4 +86,5 @@ urlpatterns = [
     views.inventory_delete,
     name="inventory_delete",
     ),
+    
 ]
