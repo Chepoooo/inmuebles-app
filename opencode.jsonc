@@ -1,0 +1,98 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Modelo por defecto para el proyecto
+  "model": "opencode/longcat-2.5-preview-free",
+
+  // Agente por defecto
+  "default_agent": "build",
+
+  // Skills del proyecto (automáticamente descubiertas en .opencode/skills/)
+  "skills": [
+    "./.opencode/skills/"
+  ],
+
+  // Comandos personalizados (automáticamente descubiertos en .opencode/commands/)
+  "commands": {
+    "generar-pdf-inventario": {
+      "description": "Genera PDF del inventario de una propiedad",
+      "template": "Genera el PDF del inventario para la propiedad con ID {{argument}}"
+    },
+    "crear-propiedad": {
+      "description": "Guía para crear una nueva propiedad",
+      "template": "Guíame paso a paso para crear una nueva propiedad en el sistema"
+    },
+    "backup-db": {
+      "description": "Realiza backup de la base de datos PostgreSQL",
+      "template": "Crea un backup de la base de datos usando pg_dump"
+    },
+    "verificar-sistema": {
+      "description": "Verifica el estado general del sistema",
+      "template": "Ejecuta todas las verificaciones de salud del sistema"
+    }
+  },
+
+  // Referencias al contexto del proyecto
+  "references": {
+    "readme": {
+      "path": "./README.md",
+      "description": "Documentación principal del proyecto"
+    },
+    "agents": {
+      "path": "./AGENTS.md",
+      "description": "Instrucciones detalladas para agentes"
+    }
+  },
+
+  // Configuración de permisos
+  "permissions": [
+    {
+      "action": "shell",
+      "resource": "python manage.py *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "pip *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "cloudinary *",
+      "effect": "ask"
+    }
+  ],
+
+  // Watcher: ignorar archivos que no deben触发 cambios
+  "watcher": {
+    "ignore": [
+      "venv/**",
+      "**/__pycache__/**",
+      "**/*.pyc",
+      ".env",
+      "**/.DS_Store",
+      "staticfiles/**",
+      "**/migrations/*.py"
+    ]
+  },
+
+  // Compaction: manejo del contexto
+  "compaction": {
+    "auto": true,
+    "keep": {
+      "tokens": 15000
+    },
+    "buffer": 20000
+  },
+
+  // Snapshots para undo/redo
+  "snapshots": true,
+
+  // Formateador
+  "formatter": false
+}
