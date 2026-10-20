@@ -474,3 +474,74 @@
     }
 
 }
+
+/* ================================
+   ACTUALIZAR REPARACIÓN (REPAIR USER)
+   ================================ */
+
+.repair-update-page {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.repair-update-page > h1 {
+    margin: 12px 0 6px;
+}
+
+.repair-update-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.repair-update-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.repair-update-error {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #c62828;
+}
+
+.repair-update-upload input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed var(--color-secondary);
+    border-radius: var(--border-radius);
+    background-color: var(--color-light);
+    box-sizing: border-box;
+}
+
+.repair-update-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.repair-update-gallery {
+    margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+
+    .repair-update-actions {
+        flex-direction: column-reverse;
+    }
+
+    .repair-update-actions a,
+    .repair-update-actions button {
+        width: 100%;
+        text-align: center;
+    }
+
+}

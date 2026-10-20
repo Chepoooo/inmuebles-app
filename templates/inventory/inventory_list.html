@@ -11,12 +11,14 @@
     <h2>{{ property.name }}</h2>
 
     <p>
-        Propiedad #{{ property.property_number }}
+        Contrato #{{ property.property_number }}
     </p>
 
+    {% if current_membership.role == "admin" %}
     <a href="{% url 'inventory_create' property.id %}">
         Crear inventario
     </a>
+    {% endif %}
 
     <hr>
 

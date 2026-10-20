@@ -1,0 +1,108 @@
+/* ==================================================
+   SELECCIÓN DE ORGANIZACIÓN
+   ================================================== */
+
+.org-select-page {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.org-select-header {
+    margin-bottom: 26px;
+}
+
+.org-select-header h1 {
+    margin: 0 0 8px;
+}
+
+.org-select-description {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-dark);
+}
+
+.org-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.org-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 22px;
+    background-color: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.org-card:hover {
+    border-color: var(--color-secondary);
+    transform: translateY(-2px);
+}
+
+.org-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.org-card-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.org-card-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+}
+
+.org-card-role {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background-color: var(--color-light);
+    color: var(--color-secondary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.org-card-name {
+    margin: 0;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+}
+
+.org-card-action {
+    margin-top: auto;
+    text-align: center;
+    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+
+    .org-select-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .org-card {
+        padding: 18px;
+    }
+
+}

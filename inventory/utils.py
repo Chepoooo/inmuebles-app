@@ -1,11 +1,22 @@
 from inventory.models import Inventory
-from inventory.defaults import INVENTORY_SECTION_DEFINITIONS
+from inventory.defaults import (
+    INVENTORY_SECTION_DEFINITIONS,
+    KEYS_SECTION_NAME,
+)
 
 
 def save_inventory_from_post(request, inventory):
     sections = inventory.sections.prefetch_related("items").all()
 
     for section in sections:
+
+        base_section_name = section.name
+
+        if section.name.startswith("Alcoba auxiliar "):
+            base_section_name = "Alcoba auxiliar"
+
+        elif section.name.startswith("Baño auxiliar "):
+            base_section_name = "Baño auxiliar"
 
         for item in section.items.all():
 
@@ -19,6 +30,27 @@ def save_inventory_from_post(request, inventory):
                 item.save(
                     update_fields=[
                         "description",
+                    ]
+                )
+
+                continue
+
+            # ------------------------------------------------
+            # Sección especial: Llaves entregadas
+            # ------------------------------------------------
+
+            if base_section_name == KEYS_SECTION_NAME:
+
+                quantity = request.POST.get(
+                    f"extra_quantity_{item.id}",
+                    "",
+                ).strip()
+
+                item.extra_data = {"quantity": quantity}
+
+                item.save(
+                    update_fields=[
+                        "extra_data",
                     ]
                 )
 
@@ -38,14 +70,6 @@ def save_inventory_from_post(request, inventory):
                 f"description_{item.id}",
                 "",
             ).strip()
-
-            base_section_name = section.name
-
-            if section.name.startswith("Alcoba auxiliar "):
-                base_section_name = "Alcoba auxiliar"
-
-            elif section.name.startswith("Baño auxiliar "):
-                base_section_name = "Baño auxiliar"
 
             extra_fields = {}
 

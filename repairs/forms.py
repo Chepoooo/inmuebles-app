@@ -12,6 +12,7 @@ class RepairForm(forms.ModelForm):
             "repair_type",
             "report_date",
             "assigned_worker",
+            "assigned_worker_email",
             "quote",
             "description",
             "status",
@@ -22,6 +23,7 @@ class RepairForm(forms.ModelForm):
             "repair_type": "Tipo de reparación",
             "report_date": "Fecha de reporte",
             "assigned_worker": "Trabajador asignado",
+            "assigned_worker_email": "Correo del trabajador",
             "quote": "Cotización",
             "description": "Descripción",
             "status": "Estado",
@@ -31,6 +33,12 @@ class RepairForm(forms.ModelForm):
             "report_date": forms.DateInput(
                 attrs={
                     "type": "date",
+                }
+            ),
+
+            "assigned_worker_email": forms.EmailInput(
+                attrs={
+                    "placeholder": "correo@ejemplo.com",
                 }
             ),
 
@@ -67,6 +75,7 @@ class InventoryRepairForm(forms.ModelForm):
         fields = (
             "report_date",
             "assigned_worker",
+            "assigned_worker_email",
             "quote",
             "description",
             "status",
@@ -75,6 +84,7 @@ class InventoryRepairForm(forms.ModelForm):
         labels = {
             "report_date": "Fecha de reporte",
             "assigned_worker": "Trabajador asignado",
+            "assigned_worker_email": "Correo del trabajador",
             "quote": "Cotización",
             "description": "Descripción",
             "status": "Estado",
@@ -84,6 +94,12 @@ class InventoryRepairForm(forms.ModelForm):
             "report_date": forms.DateInput(
                 attrs={
                     "type": "date",
+                }
+            ),
+
+            "assigned_worker_email": forms.EmailInput(
+                attrs={
+                    "placeholder": "correo@ejemplo.com",
                 }
             ),
 

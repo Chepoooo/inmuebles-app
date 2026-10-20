@@ -77,6 +77,11 @@ urlpatterns = [
         name="inventory_add_auxiliary_bathroom",
     ),
     path(
+        "inventory/<int:inventory_id>/add-keys/",
+        views.inventory_add_keys,
+        name="inventory_add_keys",
+    ),
+    path(
     "inventory/section/<int:section_id>/delete/",
     views.inventory_section_delete,
     name="inventory_section_delete",
@@ -85,6 +90,27 @@ urlpatterns = [
     "inventory/<int:inventory_id>/delete/",
     views.inventory_delete,
     name="inventory_delete",
+    ),
+
+    path(
+        "notes/",
+        views.inventory_notes,
+        name="inventory_notes",
+    ),
+    path(
+        "notes/create/",
+        views.inventory_note_create,
+        name="inventory_note_create",
+    ),
+    path(
+        "notes/<int:note_id>/edit/",
+        views.inventory_note_update,
+        name="inventory_note_update",
+    ),
+    path(
+        "notes/<int:note_id>/delete/",
+        views.inventory_note_delete,
+        name="inventory_note_delete",
     ),
     
 ]

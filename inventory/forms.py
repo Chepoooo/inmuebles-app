@@ -1,6 +1,11 @@
 from django import forms
 
-from .models import Inventory, InventoryItem, InventorySection
+from .models import (
+    Inventory,
+    InventoryItem,
+    InventorySection,
+    InventoryNote,
+)
 
 
 class InventoryForm(forms.ModelForm):
@@ -9,6 +14,20 @@ class InventoryForm(forms.ModelForm):
         fields = (
             "inventory_type",
         )
+        labels = {
+            "inventory_type": "Tipo de inventario",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["inventory_type"].choices = [
+            ("", "Seleccionar una opción"),
+            *Inventory.InventoryType.choices,
+        ]
+        self.fields["inventory_type"].error_messages = {
+            "required": "Debe seleccionar el tipo de inventario.",
+        }
         
 class InventorySectionForm(forms.ModelForm):
     class Meta:
@@ -74,3 +93,26 @@ class InventoryItemForm(forms.ModelForm):
             )
 
         return status
+
+
+class InventoryNoteForm(forms.ModelForm):
+
+    class Meta:
+        model = InventoryNote
+        fields = (
+            "title",
+            "content",
+            "order",
+        )
+        labels = {
+            "title": "Título",
+            "content": "Contenido",
+            "order": "Orden",
+        }
+        widgets = {
+            "content": forms.Textarea(
+                attrs={
+                    "rows": 4,
+                }
+            ),
+        }

@@ -4,6 +4,7 @@ from .models import (
     Inventory,
     InventoryItem,
     InventoryItemPhoto,
+    InventoryNote,
     InventorySection,
     InventorySignature,
 )
@@ -68,3 +69,15 @@ class InventorySignatureAdmin(admin.ModelAdmin):
         "inventory__property__name",
         "inventory__property__property_number",
     )
+
+
+@admin.register(InventoryNote)
+class InventoryNoteAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "organization",
+        "order",
+        "created_at",
+    )
+    list_filter = ("organization",)
+    search_fields = ("title", "content")

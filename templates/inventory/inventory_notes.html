@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Notas y declaraciones
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=4">
+{% endblock %}
+
+{% block content %}
+
+<div class="notes-page">
+
+    <div class="notes-header">
+
+        <div>
+
+            <h1>Notas y declaraciones</h1>
+
+            <p class="notes-description">
+                Crea declaraciones personalizadas para mostrar
+                al cliente al firmar un inventario y en el PDF.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'inventory_note_create' %}"
+            class="button-primary"
+        >
+            Nueva nota
+        </a>
+
+    </div>
+
+
+    <div class="notes-card">
+
+        {% if notes %}
+
+            <table class="notes-table">
+
+                <thead>
+                    <tr>
+                        <th>Orden</th>
+                        <th>Título</th>
+                        <th>Contenido</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for note in notes %}
+
+                        <tr>
+                            <td data-label="Orden">{{ note.order }}</td>
+                            <td data-label="Título">{{ note.title }}</td>
+                            <td data-label="Contenido">{{ note.content|truncatewords:25 }}</td>
+
+                            <td class="notes-table-actions" data-label="Acciones">
+                                <a
+                                    href="{% url 'inventory_note_update' note.id %}"
+                                    class="button-secondary"
+                                >
+                                    Editar
+                                </a>
+
+                                <a
+                                    href="{% url 'inventory_note_delete' note.id %}"
+                                    class="button-danger"
+                                >
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <p class="inventory-empty-text">
+                No hay notas creadas todavía.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

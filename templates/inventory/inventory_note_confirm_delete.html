@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Eliminar nota
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=4">
+{% endblock %}
+
+{% block content %}
+
+<div class="notes-page">
+
+    <div class="notes-card">
+
+        <h1>Eliminar nota</h1>
+
+        <p>
+            ¿Seguro que deseas eliminar la nota
+            <strong>{{ note.title }}</strong>?
+        </p>
+
+        <p class="notes-description">
+            Los inventarios ya firmados conservarán el texto
+            que mostraron en su momento.
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="notes-form-actions">
+
+                <a
+                    href="{% url 'inventory_notes' %}"
+                    class="button-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-danger">
+                    Sí, eliminar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

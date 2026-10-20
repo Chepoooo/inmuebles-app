@@ -3,7 +3,7 @@
 
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/repairs.css' %}">
+<link rel="stylesheet" href="{% static 'css/repair.css' %}?v=5">
 {% endblock %}
 
 {% block title %}
@@ -58,6 +58,13 @@
                 <span>Trabajador</span>
                 <strong>
                     {{ repair.assigned_worker|default:"No asignado" }}
+                </strong>
+            </div>
+
+            <div class="repair-info-item">
+                <span>Correo del trabajador</span>
+                <strong>
+                    {{ repair.assigned_worker_email|default:"No registrado" }}
                 </strong>
             </div>
 
@@ -118,12 +125,12 @@
                 </div>
 
                 <div class="repair-inventory-link">
-                    <a
+                    {% if membership.role != "repair_user" %}<a
                         href="{% url 'inventory_detail' repair.inventory_item.section.inventory.id %}#inventory-item-{{ repair.inventory_item.id }}"
                         class="button-secondary"
                     >
                         Ver en el inventario
-                    </a>
+                    </a>{% endif %}
                 </div>
 
             </div>

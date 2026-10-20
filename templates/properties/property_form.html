@@ -3,7 +3,7 @@
 {% block extra_css %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/properties.css' %}">
+<link rel="stylesheet" href="{% static 'css/properties.css' %}?v=4">
 {% endblock %}
 
 {% block title %}
@@ -104,7 +104,7 @@
                 </div>
 
 
-                <!-- Número de propiedad -->
+                <!-- Número de contrato -->
 
                 <div class="property-form-field">
 
@@ -198,7 +198,7 @@
 
                 <!-- Arrendatario -->
 
-                <div class="property-form-field">
+                <div class="property-form-field property-form-field-full">
 
                     {{ form.tenant_name.label_tag }}
 
@@ -213,15 +213,36 @@
 
                 <!-- Documento -->
 
-                <div class="property-form-field">
+                <div class="property-form-field property-form-field-full">
 
-                    {{ form.document_number.label_tag }}
+                    <div class="property-form-document-row">
 
-                    {{ form.document_number }}
+                        <div class="property-form-document-type">
 
-                    {% if form.document_number.errors %}
-                        {{ form.document_number.errors }}
-                    {% endif %}
+                            {{ form.document_type.label_tag }}
+
+                            {{ form.document_type }}
+
+                            {% if form.document_type.errors %}
+                                {{ form.document_type.errors }}
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="property-form-document-number">
+
+                            {{ form.document_number.label_tag }}
+
+                            {{ form.document_number }}
+
+                            {% if form.document_number.errors %}
+                                {{ form.document_number.errors }}
+                            {% endif %}
+
+                        </div>
+
+                    </div>
 
                 </div>
 

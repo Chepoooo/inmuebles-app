@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from accounts.utils import admin_required
 from accounts.utils import get_current_organization
+from organizations.models import Membership
 import cloudinary.uploader
 
 from .forms import PropertyForm
@@ -45,6 +46,11 @@ def property_list(request):
             "properties": page_obj,
             "page_obj": page_obj,
             "search": search,
+            "has_multiple_organizations": (
+                Membership.objects.filter(
+                    user=request.user,
+                ).count() > 1
+            ),
         },
     )
 

@@ -16,12 +16,28 @@ Gestión de propiedades en el sistema Inmuebles App.
 - `name` (max 150)
 - `address` (max 255)
 - `property_number` (max 100)
-- `tenant_name` (max 150)
-- `document_number` (max 50)
+- `tenant_name` (max 150): nombres y apellidos completos del arrendatario
+- `document_type`: CC, CE, NIT, PPT, PASAPORTE
+- `document_number` (max 50): validado según el tipo de documento
 - `tenant_email` (email válido)
 - `property_type`: Casa, Apartamento, Aparta estudio, Oficina, Bodega, Local
 - `photo` (opcional, imagen)
 - `created_at` (fecha)
+
+## Tipos de documento
+
+| Código | Nombre completo |
+|--------|-----------------|
+| `CC` | Cédula de Ciudadanía |
+| `CE` | Cédula de Extranjería |
+| `NIT` | Número de Identificación Tributaria |
+| `PPT` | Permiso por Protección Temporal |
+| `PASAPORTE` | Pasaporte |
+
+- `CC`, `CE` → solo números
+- `NIT` → números con guion opcional
+- `PPT`, `PASAPORTE` → letras y números
+- `Property.document_label` → `"Cédula de Ciudadanía 123456789"`
 
 ## Editar propiedad
 

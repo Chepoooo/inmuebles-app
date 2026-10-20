@@ -89,17 +89,49 @@ cloudinary.uploader.destroy(public_id)
 - **urls.py**: Bajo `/organizations/`
 
 ### properties/
-- **models.py**: `Property` (con foto Cloudinary)
+- **models.py**: `Property` (con foto Cloudinary y tipo de documento del arrendatario)
 - **views.py**: `property_list`, `property_detail`, `property_create`, `property_update`, `property_delete`
 - **forms.py**: `PropertyForm`
 - **urls.py**: Bajo `/properties/`
 
+### Tipos de Documento
+
+El arrendatario tiene un tipo de documento y un número. Los tipos disponibles son:
+
+| Código | Nombre completo |
+|--------|-----------------|
+| `CC` | Cédula de Ciudadanía |
+| `CE` | Cédula de Extranjería |
+| `NIT` | Número de Identificación Tributaria |
+| `PPT` | Permiso por Protección Temporal |
+| `PASAPORTE` | Pasaporte |
+
+- El número de documento se valida según el tipo:
+  - `CC`, `CE` → solo números
+  - `NIT` → números con guion opcional (ej. `123456789-0`)
+  - `PPT`, `PASAPORTE` → letras y números
+- `Property.document_label` retorna el documento con su nombre completo (ej. `Cédula de Ciudadanía 123456789`).
+- El campo `tenant_name` guarda los **nombres y apellidos completos** del arrendatario.
+
 ### inventory/
-- **models.py**: `Inventory`, `InventorySection`, `InventoryItem`, `InventoryItemPhoto`, `InventorySignature`, `InventorySignaturePhoto`
+- **models.py**: `Inventory`, `InventorySection`, `InventoryItem`, `InventoryItemPhoto`, `InventorySignature`, `InventorySignaturePhoto`, `InventoryNote`
 - **views.py**: Gestión de inventarios
 - **pdf.py**: Generación de PDF con ReportLab
 - **templatetags**: Tags personalizados
 - **urls.py**: Bajo `/inventory/`
+
+`InventorySignature` almacena una copia de los datos del arrendatario al momento de firmar: `name` (nombres y apellidos), `document_type`, `document_number` y `email`. La plantilla de firma los autocompleta desde la propiedad, pero el cliente puede corregirlos antes de enviar.
+
+### Notas y declaraciones
+
+`InventoryNote` es la biblioteca de notas/declaraciones de la organización (`title`, `content`, `order`). Se gestionan en la página **Notas** (`/inventory/notes/`).
+
+Al firmar un inventario:
+1. Se muestra la declaración por defecto (`DEFAULT_DECLARATION` en `defaults.py`).
+2. El admin selecciona con checkboxes las notas de la biblioteca a incluir.
+3. Puede agregar una nota nueva (título + contenido) que se guarda en la biblioteca.
+4. Todo se guarda en `InventorySignature.notes_snapshot` (JSON) como copia congelada.
+5. El PDF muestra la sección **"NOTAS Y DECLARACIONES"** justo encima de la firma.
 
 ### repairs/
 - **models.py**: `Repair`, `RepairPhoto`

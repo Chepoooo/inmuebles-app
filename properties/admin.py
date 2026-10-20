@@ -12,13 +12,16 @@ class PropertyAdmin(admin.ModelAdmin):
         "name",
         "property_number",
         "tenant_name",
+        "document_type",
+        "document_number",
         "organization",
         "created_at",
     )
-    list_filter = ("organization",)
+    list_filter = ("organization", "document_type")
     search_fields = (
         "name",
         "property_number",
         "tenant_name",
+        "document_number",
         "address",
     )

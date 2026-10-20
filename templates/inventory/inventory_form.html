@@ -1,29 +1,80 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     {{ title }}
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=5">
+{% endblock %}
+
 {% block content %}
+
+<div class="inventory-form-page">
+
+    <a
+        href="{% url 'inventory_list' property.id %}"
+        class="inventory-back-link"
+    >
+        ← Volver a los inventarios
+    </a>
 
     <h1>{{ title }}</h1>
 
-    <h2>{{ property.name }}</h2>
+    <p class="inventory-form-property">
+        {{ property.name }}
+        · Contrato #{{ property.property_number }}
+    </p>
 
-    <form method="post">
 
-        {% csrf_token %}
+    <section class="inventory-form-card">
 
-        {{ form.as_p }}
+        <form method="post" class="inventory-form">
 
-        <button type="submit">
-            Guardar
-        </button>
+            {% csrf_token %}
 
-    </form>
+            {% if form.non_field_errors %}
+                <div class="inventory-form-error">{{ form.non_field_errors }}</div>
+            {% endif %}
 
-    <a href="{% url 'inventory_list' property.id %}">
-        Cancelar
-    </a>
+            <div class="inventory-form-field">
+
+                <label for="{{ form.inventory_type.id_for_label }}">
+                    {{ form.inventory_type.label }}
+                </label>
+
+                {{ form.inventory_type }}
+
+                <small>
+                    Elige si el inventario es de entrada (inicial) o de salida (final).
+                </small>
+
+                {% if form.inventory_type.errors %}
+                    <div class="inventory-form-error">{{ form.inventory_type.errors }}</div>
+                {% endif %}
+
+            </div>
+
+            <div class="inventory-form-actions">
+
+                <a
+                    href="{% url 'inventory_list' property.id %}"
+                    class="button-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-primary">
+                    Guardar
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
 
 {% endblock %}

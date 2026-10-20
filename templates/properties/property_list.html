@@ -15,12 +15,27 @@
         </p>
     </div>
 
-    <a
-        href="{% url 'property_create' %}"
-        class="button-primary"
-    >
-        Crear propiedad
-    </a>
+    <div class="page-header-actions">
+
+        {% if has_multiple_organizations %}
+
+            <a
+                href="{% url 'organization_select' %}"
+                class="button-secondary"
+            >
+                Cambiar organización
+            </a>
+
+        {% endif %}
+
+        {% if current_membership.role == "admin" %}<a
+            href="{% url 'property_create' %}"
+            class="button-primary"
+        >
+            Crear propiedad
+        </a>{% endif %}
+
+    </div>
 
 </div>
 
@@ -85,8 +100,9 @@
             <tr>
                 <th>Foto</th>
                 <th>Propiedad</th>
-                <th>Número</th>
-                <th>Arrendatario</th>
+                <th>Contrato</th>
+                <th>Nombres y apellidos del arrendatario</th>
+                <th>Documento</th>
                 <th>Dirección</th>
                 <th>Fecha de creación</th>
             </tr>
@@ -142,6 +158,19 @@
 
 
                     <td>
+                        {% if property.document_type and property.document_number %}
+
+                            {{ property.get_document_type_display }} {{ property.document_number }}
+
+                        {% else %}
+
+                            {{ property.document_number|default:"No registrado" }}
+
+                        {% endif %}
+                    </td>
+
+
+                    <td>
                         {{ property.address }}
                     </td>
 
@@ -181,12 +210,12 @@
 
                             {% else %}
 
-                                <a
+                                {% if current_membership.role == "admin" %}<a
                                     href="{% url 'property_create' %}"
                                     class="button-primary"
                                 >
                                     Crear primera propiedad
-                                </a>
+                                </a>{% endif %}
 
                             {% endif %}
 
@@ -242,17 +271,34 @@
                 </h2>
 
                 <p class="property-number">
-                    Propiedad #{{ property.property_number }}
+                    Contrato #{{ property.property_number }}
                 </p>
 
 
                 <div class="property-card-info">
 
                     <div>
-                        <span>Arrendatario</span>
+                        <span>Nombres y apellidos del arrendatario</span>
 
                         <strong>
                             {{ property.tenant_name|default:"Sin arrendatario" }}
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Documento</span>
+
+                        <strong>
+                            {% if property.document_type and property.document_number %}
+
+                                {{ property.get_document_type_display }} {{ property.document_number }}
+
+                            {% else %}
+
+                                {{ property.document_number|default:"No registrado" }}
+
+                            {% endif %}
                         </strong>
                     </div>
 

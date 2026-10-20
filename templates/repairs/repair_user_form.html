@@ -1,40 +1,169 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Actualizar reparación</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Actualizar reparación
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/repair.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+
+<div class="repair-update-page">
+
+    <a href="{% url 'repair_detail' repair.id %}" class="repair-back-link">
+        ← Volver a la reparación
+    </a>
 
     <h1>Actualizar reparación</h1>
 
-    <p>
-        <strong>Reparación:</strong>
+    <p class="repair-detail-subtitle">
         {{ repair.repair_type }}
+        · {{ repair.property.name }}
+        · Contrato #{{ repair.property.property_number }}
     </p>
 
-    <p>
-        <strong>Propiedad:</strong>
-        {{ repair.property }}
-    </p>
 
-    <hr>
+    <!-- RESUMEN -->
 
-    <form method="post">
-        {% csrf_token %}
+    <section class="repair-detail-card">
 
-        {{ form.as_p }}
+        <div class="repair-detail-info">
 
-        <button type="submit">
-            Guardar cambios
-        </button>
-    </form>
+            <div class="repair-info-item">
+                <span>Estado actual</span>
+                <strong>
+                    <span class="repair-status repair-status-{{ repair.status }}">
+                        {{ repair.get_status_display }}
+                    </span>
+                </strong>
+            </div>
 
-    <br>
+            <div class="repair-info-item">
+                <span>Trabajador</span>
+                <strong>{{ repair.assigned_worker|default:"No asignado" }}</strong>
+            </div>
 
-    <a href="{% url 'repair_detail' repair.id %}">
-        Cancelar
-    </a>
+            <div class="repair-info-item">
+                <span>Correo del trabajador</span>
+                <strong>{{ repair.assigned_worker_email|default:"No registrado" }}</strong>
+            </div>
 
-</body>
-</html>
+            <div class="repair-info-item">
+                <span>Fecha de reporte</span>
+                <strong>{{ repair.report_date|date:"d/m/Y" }}</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ESTADO Y AVANCE -->
+
+    <section class="repair-detail-section">
+
+        <div class="repair-section-header">
+            <div>
+                <h2>Estado y avance</h2>
+                <p>Actualiza el estado y describe lo que se ha hecho.</p>
+            </div>
+        </div>
+
+        <form method="post" class="repair-update-form">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="repair-update-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="repair-update-field">
+                <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <div class="repair-update-error">{{ form.status.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="repair-update-field">
+                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="repair-update-error">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="repair-update-actions">
+                <a href="{% url 'repair_detail' repair.id %}" class="button-secondary">Cancelar</a>
+                <button type="submit" class="button-primary">Guardar cambios</button>
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- FOTOS DE AVANCE -->
+
+    <section class="repair-detail-section">
+
+        <div class="repair-section-header">
+            <div>
+                <h2>Fotos de avance</h2>
+                <p>Sube fotos del trabajo realizado. Puedes seleccionar varias a la vez.</p>
+            </div>
+        </div>
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            action="{% url 'repair_photo_create' repair.id %}"
+            class="repair-update-form repair-update-upload"
+        >
+
+            {% csrf_token %}
+
+            <input type="hidden" name="next" value="update">
+
+            <input
+                type="file"
+                name="photos"
+                accept="image/*"
+                multiple
+                required
+            >
+
+            <div class="repair-update-actions">
+                <button type="submit" class="button-primary">Subir fotos</button>
+            </div>
+
+        </form>
+
+        <div class="repair-photo-grid repair-update-gallery">
+
+            {% for photo in repair.photos.all %}
+
+                <div class="repair-photo-card">
+                    <div class="repair-photo-image">
+                        <img src="{{ photo.secure_url }}" alt="Foto de avance">
+                    </div>
+                </div>
+
+            {% empty %}
+
+                <div class="repair-empty-state">
+                    <p>No hay fotos registradas.</p>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

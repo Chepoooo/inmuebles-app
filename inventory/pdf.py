@@ -21,6 +21,8 @@ from reportlab.platypus import (
     TableStyle,
 )
 
+from .defaults import KEYS_SECTION_NAME
+
 
 # ============================================================
 # TEXTO
@@ -701,7 +703,7 @@ def build_inventory_pdf(
 
         [
             Paragraph(
-                "Numero de propiedad",
+                "Numero de contrato",
                 label_style,
             ),
 
@@ -760,12 +762,12 @@ def build_inventory_pdf(
 
         (
             "tenant_name",
-            "Arrendatario",
+            "Nombres y apellidos del arrendatario",
         ),
 
         (
-            "document_number",
-            "Numero de documento",
+            "document_label",
+            "Documento",
         ),
 
         (
@@ -889,6 +891,129 @@ def build_inventory_pdf(
     sections = inventory.sections.all()
 
     for section in sections:
+
+        # ------------------------------------------------
+        # Sección especial: Llaves entregadas
+        # ------------------------------------------------
+
+        if section.name == KEYS_SECTION_NAME:
+
+            story.append(
+                Paragraph(
+                    _safe_text(
+                        section.name
+                    ),
+                    section_style,
+                )
+            )
+
+            for item in section.items.all():
+
+                quantity = (
+                    item.extra_data or {}
+                ).get(
+                    "quantity",
+                    "",
+                )
+
+                if not quantity:
+                    quantity = "Sin registrar"
+
+                keys_table = Table(
+                    [
+                        [
+                            Paragraph(
+                                "Cantidad de llaves",
+                                label_style,
+                            ),
+
+                            Paragraph(
+                                _safe_text(quantity),
+                                body_style,
+                            ),
+                        ],
+                    ],
+
+                    colWidths=[
+                        1.85 * inch,
+                        5.15 * inch,
+                    ],
+
+                    hAlign="LEFT",
+                )
+
+                keys_table.setStyle(
+                    TableStyle(
+                        [
+                            (
+                                "BACKGROUND",
+                                (0, 0),
+                                (0, -1),
+                                colors.HexColor(
+                                    "#f2f2f2"
+                                ),
+                            ),
+
+                            (
+                                "GRID",
+                                (0, 0),
+                                (-1, -1),
+                                0.5,
+                                colors.HexColor(
+                                    "#d9dee4"
+                                ),
+                            ),
+
+                            (
+                                "VALIGN",
+                                (0, 0),
+                                (-1, -1),
+                                "TOP",
+                            ),
+
+                            (
+                                "LEFTPADDING",
+                                (0, 0),
+                                (-1, -1),
+                                7,
+                            ),
+
+                            (
+                                "RIGHTPADDING",
+                                (0, 0),
+                                (-1, -1),
+                                7,
+                            ),
+
+                            (
+                                "TOPPADDING",
+                                (0, 0),
+                                (-1, -1),
+                                7,
+                            ),
+
+                            (
+                                "BOTTOMPADDING",
+                                (0, 0),
+                                (-1, -1),
+                                7,
+                            ),
+                        ]
+                    )
+                )
+
+                story.append(
+                    keys_table
+                )
+
+                story.append(
+                    Spacer(
+                        1,
+                        12,
+                    )
+                )
+
+            continue
 
         story.append(
             Paragraph(
@@ -1180,15 +1305,73 @@ def build_inventory_pdf(
                 )
             )
 
-    # ========================================================
-    # FIRMA
-    # ========================================================
-
     signature = getattr(
         inventory,
         "signature",
         None,
     )
+
+    # ========================================================
+    # NOTAS Y DECLARACIONES
+    # ========================================================
+
+    notes_snapshot = (
+        getattr(signature, "notes_snapshot", None)
+        if signature
+        else None
+    )
+
+    if notes_snapshot:
+
+        story.append(
+            PageBreak()
+        )
+
+        story.append(
+            Paragraph(
+                "NOTAS Y DECLARACIONES",
+                section_style,
+            )
+        )
+
+        for note in notes_snapshot:
+
+            note_title = _safe_text(
+                note.get("title", "")
+            )
+
+            note_content = _safe_text(
+                note.get("content", "")
+            )
+
+            if note_title:
+
+                story.append(
+                    Paragraph(
+                        f"<b>{note_title}</b>",
+                        label_style,
+                    )
+                )
+
+            if note_content:
+
+                story.append(
+                    Paragraph(
+                        note_content,
+                        body_style,
+                    )
+                )
+
+            story.append(
+                Spacer(
+                    1,
+                    8,
+                )
+            )
+
+    # ========================================================
+    # FIRMA
+    # ========================================================
 
     if signature:
 
@@ -1212,6 +1395,40 @@ def build_inventory_pdf(
                 signature_name_style,
             )
         )
+
+        signature_document = (
+            signature.document_label
+            or inventory.property.document_label
+        )
+
+        if signature_document:
+
+            story.append(
+                Paragraph(
+                    (
+                        "Documento: "
+                        f"<b>{_safe_text(signature_document)}</b>"
+                    ),
+                    subtitle_style,
+                )
+            )
+
+        signature_email = (
+            signature.email
+            or inventory.property.tenant_email
+        )
+
+        if signature_email:
+
+            story.append(
+                Paragraph(
+                    (
+                        "Correo: "
+                        f"{_safe_text(signature_email)}"
+                    ),
+                    subtitle_style,
+                )
+            )
 
         story.append(
             Paragraph(

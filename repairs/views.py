@@ -293,7 +293,7 @@ def repair_user_update(request, repair_id):
             form.save()
 
             return redirect(
-                "repair_detail",
+                "repair_user_update",
                 repair_id=repair.id,
             )
     else:
@@ -335,19 +335,26 @@ def repair_photo_create(request, repair_id):
     )
 
     if request.method == "POST":
-        photo = request.FILES.get("photo")
+        photos = request.FILES.getlist("photos") or request.FILES.getlist("photo")
 
-        if photo:
-            result = cloudinary.uploader.upload(
-                photo,
-                folder="repairs",
-            )
+        if photos:
+            for photo in photos:
+                result = cloudinary.uploader.upload(
+                    photo,
+                    folder="repairs",
+                )
 
-            RepairPhoto.objects.create(
-                repair=repair,
-                public_id=result["public_id"],
-                secure_url=result["secure_url"],
-            )
+                RepairPhoto.objects.create(
+                    repair=repair,
+                    public_id=result["public_id"],
+                    secure_url=result["secure_url"],
+                )
+
+            if request.POST.get("next") == "update":
+                return redirect(
+                    "repair_user_update",
+                    repair_id=repair.id,
+                )
 
             return redirect(
                 "repair_detail",

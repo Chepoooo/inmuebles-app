@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from inventory.utils import save_inventory_from_post
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseForbidden
 from django.utils.text import slugify
 import cloudinary
 
@@ -18,11 +18,16 @@ from accounts.utils import (
 
 from properties.models import Property
 
-from .defaults import INVENTORY_SECTION_DEFINITIONS
+from .defaults import (
+    DEFAULT_DECLARATION,
+    INVENTORY_SECTION_DEFINITIONS,
+    KEYS_SECTION_NAME,
+)
 
 from .forms import (
     InventoryForm,
     InventoryItemForm,
+    InventoryNoteForm,
     InventorySectionForm,
 )
 
@@ -30,6 +35,7 @@ from .models import (
     Inventory,
     InventoryItem,
     InventoryItemPhoto,
+    InventoryNote,
     InventorySection,
     InventorySignature,
     InventorySignaturePhoto,
@@ -151,7 +157,6 @@ def inventory_create(request, property_id):
 
 
 @login_required
-@admin_required
 def inventory_detail(request, inventory_id):
     organization = get_current_organization(request)
 
@@ -159,6 +164,13 @@ def inventory_detail(request, inventory_id):
         return redirect("organization_select")
 
     membership = get_current_membership(request)
+
+    if not membership or membership.role not in ("admin", "viewer"):
+        return HttpResponseForbidden(
+            "No tienes permisos para realizar esta acción."
+        )
+
+    read_only = membership.role != "admin"
 
     inventory = get_object_or_404(
         Inventory.objects.select_related(
@@ -176,6 +188,11 @@ def inventory_detail(request, inventory_id):
     )
 
     if request.method == "POST":
+
+        if read_only:
+            return HttpResponseForbidden(
+                "No tienes permisos para realizar esta acción."
+            )
 
         save_inventory_from_post(
             request,
@@ -234,6 +251,10 @@ def inventory_detail(request, inventory_id):
             "sections": sections,
             "status_choices": InventoryItem.STATUS_CHOICES,
             "membership": membership,
+            "read_only": read_only,
+            "has_keys_section": inventory.sections.filter(
+                name=KEYS_SECTION_NAME,
+            ).exists(),
         },
     )
     
@@ -538,6 +559,35 @@ def inventory_signature_create(request, inventory_id):
             "",
         ).strip()
 
+        document_type = request.POST.get(
+            "document_type",
+            "",
+        ).strip()
+
+        document_number = request.POST.get(
+            "document_number",
+            "",
+        ).strip()
+
+        email = request.POST.get(
+            "email",
+            "",
+        ).strip()
+
+        selected_note_ids = request.POST.getlist(
+            "notes"
+        )
+
+        new_note_title = request.POST.get(
+            "new_note_title",
+            "",
+        ).strip()
+
+        new_note_content = request.POST.get(
+            "new_note_content",
+            "",
+        ).strip()
+
         signature_data = request.POST.get(
             "signature",
             "",
@@ -558,6 +608,13 @@ def inventory_signature_create(request, inventory_id):
                 "inventory/inventory_signature_form.html",
                 {
                     "inventory": inventory,
+                    "notes": organization.notes.all(),
+                    "default_declaration": (
+                        DEFAULT_DECLARATION
+                    ),
+                    "document_type_choices": (
+                        Property.DocumentType.choices
+                    ),
                     "photo_error": (
                         "Puedes subir un máximo "
                         "de 5 fotos como evidencia."
@@ -571,6 +628,55 @@ def inventory_signature_create(request, inventory_id):
 
         if name and signature_data:
 
+            # --------------------------------------------
+            # Construir el snapshot de notas y
+            # declaraciones que el cliente aceptó.
+            # --------------------------------------------
+
+            notes_snapshot = [
+                {
+                    "title": "Declaración",
+                    "content": DEFAULT_DECLARATION,
+                }
+            ]
+
+            if selected_note_ids:
+
+                selected_notes = (
+                    InventoryNote.objects.filter(
+                        organization=organization,
+                        id__in=selected_note_ids,
+                    )
+                )
+
+                for note in selected_notes:
+
+                    notes_snapshot.append(
+                        {
+                            "title": note.title,
+                            "content": note.content,
+                        }
+                    )
+
+            if new_note_content:
+
+                note_title = (
+                    new_note_title or "Nota personalizada"
+                )
+
+                new_note = InventoryNote.objects.create(
+                    organization=organization,
+                    title=note_title,
+                    content=new_note_content,
+                )
+
+                notes_snapshot.append(
+                    {
+                        "title": new_note.title,
+                        "content": new_note.content,
+                    }
+                )
+
             result = cloudinary.uploader.upload(
                 signature_data,
                 folder="inventory/signatures",
@@ -579,6 +685,10 @@ def inventory_signature_create(request, inventory_id):
             signature = InventorySignature.objects.create(
                 inventory=inventory,
                 name=name,
+                document_type=document_type,
+                document_number=document_number,
+                email=email,
+                notes_snapshot=notes_snapshot,
                 public_id=result["public_id"],
                 secure_url=result["secure_url"],
             )
@@ -616,6 +726,11 @@ def inventory_signature_create(request, inventory_id):
         "inventory/inventory_signature_form.html",
         {
             "inventory": inventory,
+            "notes": organization.notes.all(),
+            "default_declaration": DEFAULT_DECLARATION,
+            "document_type_choices": (
+                Property.DocumentType.choices
+            ),
         },
     )
     
@@ -940,6 +1055,59 @@ def inventory_add_auxiliary_bathroom(request, inventory_id):
         inventory_id=inventory.id,
     )
     
+
+@login_required
+@admin_required
+def inventory_add_keys(request, inventory_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    inventory = get_object_or_404(
+        Inventory,
+        id=inventory_id,
+        property__organization=organization,
+    )
+
+    # No duplicar la sección si ya existe
+    if inventory.sections.filter(
+        name=KEYS_SECTION_NAME,
+    ).exists():
+
+        return redirect(
+            "inventory_detail",
+            inventory_id=inventory.id,
+        )
+
+    last_section = inventory.sections.order_by(
+        "-order"
+    ).first()
+
+    if last_section:
+        section_order = last_section.order + 1
+    else:
+        section_order = 0
+
+    section = InventorySection.objects.create(
+        inventory=inventory,
+        name=KEYS_SECTION_NAME,
+        order=section_order,
+    )
+
+    InventoryItem.objects.create(
+        section=section,
+        name="Cantidad de llaves",
+        order=0,
+        extra_data={"quantity": ""},
+    )
+
+    return redirect(
+        "inventory_detail",
+        inventory_id=inventory.id,
+    )
+
+
 @login_required
 @admin_required
 def inventory_section_delete(request, section_id):
@@ -1019,5 +1187,127 @@ def inventory_delete(request, inventory_id):
         "inventory/inventory_confirm_delete.html",
         {
             "inventory": inventory,
+        },
+    )
+
+
+# ================================================================
+# NOTAS Y DECLARACIONES
+# ================================================================
+
+@login_required
+@admin_required
+def inventory_notes(request):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    notes = organization.notes.all()
+
+    return render(
+        request,
+        "inventory/inventory_notes.html",
+        {
+            "notes": notes,
+            "organization": organization,
+        },
+    )
+
+
+@login_required
+@admin_required
+def inventory_note_create(request):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    if request.method == "POST":
+
+        form = InventoryNoteForm(request.POST)
+
+        if form.is_valid():
+
+            note = form.save(commit=False)
+            note.organization = organization
+            note.save()
+
+            return redirect("inventory_notes")
+
+    else:
+        form = InventoryNoteForm()
+
+    return render(
+        request,
+        "inventory/inventory_note_form.html",
+        {
+            "form": form,
+            "title": "Nueva nota",
+        },
+    )
+
+
+@login_required
+@admin_required
+def inventory_note_update(request, note_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    note = get_object_or_404(
+        InventoryNote,
+        id=note_id,
+        organization=organization,
+    )
+
+    if request.method == "POST":
+
+        form = InventoryNoteForm(
+            request.POST,
+            instance=note,
+        )
+
+        if form.is_valid():
+            form.save()
+            return redirect("inventory_notes")
+
+    else:
+        form = InventoryNoteForm(instance=note)
+
+    return render(
+        request,
+        "inventory/inventory_note_form.html",
+        {
+            "form": form,
+            "title": "Editar nota",
+        },
+    )
+
+
+@login_required
+@admin_required
+def inventory_note_delete(request, note_id):
+    organization = get_current_organization(request)
+
+    if not organization:
+        return redirect("organization_select")
+
+    note = get_object_or_404(
+        InventoryNote,
+        id=note_id,
+        organization=organization,
+    )
+
+    if request.method == "POST":
+        note.delete()
+        return redirect("inventory_notes")
+
+    return render(
+        request,
+        "inventory/inventory_note_confirm_delete.html",
+        {
+            "note": note,
         },
     )

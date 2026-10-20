@@ -87,13 +87,15 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
 
             <th>Propiedad</th>
 
-            <th>Número</th>
+            <th>Contrato</th>
 
             <th>Tipo</th>
 
             <th>Fecha</th>
 
             <th>Firmado por</th>
+
+            <th>Estado</th>
 
             <th>Acciones</th>
 
@@ -105,7 +107,7 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
 
         {% for inventory in inventories %}
 
-            <tr>
+            <tr class="{% if not inventory.signature %}inventory-row-incomplete{% endif %}">
 
                 <td>
 
@@ -149,14 +151,32 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
 
                 <td>
 
+                    {% if inventory.signature %}
+
+                        <span class="inventory-status inventory-status-complete">
+                            Completo
+                        </span>
+
+                    {% else %}
+
+                        <span class="inventory-status inventory-status-incomplete">
+                            Incompleto
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
                     <div class="inventory-actions">
 
-                        <a
+                        {% if membership.role != "repair_user" %}<a
                             href="{% url 'inventory_detail' inventory.id %}"
                             class="inventory-action-link"
                         >
                             Ver inventario
-                        </a>
+                        </a>{% endif %}
                         <a
                             href="{% url 'inventory_pdf' inventory.id %}"
                             class="inventory-action-link"
@@ -185,7 +205,7 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
 
             <tr>
 
-                <td colspan="6">
+                <td colspan="7">
 
                     <div class="empty-state">
 
@@ -240,7 +260,7 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
 
 {% for inventory in inventories %}
 
-    <article class="inventory-card">
+    <article class="inventory-card{% if not inventory.signature %} inventory-card-incomplete{% endif %}">
 
         <div class="inventory-card-header">
 
@@ -251,14 +271,32 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
                 </h2>
 
                 <span class="inventory-card-number">
-                    Propiedad #{{ inventory.property.property_number }}
+                    Contrato #{{ inventory.property.property_number }}
                 </span>
 
             </div>
 
-            <span class="inventory-type">
-                {{ inventory.get_inventory_type_display }}
-            </span>
+            <div class="inventory-card-badges">
+
+                <span class="inventory-type">
+                    {{ inventory.get_inventory_type_display }}
+                </span>
+
+                {% if inventory.signature %}
+
+                    <span class="inventory-status inventory-status-complete">
+                        Completo
+                    </span>
+
+                {% else %}
+
+                    <span class="inventory-status inventory-status-incomplete">
+                        Incompleto
+                    </span>
+
+                {% endif %}
+
+            </div>
 
         </div>
 
@@ -314,12 +352,12 @@ Inventarios encontrados: {{ page_obj.paginator.count }}
 
         <div class="inventory-card-actions">
 
-            <a
+            {% if membership.role != "repair_user" %}<a
                 href="{% url 'inventory_detail' inventory.id %}"
                 class="button-primary"
             >
                 Ver inventario
-            </a>
+            </a>{% endif %}
             <a
                 href="{% url 'inventory_pdf' inventory.id %}"
                 class="inventory-action-link"

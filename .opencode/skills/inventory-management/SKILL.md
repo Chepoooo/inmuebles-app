@@ -15,7 +15,26 @@ Gestión de inventarios (inicial/final) en el sistema Inmuebles App.
   - `extra_data`: JSON con datos adicionales
   - `order`: Orden de visualización
 - **InventoryItemPhoto**: Fotos de evidencia por ítem
-- **InventorySignature**: Firma digital con nombre, fotos de evidencia
+- **InventorySignature**: Firma digital con nombre, tipo/número de documento, correo, fotos de evidencia
+
+### Datos de la firma
+
+Al firmar un inventario, la plantilla autocompleta desde la propiedad:
+
+- `name` ← `property.tenant_name` (nombres y apellidos)
+- `document_type` ← `property.document_type`
+- `document_number` ← `property.document_number`
+- `email` ← `property.tenant_email`
+
+Los campos son **editables** en el formulario para permitir correcciones antes de firmar.
+
+### Notas y declaraciones
+
+- `InventoryNote`: biblioteca de notas de la organización (`title`, `content`, `order`).
+- Gestión: página **Notas** (`/inventory/notes/`) con CRUD.
+- Al firmar: se muestra la declaración por defecto (`DEFAULT_DECLARATION`), se seleccionan notas con checkboxes y se puede agregar una nota nueva.
+- Todo se congela en `InventorySignature.notes_snapshot` (JSON).
+- El PDF muestra la sección **"NOTAS Y DECLARACIONES"** justo encima de la firma.
 
 ## Crear inventario
 

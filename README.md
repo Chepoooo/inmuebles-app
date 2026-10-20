@@ -87,8 +87,14 @@ APP/
 ### Propiedades
 - CRUD completo de propiedades
 - Tipos: Casa, Apartamento, Aparta estudio, Oficina, Bodega, Local
+- Datos del arrendatario: nombres y apellidos, tipo de documento (CC, CE, NIT, PPT, Pasaporte), número de documento y correo
 - Fotos de propiedades
-- Búsqueda por nombre, número, inquilino o dirección
+- Búsqueda por nombre, número, arrendatario o dirección
+
+### Firmas de inventario
+- Firma digital del arrendatario con foto y hasta 5 fotos de evidencia
+- Los datos de la firma se autocompletan desde la propiedad (nombre, documento, correo) y son editables
+- **Notas y declaraciones personalizadas**: biblioteca de notas por organización, seleccionables al firmar y mostradas en el PDF justo encima de la firma
 
 ### Inventarios
 - Inventarios inicial y final

@@ -13,6 +13,13 @@ class Property(models.Model):
         ("Local", "Locales"),
     ]
 
+    class DocumentType(models.TextChoices):
+        CC = "CC", "Cédula de Ciudadanía"
+        CE = "CE", "Cédula de Extranjería"
+        NIT = "NIT", "Número de Identificación Tributaria"
+        PPT = "PPT", "Permiso por Protección Temporal"
+        PASAPORTE = "PASAPORTE", "Pasaporte"
+
     organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,
@@ -23,9 +30,21 @@ class Property(models.Model):
 
     address = models.CharField(max_length=255)
 
-    property_number = models.CharField(max_length=100)
+    property_number = models.CharField(
+        max_length=100,
+        verbose_name="Número de contrato",
+    )
 
-    tenant_name = models.CharField(max_length=150)
+    tenant_name = models.CharField(
+        max_length=150,
+        verbose_name="Nombres y apellidos del arrendatario",
+    )
+
+    document_type = models.CharField(
+        max_length=15,
+        choices=DocumentType.choices,
+        blank=True,
+    )
 
     document_number = models.CharField(
         max_length=50,
@@ -50,3 +69,18 @@ class Property(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.property_number}"
+
+    @property
+    def document_label(self):
+        """
+        Retorna el documento con su tipo, por ejemplo
+        "Cédula de Ciudadanía 123456789". Si no hay tipo,
+        solo el número.
+        """
+        if self.document_type and self.document_number:
+            return (
+                f"{self.get_document_type_display()} "
+                f"{self.document_number}"
+            )
+
+        return self.document_number

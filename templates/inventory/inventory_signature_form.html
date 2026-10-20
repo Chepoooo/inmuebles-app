@@ -2,7 +2,7 @@
 
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=4">
 {% endblock %}
 
 {% block title %}
@@ -54,10 +54,34 @@
             </div>
 
             <div>
-                <span>Número de propiedad</span>
+                <span>Número de contrato</span>
 
                 <strong>
                     {{ inventory.property.property_number }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Nombres y apellidos del arrendatario</span>
+
+                <strong>
+                    {{ inventory.property.tenant_name|default:"Sin arrendatario" }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Documento</span>
+
+                <strong>
+                    {{ inventory.property.document_label|default:"No registrado" }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Correo electrónico</span>
+
+                <strong>
+                    {{ inventory.property.tenant_email|default:"No registrado" }}
                 </strong>
             </div>
 
@@ -66,41 +90,100 @@
     </section>
 
 
-    <!-- DECLARACIÓN -->
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        id="signature-form"
+        class="inventory-signature-form"
+    >
+
+        {% csrf_token %}
+
+
+    <!-- DECLARACIONES Y NOTAS -->
 
     <section class="inventory-signature-card">
 
         <div class="inventory-signature-section-header">
 
-            <h2>Declaración</h2>
+            <h2>Declaraciones y notas</h2>
 
         </div>
 
         <div class="inventory-signature-declaration">
 
             <p>
-                Declaro que he revisado el presente inventario y estoy
-                de acuerdo con el estado de la propiedad y los elementos
-                registrados en él.
+                {{ default_declaration }}
             </p>
+
+        </div>
+
+
+        {% if notes %}
+
+            <div class="inventory-signature-notes">
+
+                <span class="inventory-signature-notes-label">
+                    Selecciona las notas que deseas incluir:
+                </span>
+
+                {% for note in notes %}
+
+                    <label class="inventory-signature-note-item">
+
+                        <input
+                            type="checkbox"
+                            name="notes"
+                            value="{{ note.id }}"
+                        >
+
+                        <span>
+                            <strong>{{ note.title }}</strong>
+
+                            {{ note.content }}
+                        </span>
+
+                    </label>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="inventory-signature-note-new">
+
+            <span class="inventory-signature-notes-label">
+                Agregar una nota nueva
+            </span>
+
+            <input
+                type="text"
+                name="new_note_title"
+                maxlength="150"
+                placeholder="Título de la nota"
+            >
+
+            <textarea
+                name="new_note_content"
+                rows="3"
+                placeholder="Contenido de la nota o declaración..."
+            ></textarea>
+
+            <small>
+                Se guardará en la biblioteca de notas para
+                reutilizarla en otros inventarios.
+            </small>
 
         </div>
 
     </section>
 
 
-    <!-- FORMULARIO -->
+    <!-- FIRMA Y FOTOS -->
 
     <section class="inventory-signature-card">
-
-        <form
-            method="post"
-            enctype="multipart/form-data"
-            id="signature-form"
-            class="inventory-signature-form"
-        >
-
-            {% csrf_token %}
 
 
             <!-- ERROR DE FOTOS -->
@@ -119,7 +202,7 @@
             <div class="inventory-signature-field">
 
                 <label for="name">
-                    Nombre del cliente
+                    Nombres y apellidos del cliente
                 </label>
 
                 <input
@@ -128,7 +211,72 @@
                     name="name"
                     maxlength="150"
                     required
-                    placeholder="Ingrese su nombre completo"
+                    value="{{ inventory.property.tenant_name }}"
+                    placeholder="Ingrese los nombres y apellidos"
+                >
+
+            </div>
+
+
+            <!-- DOCUMENTO -->
+
+            <div class="inventory-signature-field">
+
+                <label>
+                    Documento
+                </label>
+
+                <div class="inventory-signature-document-row">
+
+                    <select
+                        id="document_type"
+                        name="document_type"
+                        class="inventory-signature-document-type"
+                    >
+                        <option value="">Tipo</option>
+
+                        {% for value, label in document_type_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if value == inventory.property.document_type %}selected{% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+                    </select>
+
+                    <input
+                        type="text"
+                        id="document_number"
+                        name="document_number"
+                        maxlength="50"
+                        value="{{ inventory.property.document_number }}"
+                        placeholder="Número de documento"
+                        class="inventory-signature-document-number"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CORREO -->
+
+            <div class="inventory-signature-field">
+
+                <label for="email">
+                    Correo electrónico
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    maxlength="254"
+                    value="{{ inventory.property.tenant_email }}"
+                    placeholder="correo@ejemplo.com"
                 >
 
             </div>
@@ -247,9 +395,9 @@
 
             </div>
 
-        </form>
-
     </section>
+
+    </form>
 
 </div>
 

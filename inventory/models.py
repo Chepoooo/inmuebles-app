@@ -3,11 +3,12 @@
 from django.db import models
 
 from properties.models import Property
+from organizations.models import Organization
 
 
 class Inventory(models.Model):
     class InventoryType(models.TextChoices):
-        INITIAL = "initial", "Initial"
+        INITIAL = "initial", "Inicial"
         FINAL = "final", "Final"
 
     property = models.ForeignKey(
@@ -128,12 +129,62 @@ class InventorySignature(models.Model):
         related_name="signature",
     )
     name = models.CharField(max_length=150)
+    document_type = models.CharField(
+        max_length=15,
+        choices=Property.DocumentType.choices,
+        blank=True,
+    )
+    document_number = models.CharField(
+        max_length=50,
+        blank=True,
+    )
+    email = models.EmailField(
+        max_length=254,
+        blank=True,
+    )
+    notes_snapshot = models.JSONField(
+        default=list,
+        blank=True,
+    )
     public_id = models.CharField(max_length=255)
     secure_url = models.URLField(max_length=500)
     signed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Signature for {self.inventory}"
+
+    @property
+    def document_label(self):
+        if self.document_type and self.document_number:
+            return (
+                f"{self.document_type} "
+                f"{self.document_number}"
+            )
+
+        return self.document_number
+
+
+class InventoryNote(models.Model):
+    """
+    Notas o declaraciones personalizadas de la organización.
+    Se reutilizan en los inventarios al momento de firmar.
+    """
+
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="notes",
+    )
+    title = models.CharField(max_length=150)
+    content = models.TextField()
+    order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.title
     
 class InventorySignaturePhoto(models.Model):
     signature = models.ForeignKey(

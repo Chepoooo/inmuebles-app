@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=4">
+{% endblock %}
+
+{% block content %}
+
+<div class="notes-page">
+
+    <div class="notes-header">
+
+        <div>
+
+            <h1>{{ title }}</h1>
+
+            <p class="notes-description">
+                La nota se guardará en la biblioteca de la
+                organización y podrás reutilizarla en otros
+                inventarios.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="notes-card">
+
+        <form method="post" class="notes-form">
+
+            {% csrf_token %}
+
+
+            <div class="notes-field">
+
+                <label for="{{ form.title.id_for_label }}">
+                    {{ form.title.label }}
+                </label>
+
+                {{ form.title }}
+
+                {% if form.title.errors %}
+                    <div class="notes-error">{{ form.title.errors }}</div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="notes-field">
+
+                <label for="{{ form.content.id_for_label }}">
+                    {{ form.content.label }}
+                </label>
+
+                {{ form.content }}
+
+                {% if form.content.errors %}
+                    <div class="notes-error">{{ form.content.errors }}</div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="notes-field">
+
+                <label for="{{ form.order.id_for_label }}">
+                    {{ form.order.label }}
+                </label>
+
+                {{ form.order }}
+
+                <small>
+                    Las notas con menor número aparecen primero.
+                </small>
+
+                {% if form.order.errors %}
+                    <div class="notes-error">{{ form.order.errors }}</div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="notes-form-actions">
+
+                <a
+                    href="{% url 'inventory_notes' %}"
+                    class="button-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-primary">
+                    Guardar nota
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

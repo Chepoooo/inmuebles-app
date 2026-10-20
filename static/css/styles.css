@@ -1648,3 +1648,168 @@ tr:hover {
         font-size: 17px;
     }
 }
+
+/* =========================================
+   MENÚ HAMBURGUESA (MÓVIL)
+   ========================================= */
+
+.nav-menu {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.nav-toggle span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--color-primary);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.main-nav.is-open .nav-toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.main-nav.is-open .nav-toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.main-nav.is-open .nav-toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+
+    .main-nav {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0;
+        padding: 12px 0;
+    }
+
+    .nav-brand {
+        width: auto;
+        margin-right: auto;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        flex: 0 0 100%;
+        width: 100%;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .main-nav.is-open .nav-menu {
+        display: flex;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: 100%;
+        overflow: visible;
+        white-space: normal;
+    }
+
+    .nav-links a {
+        padding: 13px 4px;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 16px;
+    }
+
+    .nav-links a::after {
+        display: none;
+    }
+
+    .nav-user {
+        width: 100%;
+        margin-left: 0;
+    }
+
+}
+
+
+/* =========================================
+   INVENTARIOS — ESTADO FIRMADO / INCOMPLETO
+   ========================================= */
+
+.inventory-no-signature {
+    color: #c62828;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.inventory-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.inventory-status-complete {
+    background-color: #2e7d32;
+    color: #ffffff;
+}
+
+.inventory-status-incomplete {
+    background-color: #c62828;
+    color: #ffffff;
+}
+
+.inventory-row-incomplete td {
+    background-color: #fdecea;
+}
+
+.inventory-row-incomplete td:first-child {
+    box-shadow: inset 4px 0 0 #c62828;
+}
+
+.inventory-card-incomplete {
+    border: 2px solid #c62828;
+}
+
+.inventory-card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}

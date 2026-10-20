@@ -1,5 +1,12 @@
-INVENTORY_SECTION_DEFINITIONS = {
+DEFAULT_DECLARATION = (
+    "Declaro que he revisado el presente inventario y estoy de "
+    "acuerdo con el estado de la propiedad y los elementos "
+    "registrados en él."
+)
 
+KEYS_SECTION_NAME = "Llaves entregadas"
+
+INVENTORY_SECTION_DEFINITIONS = {
     "Entrada": [
         {
             "name": "Puerta",

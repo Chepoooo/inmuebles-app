@@ -3,7 +3,7 @@
 {% block extra_css %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/properties.css' %}">
+<link rel="stylesheet" href="{% static 'css/properties.css' %}?v=4">
 {% endblock %}
 
 {% block title %}
@@ -81,7 +81,7 @@
         <div class="property-info-item">
 
             <span>
-                Número de propiedad
+                Número de contrato
             </span>
 
             <strong>
@@ -94,7 +94,7 @@
         <div class="property-info-item">
 
             <span>
-                Arrendatario
+                Nombres y apellidos del arrendatario
             </span>
 
             <strong>
@@ -107,11 +107,11 @@
         <div class="property-info-item">
 
             <span>
-                Número de documento
+                Documento
             </span>
 
             <strong>
-                {{ property.document_number|default:"No registrado" }}
+                {{ property.document_label|default:"No registrado" }}
             </strong>
 
         </div>
@@ -220,6 +220,7 @@
      ACCIONES
      ================================ -->
 
+{% if current_membership.role == "admin" %}
 <div class="property-detail-actions">
 
     <a
@@ -237,6 +238,7 @@
     </a>
 
 </div>
+{% endif %}
 
 
 </div>

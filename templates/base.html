@@ -8,7 +8,7 @@
 
     {% load static %}
 
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=4">
     {% block extra_css %}{% endblock %}
 </head>
 
@@ -16,45 +16,65 @@
 
     {% if user.is_authenticated %}
     <header class="site-header">
-        <nav class="main-nav">
+        <nav class="main-nav" id="main-nav">
 
             <div class="nav-brand">
                 <a href="{% url 'property_list' %}">Habita</a>
             </div>
 
-            <div class="nav-links">
-                <a href="{% url 'property_list' %}">Propiedades</a>
-                <a href="{% url 'repair_list' %}">Reparaciones</a>
-                <a href="{% url 'inventory_dashboard' %}">Inventarios</a>
-                <a href="{% url 'organization_settings' %}">Organización</a>
-            </div>
+            <button
+                type="button"
+                class="nav-toggle"
+                id="nav-toggle"
+                aria-controls="nav-menu"
+                aria-expanded="false"
+                aria-label="Abrir menú"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
-            <div class="nav-user">
+            <div class="nav-menu" id="nav-menu">
 
-                <div class="nav-user-profile">
-                    <div class="nav-user-avatar" aria-hidden="true">
-                        {{ user.username|first|upper }}
-                    </div>
-
-                    <div class="nav-user-info">
-                        <span class="nav-user-label">Sesión iniciada</span>
-                        <span class="nav-username">{{ user.username }}</span>
-                    </div>
+                <div class="nav-links">
+                    <a href="{% url 'property_list' %}">Propiedades</a>
+                    <a href="{% url 'repair_list' %}">Reparaciones</a>
+                    <a href="{% url 'inventory_dashboard' %}">Inventarios</a>
+                    {% if current_membership.role == "admin" %}
+                    <a href="{% url 'inventory_notes' %}">Notas</a>
+                    {% endif %}
+                    <a href="{% url 'organization_settings' %}">Organización</a>
                 </div>
 
-                <form
-                    class="nav-logout-form"
-                    method="post"
-                    action="{% url 'logout' %}"
-                    onsubmit="return confirm('¿Estás seguro de que deseas cerrar sesión?');"
-                >
-                    {% csrf_token %}
+                <div class="nav-user">
 
-                    <button type="submit" class="logout-button">
-                        <span class="logout-icon" aria-hidden="true">↪</span>
-                        <span>Cerrar sesión</span>
-                    </button>
-                </form>
+                    <div class="nav-user-profile">
+                        <div class="nav-user-avatar" aria-hidden="true">
+                            {{ user.username|first|upper }}
+                        </div>
+
+                        <div class="nav-user-info">
+                            <span class="nav-user-label">Sesión iniciada</span>
+                            <span class="nav-username">{{ user.username }}</span>
+                        </div>
+                    </div>
+
+                    <form
+                        class="nav-logout-form"
+                        method="post"
+                        action="{% url 'logout' %}"
+                        onsubmit="return confirm('¿Estás seguro de que deseas cerrar sesión?');"
+                    >
+                        {% csrf_token %}
+
+                        <button type="submit" class="logout-button">
+                            <span class="logout-icon" aria-hidden="true">↪</span>
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </form>
+
+                </div>
 
             </div>
 
@@ -65,6 +85,27 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    <script>
+        (function () {
+            const nav = document.getElementById("main-nav");
+            const toggle = document.getElementById("nav-toggle");
+
+            if (!nav || !toggle) {
+                return;
+            }
+
+            toggle.addEventListener("click", function () {
+                const isOpen = nav.classList.toggle("is-open");
+
+                toggle.setAttribute("aria-expanded", isOpen);
+                toggle.setAttribute(
+                    "aria-label",
+                    isOpen ? "Cerrar menú" : "Abrir menú"
+                );
+            });
+        })();
+    </script>
 
 </body>
 </html>

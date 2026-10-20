@@ -39,6 +39,11 @@ class Repair(models.Model):
         blank=True,
     )
 
+    assigned_worker_email = models.EmailField(
+        max_length=254,
+        blank=True,
+    )
+
     quote = models.DecimalField(
         max_digits=10,
         decimal_places=2,

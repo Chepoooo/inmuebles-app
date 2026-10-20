@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'config.context_processors.google_maps_api_key',
+                'accounts.context_processors.current_membership',
             ],
         },
     },

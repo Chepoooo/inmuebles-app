@@ -3,7 +3,7 @@
 
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=4">
 {% endblock %}
 
 {% block title %}
@@ -32,7 +32,7 @@ Inventario
 
             <p class="inventory-detail-property">
                 {{ inventory.property.name }}
-                · Propiedad #{{ inventory.property.property_number }}
+                · Contrato #{{ inventory.property.property_number }}
             </p>
         </div>
 
@@ -78,6 +78,8 @@ Inventario
     <form method="post">
 
         {% csrf_token %}
+
+        <fieldset class="inventory-readonly-fieldset" {% if read_only %}disabled{% endif %}>
 
 
         <!-- ESTADO MASIVO -->
@@ -231,6 +233,43 @@ Inventario
 
 
                         <div class="inventory-section-content">
+
+                            {% if section.name == "Llaves entregadas" %}
+
+                                {% for item in section.items.all %}
+
+                                    <div class="inventory-item">
+
+                                        <div class="inventory-item-header">
+
+                                            <h3>
+                                                Cantidad de llaves
+                                            </h3>
+
+                                        </div>
+
+                                        <div class="inventory-field">
+
+                                            <label for="extra_quantity_{{ item.id }}">
+                                                Cantidad de llaves entregadas
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                id="extra_quantity_{{ item.id }}"
+                                                name="extra_quantity_{{ item.id }}"
+                                                min="0"
+                                                value="{{ item.extra_data.quantity|default:'' }}"
+                                                placeholder="Ej. 2"
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
 
                             {% for item in section.items.all %}
 
@@ -574,6 +613,8 @@ Inventario
 
                             {% endfor %}
 
+                            {% endif %}
+
                         </div>
 
                     </details>
@@ -606,13 +647,33 @@ Inventario
         </div>
 
 
+        <!-- LLAVES ENTREGADAS -->
+
+        {% if membership.role == "admin" and not has_keys_section %}
+
+            <div class="inventory-admin-actions inventory-admin-actions-bottom">
+
+                <a
+                    href="{% url 'inventory_add_keys' inventory.id %}"
+                    class="button-secondary"
+                >
+                    + Llaves entregadas
+                </a>
+
+            </div>
+
+        {% endif %}
+
+
         <!-- FIRMA -->
 
-        {% if membership.role == "admin" %}
+        {% if membership.role == "admin" or inventory.signature %}
 
             <section class="inventory-signature-section">
 
                 {% if not inventory.signature %}
+
+                    {% if membership.role == "admin" %}
 
                     <div class="inventory-signature-card">
 
@@ -639,9 +700,11 @@ Inventario
 
                     </div>
 
+                    {% endif %}
+
                 {% else %}
 
-                    <div class="inventory-signature-card">
+                    <div class="inventory-signature-card inventory-signature-card-signed">
 
                         <h2>
                             Firma del cliente
@@ -649,17 +712,53 @@ Inventario
 
                         <div class="inventory-signature-info">
 
-                            <p>
-                                Inventario firmado por:
+                            <div class="inventory-signature-info-item">
+
+                                <span>
+                                    Nombre
+                                </span>
+
                                 <strong>
                                     {{ inventory.signature.name }}
                                 </strong>
-                            </p>
 
-                            <p>
-                                Fecha:
-                                {{ inventory.signature.signed_at|date:"d/m/Y H:i" }}
-                            </p>
+                            </div>
+
+                            <div class="inventory-signature-info-item">
+
+                                <span>
+                                    Documento
+                                </span>
+
+                                <strong>
+                                    {{ inventory.signature.document_label|default:inventory.property.document_label|default:"No registrado" }}
+                                </strong>
+
+                            </div>
+
+                            <div class="inventory-signature-info-item">
+
+                                <span>
+                                    Correo
+                                </span>
+
+                                <strong>
+                                    {{ inventory.signature.email|default:inventory.property.tenant_email|default:"No registrado" }}
+                                </strong>
+
+                            </div>
+
+                            <div class="inventory-signature-info-item">
+
+                                <span>
+                                    Fecha de firma
+                                </span>
+
+                                <strong>
+                                    {{ inventory.signature.signed_at|date:"d/m/Y H:i" }}
+                                </strong>
+
+                            </div>
 
                         </div>
 
@@ -726,11 +825,49 @@ Inventario
         {% endif %}
 
 
+        <!-- NOTAS Y DECLARACIONES -->
+
+        {% if inventory.signature and inventory.signature.notes_snapshot %}
+
+            <section class="inventory-signature-section">
+
+                <div class="inventory-signature-card">
+
+                    <h2>
+                        Notas y declaraciones
+                    </h2>
+
+                    <div class="inventory-signature-notes-list">
+
+                        {% for note in inventory.signature.notes_snapshot %}
+
+                            <div class="inventory-signature-note">
+
+                                <h3>
+                                    {{ note.title }}
+                                </h3>
+
+                                <p>
+                                    {{ note.content }}
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
 
 
         <!-- GUARDAR -->
 
-        <div class="inventory-save-bar">
+        {% if not read_only %}<div class="inventory-save-bar">
 
             <button
                 type="submit"
@@ -739,7 +876,9 @@ Inventario
                 Guardar cambios
             </button>
 
-        </div>
+        </div>{% endif %}
+
+        </fieldset>
 
     </form>
 

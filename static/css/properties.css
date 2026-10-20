@@ -230,3 +230,31 @@
     }
 
 }
+
+
+/* ================================
+   FORMULARIO — TIPO Y NÚMERO DE DOCUMENTO
+   ================================ */
+
+.property-form-document-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.property-form-document-type label,
+.property-form-document-number label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.property-form-document-type select {
+    text-align: center;
+}
+
+@media (max-width: 560px) {
+    .property-form-document-row {
+        grid-template-columns: 1fr;
+    }
+}
