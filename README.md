@@ -1,4 +1,4 @@
-# Inmuebles App
+# Habita
 
 Sistema de gestión inmobiliaria multi-tenant construido con Django y PostgreSQL.
 

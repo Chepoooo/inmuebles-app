@@ -1,6 +1,6 @@
 # Skill: Repair Management
 
-Gestión de reparaciones en el sistema Inmuebles App.
+Gestión de reparaciones en el sistema Habita.
 
 ## Crear reparación
 

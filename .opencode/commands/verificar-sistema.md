@@ -1,6 +1,6 @@
 # Comando: Verificar Sistema
 
-Verifica el estado general del sistema Inmuebles App.
+Verifica el estado general del sistema Habita.
 
 ## Uso
 

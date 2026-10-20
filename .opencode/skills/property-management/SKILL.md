@@ -1,6 +1,6 @@
 # Skill: Property Management
 
-Gestión de propiedades en el sistema Inmuebles App.
+Gestión de propiedades en el sistema Habita.
 
 ## Crear una nueva propiedad
 

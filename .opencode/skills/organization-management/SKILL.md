@@ -1,6 +1,6 @@
 # Skill: Organization Management
 
-Gestión de organizaciones y membresías en el sistema Inmuebles App.
+Gestión de organizaciones y membresías en el sistema Habita.
 
 ## Crear organización
 

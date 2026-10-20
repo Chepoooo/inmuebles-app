@@ -1,6 +1,6 @@
 # Skill: Inventory Management
 
-Gestión de inventarios (inicial/final) en el sistema Inmuebles App.
+Gestión de inventarios (inicial/final) en el sistema Habita.
 
 ## Estructura del Inventario
 

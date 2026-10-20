@@ -1,4 +1,4 @@
-# AGENTS.md - Inmuebles App
+# AGENTS.md - Habita
 
 Este archivo proporciona orientación a los agentes de IA cuando trabajan en este proyecto.
 
