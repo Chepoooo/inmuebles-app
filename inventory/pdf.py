@@ -11,6 +11,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
+from PIL import Image as PILImage
 from reportlab.platypus import (
     Image,
     PageBreak,
@@ -406,15 +407,78 @@ def _photo_gallery(
 # PIE DE PAGINA
 # ============================================================
 
-def _footer(canvas, doc):
+def _build_watermark(url, opacity=0.08):
     """
-    Agrega una línea y número de página
-    en cada página.
+    Prepara el logo de la organización como marca de agua
+    difuminada (transparente) para dibujarlo en cada página.
+    Devuelve None si la organización no tiene logo.
+    """
+
+    image_data = _download_image(url)
+
+    if image_data is None:
+        return None
+
+    try:
+        image_data.seek(0)
+
+        logo = PILImage.open(
+            image_data
+        ).convert("RGBA")
+
+        alpha = logo.getchannel("A").point(
+            lambda value: int(value * opacity)
+        )
+
+        logo.putalpha(alpha)
+
+        buffer = BytesIO()
+        logo.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        return ImageReader(buffer)
+
+    except Exception:
+        return None
+
+
+def _decorate_page(
+    canvas,
+    doc,
+    watermark=None,
+    organization_name="",
+):
+    """
+    Dibuja en cada página la marca de agua (detrás del contenido)
+    y el pie de página con el nombre de la organización y el número.
     """
 
     canvas.saveState()
 
     width, height = letter
+
+    if watermark is not None:
+
+        image_width, image_height = watermark.getSize()
+
+        max_size = 4.8 * inch
+
+        ratio = min(
+            max_size / float(image_width),
+            max_size / float(image_height),
+        )
+
+        draw_width = image_width * ratio
+        draw_height = image_height * ratio
+
+        canvas.drawImage(
+            watermark,
+            (width - draw_width) / 2,
+            (height - draw_height) / 2,
+            width=draw_width,
+            height=draw_height,
+            mask="auto",
+        )
 
     canvas.setStrokeColor(
         colors.HexColor("#d9dee4")
@@ -439,13 +503,13 @@ def _footer(canvas, doc):
     canvas.drawString(
         doc.leftMargin,
         0.28 * inch,
-        "Documento generado por la plataforma Habita",
+        _safe_text(organization_name, default="Habita"),
     )
 
     canvas.drawRightString(
         width - doc.rightMargin,
         0.28 * inch,
-        f"Pagina {doc.page}",
+        f"Página {doc.page}",
     )
 
     canvas.restoreState()
@@ -585,9 +649,9 @@ def build_inventory_pdf(
 
         fontName="Helvetica",
 
-        fontSize=9,
+        fontSize=9.5,
 
-        leading=13,
+        leading=14,
 
         textColor=colors.HexColor(
             "#333333"
@@ -663,10 +727,7 @@ def build_inventory_pdf(
 
     story.append(
         Paragraph(
-            _safe_text(
-                organization.name,
-                default="Organización",
-            ),
+            "INVENTARIO DE ENTREGA DE INMUEBLE",
             title_style,
         )
     )
@@ -1552,93 +1613,27 @@ def build_inventory_pdf(
             )
 
     # ========================================================
-    # LOGO DE LA ORGANIZACIÓN
-    # ========================================================
-
-    if organization.logo_secure_url:
-
-        story.append(
-            Spacer(
-                1,
-                20,
-            )
-        )
-
-        organization_logo = _build_image(
-            organization.logo_secure_url,
-            max_width=2.8 * inch,
-            max_height=1.5 * inch,
-        )
-
-        logo_table = Table(
-            [[organization_logo]],
-
-            colWidths=[
-                7.0 * inch
-            ],
-
-            hAlign="CENTER",
-        )
-
-        logo_table.setStyle(
-            TableStyle(
-                [
-                    (
-                        "VALIGN",
-                        (0, 0),
-                        (-1, -1),
-                        "MIDDLE",
-                    ),
-
-                    (
-                        "ALIGN",
-                        (0, 0),
-                        (-1, -1),
-                        "CENTER",
-                    ),
-
-                    (
-                        "LEFTPADDING",
-                        (0, 0),
-                        (-1, -1),
-                        10,
-                    ),
-
-                    (
-                        "RIGHTPADDING",
-                        (0, 0),
-                        (-1, -1),
-                        10,
-                    ),
-
-                    (
-                        "TOPPADDING",
-                        (0, 0),
-                        (-1, -1),
-                        10,
-                    ),
-
-                    (
-                        "BOTTOMPADDING",
-                        (0, 0),
-                        (-1, -1),
-                        10,
-                    ),
-                ]
-            )
-        )
-
-        story.append(
-            logo_table
-        )
-    # ========================================================
     # CREAR DOCUMENTO
     # ========================================================
 
+    watermark = (
+        _build_watermark(organization.logo_secure_url)
+        if organization.logo_secure_url
+        else None
+    )
+
+    def decorate(canvas, doc):
+        _decorate_page(
+            canvas,
+            doc,
+            watermark=watermark,
+            organization_name=organization.name,
+        )
+
     document.build(
         story,
-        onFirstPage=_footer,
-        onLaterPages=_footer,
+        onFirstPage=decorate,
+        onLaterPages=decorate,
     )
 
     buffer.seek(0)
