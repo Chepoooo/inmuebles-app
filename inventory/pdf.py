@@ -407,7 +407,7 @@ def _photo_gallery(
 # PIE DE PAGINA
 # ============================================================
 
-def _build_watermark(url, opacity=0.08):
+def _build_watermark(url, opacity=0.05):
     """
     Prepara el logo de la organización como marca de agua
     difuminada (transparente) para dibujarlo en cada página.
@@ -518,6 +518,84 @@ def _decorate_page(
 # ============================================================
 # GENERAR PDF
 # ============================================================
+
+_SECTION_BAR_STYLE = ParagraphStyle(
+    "section_bar",
+    fontName="Helvetica-Bold",
+    fontSize=13,
+    leading=16,
+    textColor=colors.white,
+)
+
+_ITEM_BAR_STYLE = ParagraphStyle(
+    "item_bar",
+    fontName="Helvetica-Bold",
+    fontSize=11,
+    leading=14,
+    textColor=colors.HexColor("#1f3a5c"),
+)
+
+
+def _section_header(text):
+    """
+    Título de sección: barra azul con texto blanco,
+    para distinguir cada sección al hacer scroll.
+    """
+
+    table = Table(
+        [[Paragraph(text, _SECTION_BAR_STYLE)]],
+        colWidths=[7.0 * inch],
+        hAlign="LEFT",
+    )
+
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#1f3a5c")),
+                ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                ("TOPPADDING", (0, 0), (-1, -1), 7),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ]
+        )
+    )
+
+    table.spaceBefore = 16
+    table.spaceAfter = 8
+    table.keepWithNext = True
+
+    return table
+
+
+def _item_header(text):
+    """
+    Título de característica: franja clara con borde azul
+    a la izquierda, para diferenciarla del contenido.
+    """
+
+    table = Table(
+        [[Paragraph(text, _ITEM_BAR_STYLE)]],
+        colWidths=[7.0 * inch],
+        hAlign="LEFT",
+    )
+
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#e8eef6")),
+                ("LINEBEFORE", (0, 0), (0, -1), 3, colors.HexColor("#2f5d8c")),
+                ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ]
+        )
+    )
+
+    table.spaceBefore = 8
+    table.spaceAfter = 6
+    table.keepWithNext = True
+
+    return table
+
 
 def build_inventory_pdf(
     inventory,
@@ -960,12 +1038,9 @@ def build_inventory_pdf(
         if section.name == KEYS_SECTION_NAME:
 
             story.append(
-                Paragraph(
-                    _safe_text(
+                _section_header(_safe_text(
                         section.name
-                    ),
-                    section_style,
-                )
+                    ))
             )
 
             for item in section.items.all():
@@ -1077,23 +1152,17 @@ def build_inventory_pdf(
             continue
 
         story.append(
-            Paragraph(
-                _safe_text(
+            _section_header(_safe_text(
                     section.name
-                ),
-                section_style,
-            )
+                ))
         )
 
         for item in section.items.all():
 
             story.append(
-                Paragraph(
-                    _safe_text(
+                _item_header(_safe_text(
                         item.name
-                    ),
-                    item_title_style,
-                )
+                    ))
             )
 
             # ------------------------------------------------
@@ -1389,10 +1458,7 @@ def build_inventory_pdf(
         )
 
         story.append(
-            Paragraph(
-                "NOTAS Y DECLARACIONES",
-                section_style,
-            )
+            _section_header("NOTAS Y DECLARACIONES")
         )
 
         for note in notes_snapshot:
@@ -1441,10 +1507,7 @@ def build_inventory_pdf(
         )
 
         story.append(
-            Paragraph(
-                "FIRMA DEL INVENTARIO",
-                section_style,
-            )
+            _section_header("FIRMA DEL INVENTARIO")
         )
 
         story.append(
