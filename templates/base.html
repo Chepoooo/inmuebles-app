@@ -88,6 +88,71 @@
 
     <script>
         (function () {
+            const previewImages = document.querySelectorAll("img[data-preview]");
+
+            if (previewImages.length) {
+
+                const overlay = document.createElement("div");
+                overlay.className = "image-preview";
+                overlay.innerHTML = `
+                    <div class="image-preview-toolbar">
+                        <button type="button" class="image-preview-download">Descargar</button>
+                        <button type="button" class="image-preview-close" aria-label="Cerrar">✕</button>
+                    </div>
+                    <img alt="">
+                `;
+                document.body.appendChild(overlay);
+
+                const previewImg = overlay.querySelector("img");
+                const downloadButton = overlay.querySelector(".image-preview-download");
+                let currentSrc = "";
+
+                function closePreview() {
+                    overlay.classList.remove("is-open");
+                    previewImg.removeAttribute("src");
+                }
+
+                previewImages.forEach(function (img) {
+                    img.classList.add("is-previewable");
+                    img.addEventListener("click", function () {
+                        currentSrc = img.src;
+                        previewImg.src = currentSrc;
+                        previewImg.alt = img.alt || "Vista previa";
+                        overlay.classList.add("is-open");
+                    });
+                });
+
+                overlay.addEventListener("click", function (event) {
+                    if (event.target === overlay || event.target.classList.contains("image-preview-close")) {
+                        closePreview();
+                    }
+                });
+
+                document.addEventListener("keydown", function (event) {
+                    if (event.key === "Escape" && overlay.classList.contains("is-open")) {
+                        closePreview();
+                    }
+                });
+
+                downloadButton.addEventListener("click", function () {
+                    const fileName = "foto-inventario-" + Date.now() + ".jpg";
+
+                    fetch(currentSrc)
+                        .then(function (response) { return response.blob(); })
+                        .then(function (blob) {
+                            const link = document.createElement("a");
+                            link.href = URL.createObjectURL(blob);
+                            link.download = fileName;
+                            document.body.appendChild(link);
+                            link.click();
+                            link.remove();
+                        })
+                        .catch(function () {
+                            window.open(currentSrc, "_blank");
+                        });
+                });
+            }
+
             const nav = document.getElementById("main-nav");
             const toggle = document.getElementById("nav-toggle");
 

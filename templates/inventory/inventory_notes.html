@@ -6,7 +6,7 @@ Notas y declaraciones
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}?v=6">
 {% endblock %}
 
 {% block content %}
@@ -16,82 +16,59 @@ Notas y declaraciones
     <div class="notes-header">
 
         <div>
-
             <h1>Notas y declaraciones</h1>
-
             <p class="notes-description">
-                Crea declaraciones personalizadas para mostrar
-                al cliente al firmar un inventario y en el PDF.
+                Declaraciones personalizadas que el cliente lee al firmar
+                un inventario y que aparecen en el PDF.
             </p>
-
         </div>
 
-        <a
-            href="{% url 'inventory_note_create' %}"
-            class="button-primary"
-        >
-            Nueva nota
+        <a href="{% url 'inventory_note_create' %}" class="button-primary notes-new-button">
+            + Nueva nota
         </a>
 
     </div>
 
 
-    <div class="notes-card">
+    {% if notes %}
 
-        {% if notes %}
+        <div class="notes-grid">
 
-            <table class="notes-table">
+            {% for note in notes %}
 
-                <thead>
-                    <tr>
-                        <th>Orden</th>
-                        <th>Título</th>
-                        <th>Contenido</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
+                <article class="note-card">
 
-                <tbody>
+                    <div class="note-card-top">
+                        <span class="note-card-order">{{ note.order }}</span>
+                        <h2 class="note-card-title">{{ note.title }}</h2>
+                    </div>
 
-                    {% for note in notes %}
+                    <p class="note-card-content">{{ note.content }}</p>
 
-                        <tr>
-                            <td data-label="Orden">{{ note.order }}</td>
-                            <td data-label="Título">{{ note.title }}</td>
-                            <td data-label="Contenido">{{ note.content|truncatewords:25 }}</td>
+                    <div class="note-card-actions">
+                        <a href="{% url 'inventory_note_update' note.id %}" class="button-secondary">
+                            Editar
+                        </a>
+                        <a href="{% url 'inventory_note_delete' note.id %}" class="button-danger">
+                            Eliminar
+                        </a>
+                    </div>
 
-                            <td class="notes-table-actions" data-label="Acciones">
-                                <a
-                                    href="{% url 'inventory_note_update' note.id %}"
-                                    class="button-secondary"
-                                >
-                                    Editar
-                                </a>
+                </article>
 
-                                <a
-                                    href="{% url 'inventory_note_delete' note.id %}"
-                                    class="button-danger"
-                                >
-                                    Eliminar
-                                </a>
-                            </td>
-                        </tr>
+            {% endfor %}
 
-                    {% endfor %}
+        </div>
 
-                </tbody>
+    {% else %}
 
-            </table>
+        <div class="notes-empty">
+            <h2>Todavía no hay notas</h2>
+            <p>Crea tu primera declaración para usarla en los inventarios.</p>
+            <a href="{% url 'inventory_note_create' %}" class="button-primary">Crear nota</a>
+        </div>
 
-        {% else %}
-
-            <p class="inventory-empty-text">
-                No hay notas creadas todavía.
-            </p>
-
-        {% endif %}
-
-    </div>
+    {% endif %}
 
 </div>
 

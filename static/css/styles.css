@@ -1813,3 +1813,61 @@ tr:hover {
     justify-content: flex-end;
     gap: 6px;
 }
+
+
+/* =========================================
+   VISTA PREVIA DE IMÁGENES
+   ========================================= */
+
+img.is-previewable {
+    cursor: zoom-in;
+}
+
+.image-preview {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 56px 16px 16px;
+    box-sizing: border-box;
+    background-color: rgba(10, 20, 35, 0.88);
+}
+
+.image-preview.is-open {
+    display: flex;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: calc(100vh - 110px);
+    object-fit: contain;
+    border-radius: 8px;
+    background-color: var(--color-white);
+}
+
+.image-preview-toolbar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.image-preview-toolbar button {
+    padding: 9px 16px;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.image-preview-toolbar .image-preview-close {
+    padding: 9px 13px;
+}

@@ -545,7 +545,7 @@ Inventario
 
                                                     <div class="inventory-photo-card">
 
-                                                        <img
+                                                        <img data-preview
                                                             src="{{ photo.secure_url }}"
                                                             alt="Foto de {{ item.name }}"
                                                         >
@@ -764,7 +764,7 @@ Inventario
 
                         <div class="inventory-signed-image">
 
-                            <img
+                            <img data-preview
                                 src="{{ inventory.signature.secure_url }}"
                                 alt="Firma de {{ inventory.signature.name }}"
                             >
@@ -793,7 +793,7 @@ Inventario
 
                                     <div class="inventory-signature-evidence-photo">
 
-                                        <img
+                                        <img data-preview
                                             src="{{ photo.secure_url }}"
                                             alt="Evidencia {{ forloop.counter }}"
                                         >

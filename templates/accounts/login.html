@@ -1,19 +1,80 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     Iniciar sesión
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/accounts.css' %}?v=6">
+{% endblock %}
+
 {% block content %}
 
-    <h1>Iniciar sesión</h1>
+<div class="login-page">
 
-    <form method="post">
-        {% csrf_token %}
+    <div class="login-card">
 
-        {{ form.as_p }}
+        <div class="login-brand">
+            <span class="login-logo" aria-hidden="true">H</span>
+            <span class="login-brand-name">Habita</span>
+        </div>
 
-        <button type="submit">Iniciar sesión</button>
-    </form>
+        <h1>Iniciar sesión</h1>
 
-{% endblock%}
+        <p class="login-description">
+            Ingresa con tu usuario y contraseña para continuar.
+        </p>
+
+        {% if form.non_field_errors %}
+            <div class="login-error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="login-form" novalidate>
+
+            {% csrf_token %}
+
+            <div class="login-field">
+                <label for="{{ form.username.id_for_label }}">Usuario</label>
+                <input
+                    type="text"
+                    name="{{ form.username.html_name }}"
+                    id="{{ form.username.id_for_label }}"
+                    value="{{ form.username.value|default:'' }}"
+                    autocomplete="username"
+                    autocapitalize="none"
+                    required
+                    autofocus
+                >
+                {% if form.username.errors %}
+                    <div class="login-field-error">{{ form.username.errors|join:" " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="login-field">
+                <label for="{{ form.password.id_for_label }}">Contraseña</label>
+                <input
+                    type="password"
+                    name="{{ form.password.html_name }}"
+                    id="{{ form.password.id_for_label }}"
+                    autocomplete="current-password"
+                    required
+                >
+                {% if form.password.errors %}
+                    <div class="login-field-error">{{ form.password.errors|join:" " }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="login-submit">Iniciar sesión</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

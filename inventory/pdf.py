@@ -50,6 +50,22 @@ def _safe_text(value, default="No registrado"):
 # ETIQUETAS
 # ============================================================
 
+_STATUS_COLORS = {
+    "good": "#2e7d32",
+    "regular": "#8a8f98",
+    "bad": "#c62828",
+}
+
+
+def _status_color(status):
+    """
+    Color de la casilla del estado: verde (buen estado),
+    gris (regular) y rojo (mal estado).
+    """
+
+    return _STATUS_COLORS.get(status)
+
+
 def _status_label(status):
     """
     Convierte el valor interno del estado
@@ -1223,7 +1239,16 @@ def build_inventory_pdf(
                             _status_label(
                                 item.status
                             ),
-                            body_style,
+                            ParagraphStyle(
+                                "status_value",
+                                parent=body_style,
+                                fontName="Helvetica-Bold",
+                                textColor=(
+                                    colors.white
+                                    if _status_color(item.status)
+                                    else body_style.textColor
+                                ),
+                            ),
                         ),
                     ],
                 ]
@@ -1333,6 +1358,8 @@ def build_inventory_pdf(
                     hAlign="LEFT",
                 )
 
+                status_color = _status_color(item.status)
+
                 detail_table.setStyle(
                     TableStyle(
                         [
@@ -1344,6 +1371,21 @@ def build_inventory_pdf(
                                 colors.HexColor(
                                     "#d9dee4"
                                 ),
+                            ),
+
+                            *(
+                                [
+                                    (
+                                        "BACKGROUND",
+                                        (1, 1),
+                                        (1, 1),
+                                        colors.HexColor(
+                                            status_color
+                                        ),
+                                    ),
+                                ]
+                                if status_color
+                                else []
                             ),
 
                             (
