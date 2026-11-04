@@ -602,6 +602,16 @@
             }
 
 
+            const confirmed = window.confirm(
+                "¿Estás seguro de que deseas guardar esta firma?\n\n" +
+                "Una vez guardada, la firma y sus notas no podrán editarse."
+            );
+
+            if (!confirmed) {
+                event.preventDefault();
+                return;
+            }
+
             const imageData =
                 canvas.toDataURL("image/png");
 

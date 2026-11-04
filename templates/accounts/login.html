@@ -26,6 +26,12 @@
             Ingresa con tu usuario y contraseña para continuar.
         </p>
 
+        {% for message in messages %}
+            <div class="login-error login-message-{{ message.tags }}">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+
         {% if form.non_field_errors %}
             <div class="login-error">
                 {% for error in form.non_field_errors %}

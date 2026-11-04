@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.contrib.auth import logout
 from django.shortcuts import render
 
 # Create your views here.
@@ -34,10 +36,15 @@ def organization_select(request):
     ).select_related("organization")
 
     if not memberships.exists():
-        return render(
+        logout(request)
+
+        messages.error(
             request,
-            "accounts/no_organization.html",
+            "Tu usuario no pertenece a ninguna organización. "
+            "Inicia sesión de nuevo o pide acceso al administrador.",
         )
+
+        return redirect("login")
 
     if memberships.count() == 1:
         request.session["organization_id"] = memberships.first().organization_id
