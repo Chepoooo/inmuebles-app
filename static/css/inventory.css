@@ -2064,3 +2064,91 @@ fieldset:disabled textarea {
     color: var(--color-primary);
     border: 1px solid var(--border-color);
 }
+
+
+/* ==================================================
+   DETALLE — TÍTULOS DE SECCIÓN Y CARACTERÍSTICA
+   Barra oscura para la sección, franja clara para
+   la característica, para distinguirlas al hacer scroll.
+   ================================================== */
+
+.inventory-section {
+    overflow: hidden;
+}
+
+.inventory-section-header {
+    background-color: var(--color-primary);
+    border-bottom: none;
+}
+
+.inventory-section-title h2 {
+    color: var(--color-white);
+    font-size: 18px;
+}
+
+.inventory-section-header .inventory-section-action-link {
+    color: var(--color-white);
+    text-decoration: underline;
+}
+
+.inventory-section-header .inventory-section-action-link:hover {
+    color: #dfe8f3;
+}
+
+.inventory-section-summary {
+    border-top: 1px solid var(--border-color);
+}
+
+.inventory-item {
+    overflow: hidden;
+}
+
+.inventory-item-header {
+    margin: -22px -22px 20px;
+    padding: 12px 22px;
+    background-color: #e8eef6;
+    border-left: 4px solid var(--color-secondary);
+}
+
+.inventory-item-header h3 {
+    font-size: 16px;
+    color: var(--color-primary);
+}
+
+.inventory-item-description .inventory-item-header {
+    background-color: #e8eef6;
+}
+
+/* Botón "+ Agregar foto": fondo claro y texto oscuro para que se lea */
+.inventory-photo-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 16px;
+    border: 1px solid var(--color-secondary);
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.inventory-photo-add-button:hover {
+    background-color: #e8eef6;
+}
+
+@media (max-width: 480px) {
+
+    .inventory-item-header {
+        margin: -18px -18px 16px;
+        padding: 10px 18px;
+    }
+
+    .inventory-item {
+        padding: 18px;
+    }
+
+}
