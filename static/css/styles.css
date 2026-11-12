@@ -1871,3 +1871,48 @@ img.is-previewable {
 .image-preview-toolbar .image-preview-close {
     padding: 9px 13px;
 }
+
+
+/* =========================================
+   TABLAS DE DASHBOARD (PROPIEDADES, INVENTARIOS, REPARACIONES)
+   Anchos fijos por columna para que las tablas
+   se vean iguales entre un dashboard y otro.
+   ========================================= */
+
+.dash-table {
+    width: 100%;
+    min-width: 820px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 0;
+    box-shadow: none;
+}
+
+.dash-table th {
+    padding: 12px 14px;
+    background-color: #f3f5f8;
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--color-primary);
+    vertical-align: middle;
+}
+
+.dash-table td {
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dash-table td:last-child,
+.dash-table th:last-child {
+    white-space: nowrap;
+}
+
+
