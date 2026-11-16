@@ -33,18 +33,19 @@
             {% csrf_token %}
 
             <div class="inventory-photo-field">
-                <label for="photo">Seleccionar imagen</label>
+                <label for="photo">Seleccionar imágenes</label>
 
                 <input
                     type="file"
                     id="photo"
                     name="photo"
                     accept="image/*"
+                    multiple
                     required
                 >
 
                 <small>
-                    Selecciona una imagen para adjuntarla a esta característica.
+                    Puedes seleccionar varias imágenes a la vez.
                 </small>
             </div>
 

@@ -2152,3 +2152,114 @@ fieldset:disabled textarea {
     }
 
 }
+
+
+/* ==================================================
+   LLENADO RÁPIDO DEL INVENTARIO
+   ================================================== */
+
+.inventory-section-bulk {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    background-color: #f3f5f8;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.inventory-section-bulk label {
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.inventory-section-bulk-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 320px;
+}
+
+.inventory-section-bulk-controls select {
+    flex: 1;
+}
+
+.inventory-section-bulk-controls button {
+    width: auto;
+    white-space: nowrap;
+    padding: 9px 14px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.inventory-section-bulk-controls button:hover {
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+}
+
+.inventory-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.inventory-field-row .inventory-field {
+    min-width: 0;
+}
+
+.inventory-pending {
+    margin: 0 auto 0 0;
+    align-self: center;
+    font-size: 14px;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.inventory-pending.is-warning {
+    color: #b45309;
+}
+
+.inventory-item.is-pending {
+    border-left: 4px solid #f59e0b;
+}
+
+@media (max-width: 640px) {
+
+    .inventory-bulk-status-controls {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .inventory-section-bulk {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .inventory-section-bulk-controls {
+        min-width: 0;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .inventory-field-row {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-save-bar {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .inventory-pending {
+        width: 100%;
+    }
+
+}

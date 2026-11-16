@@ -450,10 +450,10 @@ def inventory_item_photo_create(request, item_id):
                 },
             )
 
-        # Subir la foto después de que el usuario la seleccione.
-        photo = request.FILES.get("photo")
+        # Subir las fotos después de que el usuario las seleccione.
+        photos = request.FILES.getlist("photo")
 
-        if photo:
+        for photo in photos:
             result = cloudinary.uploader.upload(
                 photo,
                 folder="inventory",
@@ -464,6 +464,8 @@ def inventory_item_photo_create(request, item_id):
                 public_id=result["public_id"],
                 secure_url=result["secure_url"],
             )
+
+        if photos:
 
             return redirect(
                 "inventory_detail",

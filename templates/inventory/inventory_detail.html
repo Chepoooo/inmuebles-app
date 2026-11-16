@@ -271,6 +271,42 @@ Inventario
 
                             {% else %}
 
+                            {% if membership.role == "admin" and not read_only %}
+
+                                <div class="inventory-section-bulk">
+
+                                    <label for="section_bulk_{{ section.id }}">
+                                        Estado para esta sección
+                                    </label>
+
+                                    <div class="inventory-section-bulk-controls">
+
+                                        <select id="section_bulk_{{ section.id }}">
+
+                                            <option value="">
+                                                Seleccione un estado
+                                            </option>
+
+                                            {% for value, label in status_choices %}
+
+                                                <option value="{{ value }}">
+                                                    {{ label }}
+                                                </option>
+
+                                            {% endfor %}
+
+                                        </select>
+
+                                        <button type="button" data-apply-section-status="{{ section.id }}">
+                                            Aplicar a la sección
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
                             {% for item in section.items.all %}
 
                                 {% if item.is_description %}
@@ -322,6 +358,8 @@ Inventario
 
                                         </div>
 
+
+                                        <div class="inventory-field-row">
 
                                         <!-- TIPO / MATERIAL -->
 
@@ -409,6 +447,7 @@ Inventario
 
                                             </select>
 
+                                        </div>
                                         </div>
 
 
@@ -869,6 +908,10 @@ Inventario
 
         {% if not read_only %}<div class="inventory-save-bar">
 
+            <p class="inventory-pending" id="inventory_pending">
+                Revisando estados...
+            </p>
+
             <button
                 type="submit"
                 class="button-primary"
@@ -1013,6 +1056,73 @@ Inventario
 
     }
 
+</script>
+
+<script>
+(function () {
+
+    const statusFields = document.querySelectorAll('select[name^="status_"]');
+    const pendingText = document.getElementById("inventory_pending");
+
+    function updatePending() {
+
+        const pending = Array.prototype.filter.call(statusFields, function (field) {
+            const pendingItem = !field.value;
+            const card = field.closest(".inventory-item");
+
+            if (card) {
+                card.classList.toggle("is-pending", pendingItem);
+            }
+
+            return pendingItem;
+        });
+
+        if (!pendingText) return;
+
+        if (pending.length === 0) {
+            pendingText.textContent = "Todas las características tienen estado.";
+            pendingText.classList.remove("is-warning");
+        } else {
+            pendingText.textContent =
+                "Faltan " + pending.length +
+                (pending.length === 1 ? " característica" : " características") +
+                " por marcar.";
+            pendingText.classList.add("is-warning");
+        }
+    }
+
+    document.addEventListener("change", function (event) {
+        if (event.target.matches('select[name^="status_"]')) {
+            updatePending();
+        }
+    });
+
+    document.querySelectorAll("[data-apply-section-status]").forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const sectionId = button.dataset.applySectionStatus;
+            const select = document.getElementById("section_bulk_" + sectionId);
+
+            if (!select || !select.value) {
+                alert("Seleccione un estado primero.");
+                return;
+            }
+
+            const section = button.closest(".inventory-section");
+
+            section.querySelectorAll('select[name^="status_"]').forEach(function (field) {
+                field.value = select.value;
+            });
+
+            updatePending();
+        });
+
+    });
+
+    updatePending();
+
+})();
 </script>
 
 <script>
