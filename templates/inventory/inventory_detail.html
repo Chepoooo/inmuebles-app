@@ -158,6 +158,8 @@ Inventario
                                 {{ section.name }}
                             </h2>
 
+                            <span class="inventory-section-progress" data-progress-section="{{ section.id }}"></span>
+
                         </div>
 
 
@@ -425,7 +427,9 @@ Inventario
                                             <select
                                                 id="status_{{ item.id }}"
                                                 name="status_{{ item.id }}"
-                                                required
+                                                class="status-native"
+                                                tabindex="-1"
+                                                aria-hidden="true"
                                             >
 
                                                 <option value="">
@@ -446,6 +450,18 @@ Inventario
                                                 {% endfor %}
 
                                             </select>
+                                            <div class="status-picker" role="group" aria-label="Estado de la característica">
+                                                {% for value, label in status_choices %}
+                                                    <button
+                                                        type="button"
+                                                        class="status-picker-option status-picker-{{ value }}"
+                                                        data-status-value="{{ value }}"
+                                                        aria-pressed="false"
+                                                    >
+                                                        {{ label }}
+                                                    </button>
+                                                {% endfor %}
+                                            </div>
 
                                         </div>
                                         </div>
@@ -1049,6 +1065,7 @@ Inventario
             statusFields.forEach(function (field) {
 
                 field.value = selectedStatus;
+                field.dispatchEvent(new Event("change", { bubbles: true }));
 
             });
 
@@ -1064,7 +1081,53 @@ Inventario
     const statusFields = document.querySelectorAll('select[name^="status_"]');
     const pendingText = document.getElementById("inventory_pending");
 
+    function syncStatusPicker(field) {
+
+        const picker = field.closest(".inventory-field");
+
+        if (!picker) return;
+
+        picker.querySelectorAll("[data-status-value]").forEach(function (button) {
+            const active = button.dataset.statusValue === field.value;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+    }
+
+    function updateSectionProgress() {
+
+        document.querySelectorAll(".inventory-section").forEach(function (section) {
+
+            const progress = section.querySelector(".inventory-section-progress");
+            const fields = section.querySelectorAll('select[name^="status_"]');
+
+            if (!progress || !fields.length) return;
+
+            const done = Array.prototype.filter.call(fields, function (field) {
+                return field.value;
+            }).length;
+
+            progress.textContent = done + " de " + fields.length + " con estado";
+            progress.classList.toggle("is-complete", done === fields.length);
+        });
+    }
+
+    document.querySelectorAll(".status-picker-option").forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const field = button.closest(".inventory-field").querySelector("select.status-native");
+
+            field.value = button.dataset.statusValue;
+            field.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+
+    });
+
     function updatePending() {
+
+        statusFields.forEach(syncStatusPicker);
+        updateSectionProgress();
 
         const pending = Array.prototype.filter.call(statusFields, function (field) {
             const pendingItem = !field.value;
@@ -1113,6 +1176,7 @@ Inventario
 
             section.querySelectorAll('select[name^="status_"]').forEach(function (field) {
                 field.value = select.value;
+                field.dispatchEvent(new Event("change", { bubbles: true }));
             });
 
             updatePending();

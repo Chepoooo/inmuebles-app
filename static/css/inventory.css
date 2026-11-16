@@ -2263,3 +2263,88 @@ fieldset:disabled textarea {
     }
 
 }
+
+
+/* ==================================================
+   ESTADO CON BOTONES (MISMOS COLORES QUE EL PDF)
+   ================================================== */
+
+.status-native {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.status-picker {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.status-picker-option {
+    min-height: 44px;
+    padding: 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.status-picker-option:hover {
+    border-color: var(--color-primary);
+}
+
+.status-picker-option:focus-visible {
+    outline: 3px solid #9bbcdc;
+    outline-offset: 2px;
+}
+
+.status-picker-good.is-active {
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+    color: var(--color-white);
+}
+
+.status-picker-regular.is-active {
+    background-color: #6b7079;
+    border-color: #6b7079;
+    color: var(--color-white);
+}
+
+.status-picker-bad.is-active {
+    background-color: #c62828;
+    border-color: #c62828;
+    color: var(--color-white);
+}
+
+.inventory-section-progress {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.16);
+    color: var(--color-white);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.inventory-section-progress.is-complete {
+    background-color: #2e7d32;
+}
+
+@media (max-width: 480px) {
+
+    .status-picker-option {
+        font-size: 13px;
+        padding: 0 6px;
+    }
+
+}
