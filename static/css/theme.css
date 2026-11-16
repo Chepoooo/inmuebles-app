@@ -1,0 +1,384 @@
+/* ==================================================
+   TEMA GENERAL DE HABITA
+   Se carga al final de cada página para unificar
+   tokens, botones, campos, tarjetas, tablas y estados
+   vacíos sin tocar la lógica de cada pantalla.
+   ================================================== */
+
+
+/* ==================================================
+   TOKENS
+   ================================================== */
+
+:root {
+    --color-primary: #1f3a5c;
+    --color-secondary: #2f5d8c;
+    --color-light: #f5f4f1;
+    --color-surface: #ffffff;
+    --color-dark: #3d4753;
+    --color-ink: #17263a;
+    --color-muted: #667283;
+    --color-white: #ffffff;
+    --color-accent: #c73a32;
+    --color-focus: rgba(47, 93, 140, 0.22);
+
+    --color-success: #2e7d32;
+    --color-warning: #b45309;
+    --color-danger: #c62828;
+
+    --border-color: #e2dfd8;
+    --border-strong: #cdd3dc;
+    --border-radius: 10px;
+    --radius-surface: 14px;
+
+    --shadow-soft: 0 1px 2px rgba(23, 38, 58, 0.05), 0 4px 14px rgba(23, 38, 58, 0.05);
+    --shadow-hover: 0 2px 4px rgba(23, 38, 58, 0.06), 0 10px 24px rgba(23, 38, 58, 0.08);
+}
+
+
+/* ==================================================
+   BASE
+   ================================================== */
+
+body {
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 15px;
+    color: var(--color-dark);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+}
+
+h1 {
+    font-weight: 800;
+}
+
+a {
+    color: var(--color-secondary);
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+
+/* ==================================================
+   ENCABEZADO Y NAVEGACIÓN
+   ================================================== */
+
+.site-header {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(1.4) blur(8px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-links a {
+    color: var(--color-muted);
+    font-weight: 600;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+    color: var(--color-ink);
+}
+
+.nav-links a[aria-current="page"]::after {
+    width: 100%;
+    background-color: var(--color-accent);
+    height: 2px;
+}
+
+.nav-user-avatar {
+    background-color: var(--color-primary);
+}
+
+.logout-button {
+    border-radius: var(--border-radius);
+    border-color: var(--border-strong);
+    color: var(--color-ink);
+}
+
+.logout-button:hover {
+    border-color: var(--color-primary);
+}
+
+
+/* ==================================================
+   ENCABEZADO DE PÁGINA
+   ================================================== */
+
+.page-header h1,
+.inventory-detail-header h1,
+.property-detail-header h1,
+.repair-detail-header h1,
+.notes-header h1,
+.property-form-header h1 {
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.page-description,
+.inventory-detail-property,
+.notes-description {
+    color: var(--color-muted);
+    font-size: 15px;
+}
+
+
+/* ==================================================
+   BOTONES
+   ================================================== */
+
+.button-primary,
+.button-secondary,
+.button-danger {
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 1px 2px rgba(23, 38, 58, 0.08);
+}
+
+.button-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.button-primary:hover {
+    background-color: #18304d;
+    border-color: #18304d;
+}
+
+.button-secondary {
+    background-color: var(--color-surface);
+    border-color: var(--border-strong);
+    color: var(--color-primary);
+}
+
+.button-secondary:hover {
+    background-color: #f1f5fa;
+    border-color: var(--color-secondary);
+}
+
+.button-danger {
+    background-color: var(--color-surface);
+    border-color: #efc4c1;
+    color: var(--color-danger);
+}
+
+.button-danger:hover {
+    background-color: #fdecea;
+    border-color: var(--color-danger);
+}
+
+.button-primary:active,
+.button-secondary:active,
+.button-danger:active {
+    transform: translateY(1px);
+}
+
+
+/* ==================================================
+   CAMPOS
+   ================================================== */
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+input[type="tel"],
+select,
+textarea {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px var(--color-focus);
+}
+
+label {
+    color: var(--color-ink);
+}
+
+
+/* ==================================================
+   SUPERFICIES (TARJETAS Y CONTENEDORES)
+   ================================================== */
+
+.properties-table-wrapper,
+.repairs-table-wrapper,
+.inventories-table-wrapper,
+.property-detail-card,
+.property-related-card,
+.property-form-card,
+.property-form-section,
+.inventory-form-card,
+.inventory-signature-card,
+.inventory-bulk-status,
+.notes-card,
+.note-card,
+.repair-card,
+.repair-detail-card,
+.repair-description-card,
+.repair-inventory-card,
+.repair-update-form,
+.property-search-form,
+.repair-search-form,
+.inventory-search-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-surface);
+    box-shadow: var(--shadow-soft);
+}
+
+.property-related-card:hover,
+.note-card:hover,
+.repair-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+
+/* ==================================================
+   TABLAS DE DASHBOARD
+   ================================================== */
+
+.dash-table th {
+    padding: 13px 16px;
+    background-color: #f7f8fa;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dash-table td {
+    padding: 14px 16px;
+    color: var(--color-dark);
+    border-bottom: 1px solid #efedE8;
+}
+
+.dash-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.dash-table tbody tr:hover {
+    background-color: #fafbfc;
+}
+
+.dash-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Acciones de cada fila como botones de texto */
+
+.dash-table td:last-child {
+    white-space: normal;
+}
+
+.dash-table td:last-child > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.dash-table td:last-child a:not(.button-primary):not(.button-secondary):not(.button-danger),
+.dash-table td:last-child button:not(.button-primary):not(.button-secondary):not(.button-danger) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 5px 9px;
+    margin: 0;
+    border-radius: 8px;
+    background-color: #eef3f9;
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.dash-table td:last-child a:not(.button-primary):not(.button-secondary):not(.button-danger):hover {
+    background-color: #dfe8f3;
+}
+
+.dash-table td:last-child [class*="delete"],
+.dash-table td:last-child [class*="eliminar"] {
+    background-color: #fdecea;
+    color: var(--color-danger);
+}
+
+
+/* ==================================================
+   ESTADOS VACÍOS
+   ================================================== */
+
+.empty-state,
+.inventory-empty-state,
+.notes-empty,
+.property-repair-empty,
+.repair-empty-state {
+    padding: 36px 24px;
+    text-align: center;
+    background-color: var(--color-surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-surface);
+    color: var(--color-muted);
+}
+
+.empty-state h2,
+.inventory-empty-state h2,
+.notes-empty h2 {
+    font-size: 18px;
+    margin: 0 0 8px;
+}
+
+
+/* ==================================================
+   MOVIMIENTO RESPETUOSO
+   ================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+}

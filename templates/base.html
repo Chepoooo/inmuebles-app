@@ -8,8 +8,13 @@
 
     {% load static %}
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=4">
     {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=1">
 </head>
 
 <body>
@@ -38,13 +43,13 @@
             <div class="nav-menu" id="nav-menu">
 
                 <div class="nav-links">
-                    <a href="{% url 'property_list' %}">Propiedades</a>
-                    <a href="{% url 'repair_list' %}">Reparaciones</a>
-                    <a href="{% url 'inventory_dashboard' %}">Inventarios</a>
+                    <a href="{% url 'property_list' %}" {% if '/properties/' in request.path %}aria-current="page"{% endif %}>Propiedades</a>
+                    <a href="{% url 'repair_list' %}" {% if '/repairs/' in request.path %}aria-current="page"{% endif %}>Reparaciones</a>
+                    <a href="{% url 'inventory_dashboard' %}" {% if '/inventory/' in request.path and '/inventory/notes/' not in request.path %}aria-current="page"{% endif %}>Inventarios</a>
                     {% if current_membership.role == "admin" %}
-                    <a href="{% url 'inventory_notes' %}">Notas</a>
+                    <a href="{% url 'inventory_notes' %}" {% if '/inventory/notes/' in request.path %}aria-current="page"{% endif %}>Notas</a>
                     {% endif %}
-                    <a href="{% url 'organization_settings' %}">Organización</a>
+                    <a href="{% url 'organization_settings' %}" {% if '/organizations/' in request.path %}aria-current="page"{% endif %}>Organización</a>
                 </div>
 
                 <div class="nav-user">
